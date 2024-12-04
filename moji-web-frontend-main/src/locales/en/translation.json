@@ -1,0 +1,209 @@
+{
+    "heroTitle": "Premier debate and test preparation academy for Vietnamese students.",
+    "heroSubtitle": "Quality education at accessible prices and on a flexible online basis, ensuring access regardless of jobs, locations, or schedules.",
+    "startLearning": "Start Learning",
+    "contactUs": "Contact Us",
+    "home": "Home",
+    "aboutMoji": "About Us",
+    "courses": "Courses",
+    "registerNow": "Register Now",
+    "homePageTitle": "Home",
+    "homePageDescription": "Home Page",
+    "homePageOgTitle": "Home Page",
+    "homePageKeywords": "Your translated keywords here",
+    "benefitsPretitle": "Why Choose Us?",
+    "benefitsTitle": "Education Excellence from Start to Finish",
+    "teamPretitle": "Our Founders",
+    "teamTitle": "Professional, Experienced, and Passionate",
+    "teamDescription": "Former public school students united by our mission to make quality education truly accessible.",
+    "faqPretitle": "Your translated FAQ pretitle here",
+    "faqTitle": "Your translated FAQ title here",
+    "benefitOne": {
+        "title": "Professional, Experienced, and Passionate",
+        "desc": "We proudly have the most accomplished team of coaches in the Vietnam",
+        "bullets": [
+            {
+                "title": "Curriculum built by experienced, educated professionals",
+                "desc": "Our curriculum are built by mentors with Education degrees from top universities and multiple years of experience"
+            },
+            {
+                "title": "Wide range of services for every need",
+                "desc": "Tournament prep, private coaching, short webinars, and much much more"
+            },
+            {
+                "title": "Continued support throughout students' debate journies",
+                "desc": "Once our student, always our student, we will always provide support beyond our classes"
+            }
+        ]
+    },
+    "benefitTwo": {
+        "title": "Advanced, Comprehensive, and Accessible",
+        "desc": "We are always iterating, changing, and improving to give our students the best possible experience",
+        "bullets": [
+            {
+                "title": "Best and most affordable program on the market",
+                "desc": "Our SAT and Debate classes are among the most affordable options with prices ranging from just 6 to 10$ an hour"
+            },
+            {
+                "title": "We keep up with education trends and changes",
+                "desc": "Our flagship AI-powered SAT learning platform gives students personalized learning and the most updated test prep experience"
+            },
+            {
+                "title": "Continuous growth opportunities",
+                "desc": "We regularly take students to new tournaments and competitions, providing them with continuous opportunities to improve and excel."
+            }
+        ]
+    },
+    "partnersPretitle": "Trusted by",
+    "partnersTitle": "Schools, universities, and organizations across Vietnam",
+    "partner1": "VTV7 - Vietnam Television",
+    "partner2": "The Olympia Schools",
+    "partner3": "Swinburne University Vietnam",
+    "partner4": "Thanh Cong Secondary School",
+    "partner5": "University of Law - VNU",
+    "partner6": "IGC Group",
+    "partner7": "Thang Long University",
+    "partner8": "Ban Mai Elementary School",
+
+
+    "testimonials": [
+        {
+            "name": "Nguyễn Trần Nguyên Anh",
+            "title": "Co-founder at Moji Education",
+            "experience": "4 National Debate Championship titles, 3 years experience as debate coach and SAT mentor at Moji Education",
+            "education": "Computer Science and Education at Colby College"
+        },
+        {
+            "name": "Hà Tuấn Hùng",
+            "title": "Co-founder at Moji Education",
+            "experience": "Ex-Captain of Vietnam National Debate Team, 3 years experience as debate coach and SAT mentor at Moji Education",
+            "education": "Theater and Comparative Literature at Williams College"
+        },
+        {
+            "name": "Chu Đức An",
+            "title": "Co-founder at Moji Education",
+            "experience": "7 National Debate Championship titles, founder of the Vietnam Debate Network, 4 years of experience as Debate Coach at Moji Education",
+            "education": "International Relations at Diplomatic Academy of Vietnam"
+        }
+    ],
+    "courseslist": [
+        {
+          "title": "Debate Fundamentals",
+          "description": "Online and in-person beginner debate classes for students of all ages.",
+          "link": "/courses/course1"
+        },
+        {
+          "title": "Digital SAT Prep",
+          "description": "AI powered SAT learning platform and online SAT classes by experienced mentors.",
+          "link": "/courses/course2"
+        },
+        {
+          "title": "Custom programs",
+          "description": "Tournament prep, advanced personalized coaching, event organization, and more!",
+          "link": "/courses/course3"
+        }
+    
+      ],
+      "coursePretitle": "Join us",
+      "courseTitle": "Programs and Courses",
+      "initiativePretitle": "Moji Foundation",
+      "initiativeTitle": "Non-profit Initiatives",
+      "learnMore": "Learn More",
+      "initiativeslist": [
+    {
+      "title": "Vietnam Women and Queer Open",
+      "description": "Since 2021, we have hosted this annual event to create a platform to discuss and advocate for issues regarding gender minorities. We have ran workshops, social media campaigns, discussions, and art displays about women and the LGBTQIA+ community.",
+      "link": "/initiatives/education-for-all"
+    },
+    {
+      "title": "Echo Camp",
+      "description": "Week long annual debate camp teaching students from rural areas how to set up their own debate club. We hold workshops on how to train members, how to register for tournaments, raise funding, and host their own tournaments as well as networking events.",
+      "link": "/initiatives/healthcare-outreach"
+    },
+    {
+      "title": "Community Building",
+      "description": "We provide expertise, sponsorship, and organizational support for schools and student organizations looking to host their own debate tournaments. We have successfully supported over 40 student tournaments over the past 2 years.",
+      "link": "/initiatives/environmental-co"    
+    },
+    {
+        "title": "Disney British Parliamentary Open",
+        "description": "Charity tournament to raise fund for child protection organizations. We hosted the event alongside a social media campaign and had more than 200 attendees",
+        "link": "/initiatives/environmental-co"    
+      }
+  ],
+  "aboutPageTitle": "About Us - Moji",
+  "aboutPageDescription": "Learn about Moji's mission, story, and impact in the education sector.",
+  "aboutPageOgTitle": "About Moji - Empowering Students to Learn",
+  "aboutPageKeywords": "Moji, about us, mission, story, impact, education",
+  "ourMission": "Our Mission",
+  "missionStatement": "At Moji, we believe that every student deserves to learn as much as they want, in any way they want to.",
+  "ourStoryImage": "Our Story",
+  "ourStoryTitle": "Our story",
+  "ourStoryDescription": "We are three students who successfully navigated the public school system and were fortunate to be admitted to the best state-sponsored specialized high school in the country. This opportunity opened doors to skills and experiences we never knew existed. These experiences led us to achieve four national championships in debate, numerous academic awards, and secured our admission to top colleges in the US.\n\nAfter taking a gap year, we founded Moji to help students like us access the same opportunities and develop themselves fully. Our background as public school students allowed us to connect with students in ways that other companies cannot.",
+  "byTheNumbersTitle": "Moji by the numbers",
+  "byTheNumbersDescription": "In the last 4 years we have made considerable in our own development, as well as the advancement of our community. We are very proud to be considered one of the leading companies for competitive debate programs, a trusted partner for public and private institutions, and the biggest community development organization in Vietnam",
+  "programsDeveloped": "Programs Developed",
+  "studentInitiatives": "Student Initiatives Supported",  
+  "studentsTaught": "Students Taught",
+  "coursesOffered": "Courses Offered",
+  "galleryTitle": "Our Gallery",
+  "coursesPageTitle": "Courses",
+  "coursesPageDescription": "Explore our wide range of courses and programs.",
+  "coursesPageOgTitle": "Courses | Your Website",
+  "coursesPageKeywords": "courses, programs, education",
+  "debateProgramsPretitle": "Debate Programs",
+  "debateProgramsTitle": "Enhance Your Debating Skills",
+  "satPrepPretitle": "SAT Prep",
+  "satPrepTitle": "Prepare for the SAT Exam",
+  "courseslist2": [
+    {
+      "title": "Debate Fundamentals",
+      "description": "Online and in-person beginner debate classes for students of all ages.",
+      "link": "/courses/course1"
+    },
+    {
+      "title": "Debate Development",
+      "description": "Online and in-person intermediate debate classes for students of all ages.",
+      "link": "/courses/course2"
+    },
+    {
+      "title": "Custom programs",
+      "description": "Tournament prep, advanced personalized coaching, event organization, and more!",
+      "link": "/courses/course3"
+    },
+    {
+        "title": "Moji SAT Platform",
+        "description": "AI powered SAT learning platform.",
+        "link": "/courses/ml-fundamentals"
+      },
+      {
+        "title": "Digital SAT Prep",
+        "description": "Online SAT classes by experienced mentors.",
+        "link": "/courses/mobile-app-dev"
+      }
+     
+  ],
+  "debateFundamentalsPageTitle": "Debate Fundamentals Course",
+  "debateFundamentalsPageDescription": "Learn the fundamentals of debating and improve your critical thinking skills.",
+  "debateFundamentalsPageOgTitle": "Debate Fundamentals Course - Enhance Your Debating Skills",
+  "debateFundamentalsPageKeywords": "debate fundamentals, debate course, debating skills, critical thinking",
+  "courseOverview": "Course Details",
+  "debateFundamentalsTitle": "Signing up",
+  "debateFundamentalsTitle2": "Additional Information",
+
+  "debateFundamentalsImage": "Debate Fundamentals Course Image",
+  "debateFundamentalsDescription": "This course is offered throughout the year, in smaller class sizes from 5-10 students to ensure quality and personalized feedback. Middle School classes will be offered in English, and Highschool/College classes will be offered in Vietnamese. Contact us for more information, or click on the button to sign up. ",
+  "courseHighlightsTitle": "Highlights",
+  "courseStructureTitle2": "About the course",
+  "courseHighlightsDescription": "Moji have hosted this course for over 2 years, with many students moving on to higher levels after finding that the course was extremely beneficial to their lives in and out of school. We are also proud to say we have one of the most affordable courses in the country as well as financial aid for those in need.",
+  "topicsCovered": "Price",
+  "debateExercises": "Satisfaction Rate",
+  "studentsTaughtDF": "Students Taught",
+  "courseDuration": "Course Duration",
+  "weeks": "Weeks",
+  "courseStructure": "Debating Fundamentals",
+  "courseStructureTitle": "Start with the basics",
+  "courseStructureImage": "Course Structure Image",
+  "courseStructureDescription": "The Debate Fundamentals course is structured to provide a comprehensive learning experience. The course is divided into modules, each focusing on a specific aspect of debating. Students will engage in a mix of lectures, group discussions, and practical exercises to reinforce their understanding of the concepts taught. Throughout the course, students will have the opportunity to participate in mock debates and receive feedback from experienced mentors. Students will then have the opportunity to prepare and be accompanied to recommended tournaments"
+
+}

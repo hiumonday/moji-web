@@ -1,0 +1,62 @@
+.prose p {
+    font-family: 'Manrope';
+    font-size: 1.2rem;
+    font-weight: 380;
+    line-height: 1.65;
+    --content-spacing-multiplier: 1.1;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.2rem;
+  }
+
+.prose{
+    white-space: pre-line;
+}
+
+.prose blockquote {
+    border-left: 5px solid blue; /* Adjust thickness and color to your liking */
+    padding-left: 1rem; /* Add some padding so the text doesn't touch the border */
+    margin-left: 0; /* Remove the default left margin */
+    margin-right: 0; /* Remove the default right margin */
+    margin-bottom: 1.7rem;
+    margin-top: 1.7rem;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.65;
+
+}
+
+.prose hr{
+    padding-top: 1.5rem;
+
+}
+
+.prose ul {
+    font-family: 'Manrope';
+    list-style-type: disc; /* Use disc as the bullet point */
+    padding-left: 2rem; /* Add some padding to the left of the list */
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.65;
+    --content-spacing-multiplier: 1.1;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.2rem;
+}
+
+.prose li {
+    font-size: 1.2rem; /* Adjust the font size of the list items */
+    line-height: 1.5; /* Adjust the space between lines */
+}
+
+.prose h3 {
+    font-size: 1.5rem; /* Adjust the font size */
+    line-height: 1.6; /* Adjust the space between lines */
+    color: #333; /* Adjust the text color */
+    font-weight: bold; /* Make the text bold */
+    margin-top: 1rem; /* Add some space above the heading */
+    margin-bottom: 1rem; /* Add some space below the heading */
+}
+
+.prose a {
+    color: rgb(63, 92, 255); /* Set the text color to blue */
+    text-decoration: underline; /* Underline the text */
+}

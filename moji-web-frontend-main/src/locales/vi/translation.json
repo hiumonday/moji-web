@@ -1,0 +1,224 @@
+{
+    "heroTitle": "Cùng Moji nuôi dưỡng kỹ năng tranh luận, tư duy phản biện, và khả năng giải quyết vấn đề.",
+    "heroSubtitle": "Trở thành lãnh đạo, công dân toàn cầu với những kỹ năng quan trọng nhất của thế kỷ 21.",
+    "startLearning": "Bắt đầu học",
+    "contactUs": "Liên hệ với chúng tôi",
+    "home": "Trang chủ",
+    "aboutMoji": "Về Moji",
+    "courses": "Khoá học",
+    "registerNow": "Đăng ký học ngay",
+    "homePageTitle": "Trang chủ",
+    "homePageDescription": "description",
+    "homePageOgTitle": "Trang chủ",
+    "homePageKeywords": "Học tranh biện, tranh luận, tư duy phản biện, hùng biện, giải quyết vấn đề",
+    "benefitsPretitle": "Tại sao chọn Moji",
+    "benefitsTitle": "Chuyên nghiệp, kinh nghiệm, tận tình",
+    "teamPretitle": "Đội ngũ",
+    "teamTitle": "Những người đứng sau Moji",
+    "teamDescription": "Các mentor với hơn 4 năm kinh nghiệm huấn luyện tranh biện, luyện thi SAT",
+    "faqPretitle": "FAQ",
+    "faqTitle": "Câu hỏi thường gặp",
+    "benefitOne": {
+        "title": "Chuyên nghiệp, kinh nghiệm, tận tình",
+        "desc": "Moji tự tin có đội ngũ mentor chuyên nghiệp, giàu thành tích hàng đầu trong giới tranh biện",
+        "bullets": [
+            {
+                "title": "Đội ngũ chuyện nghiệp, giàu kinh nghiệm thi đấu",
+                "desc": "Các mentor của Moji đã tham gia và đạt giải tại nhiều cuộc thi tranh biện quốc gia, quốc tế"
+            },
+            {
+                "title": "Chương trình dạy bài bản, hiệu quả",
+                "desc": "Nhiều học sinh đi từ không cho tới giải cao tại các cuộc thi tranh biện lớn như Hanoi Debate Tournament, Trường Teen, The Debaters,..."
+            },
+            {
+                "title": "Tiếp tục hỗ trợ kể cả sau khi kết thúc khoá học",
+                "desc": "Đã là học viên của Moji thì sẽ luôn là học viên Moji và sẽ nhận được nhiều sự giúp đỡ từ các mentor"
+            }
+        ]
+    },
+    "benefitTwo": {
+        "title": "Your English title for benefitTwo here",
+        "desc": "Your English description for benefitTwo here",
+        "bullets": [
+            {
+                "title": "Your English bullet title for the first bullet of benefitTwo here",
+                "desc": "Your English bullet description for the first bullet of benefitTwo here"
+            },
+            {
+                "title": "Your English bullet title for the second bullet of benefitTwo here",
+                "desc": "Your English bullet description for the second bullet of benefitTwo here"
+            },
+            {
+                "title": "Your English bullet title for the third bullet of benefitTwo here",
+                "desc": "Your English bullet description for the third bullet of benefitTwo here"
+            }
+        ]
+    },
+    "partnersPretitle": "Đối tác",
+    "partnersTitle": "Moji được tin tưởng và đã đồng hành cùng nhiều tổ chức uy tín",
+    "partner1": "VTV7 - Vietnam Television",
+    "partner2": "The Olympia Schools",
+    "partner3": "Swinburne University Vietnam",
+    "partner4": "Thanh Cong Secondary School",
+    "partner5": "University of Law - VNU",
+    "partner6": "IGC Group",
+    "partner7": "Thang Long University",
+    "partner8": "Ban Mai Elementary School",
+
+    "testimonials": [
+        {
+            "name": "Nguyễn Trần Nguyên Anh",
+            "title": "Đồng sáng lập tại Moji Education",
+            "experience": "4 giải vô địch toàn quốc tranh biện, 3 năm kinh nghiệm mentor SAT tại Moji Education",
+            "education": "Đội tuyển HSGQG Tiếng Anh tại THPT Chuyên Ngoại Ngữ, Sinh viên ngành Khoa học Máy tính và Khoa học Giáo dục tại Colby College"
+        },
+        {
+            "name": "Hà Tuấn Hùng",
+            "title": "Đồng sáng lập tại Moji Education",
+            "experience": "Cựu Đội trưởng đội tuyển tranh biện Việt Nam, 3 năm kinh nghiệm mentor SAT tại Moji Education",
+            "education": "Đội tuyển HSGQG Tiếng Anh tại THPT Chuyên Ngoại Ngữ, Sinh viên ngành Sân khấu và Văn học so sánh tại Williams College"
+        },
+        {
+            "name": "Chu Đức An",
+            "title": "Đồng sáng lập tại Moji Education",
+            "experience": "7 giải vô địch toàn quốc tranh biện, điều hành Vietnam Debate Network, 4 năm kinh nghiệm huấn luyện tranh biện tại Moji Education",
+            "education": "Sinh viên ngành quan hệ quốc tế tại Học viện Ngoại Giao"
+        }
+    ],
+    "courseslist": [
+        {
+          "title": "Nền tảng tranh biện",
+          "description": "Lớp học trực tuyến và trực tiếp cho học sinh trung học cơ sở, cấp 3, đại học.",
+          "link": "/courses/course1"
+        },
+        {
+          "title": "Luyện thi Digital SAT",
+          "description": "Nền tảng luyện thi SAT tích hợp AI và lớp luyện thi SAT với mentor kinh nghiệm.",
+          "link": "/courses/course2"
+        },
+        {
+          "title": "Các chương trình khác",
+          "description": "Lớp học 1-1, chấm đấu tập, tổ chức sự kiện, và nhiều chương trình khác!",
+          "link": "/courses/course3"
+        }
+      ],
+      "coursePretitle": "Học cùng Moji",
+      "courseTitle": "Các dịch vụ và sản phẩm",
+      "initiativePretitle": "Vì cộng đồng",
+      "initiativeTitle": "Những dự án đẩy mạnh phát triển cộng đồng tranh biện Việt Nam",
+      "learnMore": "Tìm hiểu thêm",
+      "initiativeslist": [
+        {
+          "title": "Vietnam Women and Queer Open",
+          "description": "Vietnam Women and Queer Open là giải đấu Tranh biện đầu tiên, duy nhất và thường niên tại Việt Nam lấy chủ đề là sự bình đẳng, quyền lợi của phụ nữ và cộng đồng LGBTQIA+ với sự hỗ trợ đến từ các doanh nghiệp uy tín như Tổ chức giáo dục QTS Australia, Công ty American Study, Công ty Spark Prep…",
+          "link": "/initiatives/education-for-all"
+        },
+        {
+          "title": "Echo Camp",
+          "description": "Trại hè tranh biện nhằm giúp cho học sinh ở các tỉnh thành xa biết cách thành lập câu lạc bộ tranh biện. Trại hè tổ chức các hội thảo về cách đào tạo thành viên, cách đăng ký tham gia các giải đấu, gây quỹ, và tự tổ chức giải đấu.",
+          "link": "/initiatives/healthcare-outreach"
+        },
+        {
+          "title": "Xây dựng và hỗ trợ cộng đồng tranh biện",
+          "description": "Tài trợ và bảo trợ chuyên môn cho các giải đấu của các trường Đại học và Trung học Phổ thông trên cả nước. Đã hỗ trợ cho hơn 40 giải đấu lớn nhỏ trong 2 năm vừa qua.",
+          "link": "/initiatives/environmental-co"    
+        },
+        {
+            "title": "Disney British Parliamentary Open",
+            "description": "Giải đấu từ thiện gây quỹ cho các tổ chức bảo vệ trẻ em. Giải đấu có hơn 200 người tham gia từ nhiều quốc gia khác nhau.",
+            "link": "/initiatives/environmental-co"    
+          },
+          {
+            "title": "Machine Learning Fundamentals",
+            "description": "Discover the fundamentals of machine learning and its applications.",
+            "link": "/courses/ml-fundamentals"
+          },
+          {
+            "title": "Mobile App Development",
+            "description": "Learn how to develop mobile applications for iOS and Android platforms.",
+            "link": "/courses/mobile-app-dev"
+          },
+          {
+            "title": "Cloud Computing Essentials",
+            "description": "Explore the essentials of cloud computing and its benefits for businesses.",
+            "link": "/courses/cloud-computing"
+          }
+      ],
+      "aboutPageTitle": "Về Moji",
+      "aboutPageDescription": "Tìm hiểu về câu chuyện và những đóng góp của Moji trong giáo dục.",
+      "aboutPageOgTitle": "Về Moji",
+      "aboutPageKeywords": "Về Moji, Moji Education, Moji Debate",
+      "ourMission": "Mục đích",
+      "missionStatement": "Tại Moji, chúng tôi tin rằng mọi học sinh đều xứng đáng có cơ hội học tập và phát triển bình đẳng.",
+      "ourStoryImage": "Câu chuyện của chúng tôi",
+      "ourStoryTitle": "Câu chuyện của chúng tôi",
+      "ourStoryDescription": "Moji được thành lập với mục tiêu tối đa hóa tiếp cận với giáo dục. Được tạo ra bởi chính những người đã trải qua những khó khăn của việc tự ôn luyện, Moji hứa hẹn sẽ đem đến cho mọi người những khóa học chất lượng cao, được xây dựng phù hợp, được giảng dạy tâm huyết, và với giá cả phải chăng.",
+      "byTheNumbersTitle": "Moji qua những con số",
+      "byTheNumbersDescription": "Trong 4 năm qua, chúng tôi đã có những bước phát triển đáng kể trong sự phát triển của bản thân, cũng như sự tiến bộ của cộng đồng. Chúng tôi rất tự hào khi được coi là một trong những công ty hàng đầu về các chương trình tranh biện, là đối tác đáng tin cậy của các trường cấp ba, đại học, và là tổ chức phát triển cộng đồng tranh biện lớn nhất tại Việt Nam",
+      "programsDeveloped": "Triệu đồng đóng góp cho từ thiện",
+      "studentInitiatives": "Giải đấu được hỗ trợ",
+      "studentsTaught": "Học sinh tham gia khoá học",
+      "coursesOffered": "Sự kiện, chương trình được tổ chức",
+      "galleryTitle": "Thư viện ảnh của chúng tôi",
+      "coursesPageTitle": "Khoá học",
+      "coursesPageDescription": "Khám phá các khoá học của Moji.",
+      "coursesPageOgTitle": "Khoá học | Moji Education",
+      "coursesPageKeywords": "Học tranh biện, Học SAT, Moji",
+      "debateProgramsPretitle": "Tranh Biện",
+      "debateProgramsTitle": "Học tranh biện cùng các HLV hàng đầu",
+      "satPrepPretitle": "Digital SAT",
+      "satPrepTitle": "Luyện SAT cùng Moji",
+      "courseslist2": [
+        {
+          "title": "Nền tảng tranh biện",
+          "description": "Lớp học trực tuyến và trực tiếp mức độ mới bắt đầu cho học sinh trung học cơ sở, cấp 3, đại học.",
+          "link": "/courses/course1"
+        },
+        {
+          "title": "Tranh biện nâng cao",
+          "description": "Lớp học trực tuyến và trực tiếp trình độ nâng cao cho học sinh trung học cơ sở, cấp 3, đại học.",
+
+          "link": "/courses/course2"
+        },
+        {
+          "title": "Các chương trình khác",
+          "description": "Lớp học 1-1, chấm đấu tập, tổ chức sự kiện, và nhiều chương trình khác!",
+          "link": "/courses/course3"
+        },
+        {
+            "title": "Nền tảng luyện thi SAT",
+            "description": "Nền tảng luyện thi SAT tích hợp AI.",
+            "link": "/courses/course1"
+          },
+          {
+            "title": "Lớp luyện thi Digital SAT",
+            "description": "Lớp luyện thi SAT Online giá phải chăng và mentor kinh nghiệm.",
+            "link": "/courses/course2"
+          }
+        
+      ],
+      "debateFundamentalsPageTitle": "Khoá học Debate Fundamentals",
+      "debateFundamentalsPageDescription": "Khoá học Tranh biện nền tảng.",
+      "debateFundamentalsPageOgTitle": "Khoá học Tranh biện nền tảng",
+      "debateFundamentalsPageKeywords": "Tranh biện, học tranh biện, tư duy phản biện, tự tin",
+      "courseOverview": "Tìm hiểu thêm",
+      "debateFundamentalsTitle": "Đăng ký học",
+      "debateFundamentalsTitle2": "Thông tin chi tiết",
+    
+      "debateFundamentalsImage": "Debate Fundamentals Course Image",
+      "debateFundamentalsDescription": "Khóa học Debate Fundamentals dành cho học sinh THCS, THPT và Đại học muốn xây dựng nền tảng tranh biện vững chắc hoặc cải thiện kỹ năng. Lớp học nhỏ từ 6-12 học viên, chia theo độ tuổi và ngôn ngữ (Tiếng Việt cho THPT-ĐH, Tiếng Anh cho THCS). Khóa học kéo dài 10 buổi, mỗi tuần 1 buổi, dự kiến khai giảng tháng 4/2024. Học phí Early Bird: 3.600.000 VND, Standard: 4.000.000 VND, đăng ký nhóm từ 2 người trở lên: 3.200.000 VND/học viên.",
+      "courseHighlightsTitle": "Con số ấn tượng",
+      "courseStructureTitle2": "Về khoá học",
+      "courseHighlightsDescription": "Trong hai năm vừa rôì Moji tự hào vì đã tổ chức thành công hơn 10 khoá Debate Fundamentals với hơn 100 học viên tham gia và đạt nhiều thành tích",
+      "topicsCovered": "Học phí",
+      "debateExercises": "Mức độ hài lòng",
+      "studentsTaughtDF": "Học sinh đã tham gia khoá",
+      "courseDuration": "Thời lượng khoá học",
+      "weeks": "Tuần",
+      "courseStructure": "Debating Fundamentals",
+      "courseStructureTitle": "Bắt đầu với câu hỏi 'tại sao?'",
+      "courseStructureImage": "Course Structure Image",
+      "courseStructureDescription": "Khoá học cơ bản dành cho bất cứ ai quan tâm tới tranh biện và hoặc các kỹ năng liên quan tới tư duy phản biện, nói trước đám đông, và tư duy ngôn ngữ. Khoá học sẽ giúp cho các học viên tự tin hơn khi nói, luyện tập kỹ năng phát biểu, và tham gia các giải đấu tranh biện"
+    
+
+}
