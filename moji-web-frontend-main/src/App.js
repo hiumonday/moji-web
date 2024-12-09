@@ -16,6 +16,8 @@ import viTranslation from './locales/vi/translation.json';
 import AboutUs from "./screens/AboutUs";
 import Courses from "./screens/Courses";
 import DF from "./screens/DF";
+import DemoComponent from "./components/DemoComponent";
+
 i18n
   .use(initReactI18next)
   .init({
@@ -68,7 +70,6 @@ const App = () => {
 		dispatch(clearSuccess());
 	};
 	
-
 	return (
 		<HelmetProvider>
 			<Router>
@@ -104,6 +105,8 @@ const App = () => {
 							}
 						/>
 						
+						<Route path="/demo" element={<DemoComponent  />} />
+
 						<Route path="/*" element={<NotFound />} />
 					</Routes>
 					<Snackbar

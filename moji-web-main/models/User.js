@@ -6,6 +6,18 @@ const userSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	cart: [
+        {
+            courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+            addedAt: { type: Date, default: Date.now }
+        }
+    ],
+    purchasedCourses: [
+        {
+            courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+            purchasedAt: { type: Date, default: Date.now }
+        }
+    ],
 	goal:{
 		type: String,
 	},
