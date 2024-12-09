@@ -6,7 +6,8 @@
     "home": "Home",
     "aboutMoji": "About Us",
     "courses": "Courses",
-    "registerNow": "Register Now",
+    "registerNow": "Register",
+    "login": "Login",
     "homePageTitle": "Home",
     "homePageDescription": "Home Page",
     "homePageOgTitle": "Home Page",
@@ -204,6 +205,10 @@
   "courseStructure": "Debating Fundamentals",
   "courseStructureTitle": "Start with the basics",
   "courseStructureImage": "Course Structure Image",
-  "courseStructureDescription": "The Debate Fundamentals course is structured to provide a comprehensive learning experience. The course is divided into modules, each focusing on a specific aspect of debating. Students will engage in a mix of lectures, group discussions, and practical exercises to reinforce their understanding of the concepts taught. Throughout the course, students will have the opportunity to participate in mock debates and receive feedback from experienced mentors. Students will then have the opportunity to prepare and be accompanied to recommended tournaments"
-
+  "courseStructureDescription": "The Debate Fundamentals course is structured to provide a comprehensive learning experience. The course is divided into modules, each focusing on a specific aspect of debating. Students will engage in a mix of lectures, group discussions, and practical exercises to reinforce their understanding of the concepts taught. Throughout the course, students will have the opportunity to participate in mock debates and receive feedback from experienced mentors. Students will then have the opportunity to prepare and be accompanied to recommended tournaments",
+  
+  "passWord": "Pass word",
+  "forgotPassWord": "Forgot your password",
+  "accountExist": "Don't have an account",
+  "haveAccount": "Already have an account"
 }

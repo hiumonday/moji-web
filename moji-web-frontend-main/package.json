@@ -23,8 +23,10 @@
 		"chart.js": "^4.4.1",
 		"chartjs-plugin-annotation": "^3.0.1",
 		"desmos": "^1.5.4",
+		"dotenv": "^16.4.7",
 		"katex": "^0.16.9",
 		"lodash": "^4.17.21",
+		"lucide-react": "^0.468.0",
 		"react": "^18.2.0",
 		"react-chartjs-2": "^5.2.0",
 		"react-circular-progressbar": "^2.1.0",
@@ -60,7 +62,6 @@
 		"eject": "react-scripts eject"
 	},
 	"proxy": "http://localhost:3001",
-
 	"eslintConfig": {
 		"extends": [
 			"react-app",

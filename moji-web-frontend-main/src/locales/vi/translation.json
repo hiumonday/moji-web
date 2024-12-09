@@ -6,7 +6,8 @@
     "home": "Trang chủ",
     "aboutMoji": "Về Moji",
     "courses": "Khoá học",
-    "registerNow": "Đăng ký học ngay",
+    "registerNow": "Đăng ký",
+    "login": "Đăng nhập",
     "homePageTitle": "Trang chủ",
     "homePageDescription": "description",
     "homePageOgTitle": "Trang chủ",
@@ -218,7 +219,10 @@
       "courseStructure": "Debating Fundamentals",
       "courseStructureTitle": "Bắt đầu với câu hỏi 'tại sao?'",
       "courseStructureImage": "Course Structure Image",
-      "courseStructureDescription": "Khoá học cơ bản dành cho bất cứ ai quan tâm tới tranh biện và hoặc các kỹ năng liên quan tới tư duy phản biện, nói trước đám đông, và tư duy ngôn ngữ. Khoá học sẽ giúp cho các học viên tự tin hơn khi nói, luyện tập kỹ năng phát biểu, và tham gia các giải đấu tranh biện"
-    
-
+      "courseStructureDescription": "Khoá học cơ bản dành cho bất cứ ai quan tâm tới tranh biện và hoặc các kỹ năng liên quan tới tư duy phản biện, nói trước đám đông, và tư duy ngôn ngữ. Khoá học sẽ giúp cho các học viên tự tin hơn khi nói, luyện tập kỹ năng phát biểu, và tham gia các giải đấu tranh biện",
+      
+      "passWord": "Mật khẩu",
+      "forgotPassWord": "Quên mật khẩu",
+      "accountExist": "Chưa có tài khoản",
+      "haveAccount": "Đã có tài khoản"
 }
