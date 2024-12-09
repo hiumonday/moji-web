@@ -19,10 +19,12 @@ import DF from "./screens/DF";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Cart from "./screens/Cart";
+import DemoComponent from "./components/DemoComponent";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
       translation: enTranslation,
+
     },
     vi: {
       translation: viTranslation,
@@ -82,6 +84,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/demo" element={<DemoComponent  />} />
 
             <Route path="/*" element={<NotFound />} />
           </Routes>
@@ -115,6 +118,8 @@ const App = () => {
       </Router>
     </HelmetProvider>
   );
+
+
 };
 
 export default App;
