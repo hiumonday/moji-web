@@ -16,7 +16,6 @@ require("dotenv").config({ path: "./.env" });
 // }
 
 const errorMiddleware = require("./middlewares/errorMiddleware");
-const scheduler = require("./utils/moduleScheduler");
 
 app.use(
   session({
@@ -25,7 +24,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 
 app.use(express.json({ limit: "4.5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "4.5mb" }));
@@ -49,11 +47,9 @@ passportConnect();
 // test module schedule
 // scheduler();
 
-
 // Routing
-const route = require('./routes/siteRoute')
+const route = require("./routes/siteRoute");
 route(app);
-
 
 // app.use(express.static(path.join(__dirname + "../moji-web-frontend-main/build")));
 

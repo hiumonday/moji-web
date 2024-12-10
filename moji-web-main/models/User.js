@@ -1,69 +1,41 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
-const userSchema = mongoose.Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	cart: [
-        {
-            courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-            addedAt: { type: Date, default: Date.now }
-        }
+const userSchema = mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    cart: [
+      {
+        courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        addedAt: { type: Date, default: Date.now },
+      },
     ],
     purchasedCourses: [
-        {
-            courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-            purchasedAt: { type: Date, default: Date.now }
-        }
+      {
+        courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        purchasedAt: { type: Date, default: Date.now },
+      },
     ],
-	goal:{
-		type: String,
-	},
-	aim:{
-		type: String
-	},
-	email: {
-		type: String,
-	},
-	provider: {
-		type: String,
-		enum: ["facebook", "google"],
-		required: true
-	},
-	googleId: {
-		type: String,
-	},
-	facebookId: {
-		type: String,
-	},
-	role: {
-		type: String,
-		required: true,
-		default: "user"
-	},
-	takenTests: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Test'
-    }],
-	isReferred: {
-		type: Boolean,
-		default: false
-	},
-	referralUsageCount: {
-		type: Number,
-		default: 0,
-		required: true
-	},
-
-}, {timestamps: true});
+    email: { type: String },
+    password: { type: String },
+    role: {
+      type: String,
+      required: true,
+      default: "user",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 //Generate Authentication Token
 userSchema.methods.generateAuthToken = function () {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-}
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
