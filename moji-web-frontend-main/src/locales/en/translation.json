@@ -210,5 +210,8 @@
   "passWord": "Pass word",
   "forgotPassWord": "Forgot your password",
   "accountExist": "Don't have an account",
-  "haveAccount": "Already have an account"
+  "haveAccount": "Already have an account",
+  "logout": "Log out",
+  "yourProfile": "My profile",
+  "settings": "Settings"
 }

@@ -224,5 +224,8 @@
       "passWord": "Mật khẩu",
       "forgotPassWord": "Quên mật khẩu",
       "accountExist": "Chưa có tài khoản",
-      "haveAccount": "Đã có tài khoản"
+      "haveAccount": "Đã có tài khoản",
+      "logout": "Đăng xuất",
+      "yourProfile": "Tài khoản",
+      "settings": "Cài đặt"
 }

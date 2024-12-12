@@ -10,10 +10,10 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 
 // Auto-login route using cookie
-router.get("/login-success", isAuthenticatedUser, userController.loginSuccess);
+router.get("/login/success", isAuthenticatedUser, userController.loginSuccess);
 
 // Logout route
-router.post("/logout", isAuthenticatedUser, userController.logout);
+router.get("/logout", isAuthenticatedUser, userController.logout);
 
 // Fake login for testing (optional)
 router.post("/fake-login", userController.fakeLogin);

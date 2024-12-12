@@ -34,6 +34,7 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
 });
+
 // main.js
 const App = () => {
   const dispatch = useDispatch();
