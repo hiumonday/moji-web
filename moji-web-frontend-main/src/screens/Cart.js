@@ -1,115 +1,36 @@
-import React from "react";
-import { Star } from "lucide-react";
-
-const CourseCard = ({
-  title,
-  instructor,
-  rating,
-  totalRatings,
-  hours,
-  lectures,
-  level,
-  price,
-  originalPrice,
-}) => (
-  <div className="flex gap-4 py-6 border-b p-2">
-    <div className="w-48 h-28 relative">
-      <img
-        src="https://via.placeholder.com/192x112"
-        alt={title}
-        className="object-cover rounded-lg w-full h-full"
-      />
-    </div>
-    <div className="flex-1">
-      <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-600">By {instructor}</p>
-      <div className="flex items-center gap-1 mt-1">
-        <span className="font-bold text-gray-900">{rating}</span>
-        <div className="flex">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${
-                i < Math.floor(rating)
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "fill-gray-200 text-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-        <span className="text-sm text-gray-500">({totalRatings} ratings)</span>
-      </div>
-      <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-        <span>{hours} total hours</span>
-        <span>•</span>
-        <span>{lectures} lectures</span>
-        <span>•</span>
-        <span>{level}</span>
-      </div>
-    </div>
-    <div className="flex flex-col items-end gap-2">
-      <div className="text-lg font-bold text-indigo-600">
-        đ{price.toLocaleString()}
-      </div>
-      <div className="text-sm text-gray-500 line-through">
-        đ{originalPrice.toLocaleString()}
-      </div>
-      <button className="text-indigo-600 hover:text-indigo-700 text-sm">
-        Remove
-      </button>
-      <button className="text-indigo-600 hover:text-indigo-700 text-sm">
-        Save for Later
-      </button>
-      <button className="text-indigo-600 hover:text-indigo-700 text-sm">
-        Move to Wishlist
-      </button>
-    </div>
-  </div>
-);
+import React, { useState, useEffect } from "react";
+import CartCard from "../components/CartCard";
 
 const Cart = () => {
-  const courses = [
-    {
-      id: 1,
-      title: "Reviving Classic games with ReactJS, Type Script and Jest",
-      instructor: "Hieu",
-      rating: 5.0,
-      totalRatings: 1,
-      hours: 9,
-      lectures: 66,
-      level: "Beginner",
-      price: 299000,
-      originalPrice: 1049000,
-    },
-    {
-      id: 2,
-      title: "JavaScript Master Class - Build your own React from scratch",
-      instructor: "HUY",
-      rating: 4.1,
-      totalRatings: 52,
-      hours: 7.5,
-      lectures: 55,
-      level: "Intermediate",
-      price: 299000,
-      originalPrice: 399000,
-    },
-    {
-      id: 3,
-      title: "Reviving Classic games with ReactJS, Type Script and Jest",
-      instructor: "Hieu",
-      rating: 5.0,
-      totalRatings: 1,
-      hours: 9,
-      lectures: 66,
-      level: "Beginner",
-      price: 299000,
-      originalPrice: 1049000,
-    },
-  ];
+  const [cart, setCart] = useState([]);
+  const [error, setError] = useState(null);
 
-  const totalPrice = courses.reduce((sum, course) => sum + course.price, 0);
-  const originalTotal = courses.reduce(
-    (sum, course) => sum + course.originalPrice,
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/v1/view-cart", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setCart(data.cart); // Đặt giỏ hàng từ server
+        } else {
+          setError("Failed to fetch cart.");
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        setError("Error fetching cart.");
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+  // Tính tổng giá trị
+  const totalPrice = cart.reduce((sum, item) => sum + item.courseId.price, 0);
+  const originalTotal = cart.reduce(
+    (sum, item) => sum + item.courseId.originalPrice,
     0
   );
   const discount = Math.round(
@@ -120,14 +41,18 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Shopping Cart</h1>
-        <div className="text-lg mb-6">{courses.length} Courses in Cart</div>
+        <div className="text-lg mb-6">{cart.length} Courses in Cart</div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm">
-              {courses.map((course) => (
-                <CourseCard key={course.id} {...course} />
-              ))}
+              {cart.length === 0 ? (
+                <div className="text-gray-600">Your cart is empty.</div>
+              ) : (
+                cart.map((item) => (
+                  <CartCard key={item.courseId._id} course={item.courseId} />
+                ))
+              )}
             </div>
           </div>
 

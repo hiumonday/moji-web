@@ -1,9 +1,11 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import Helmet from "react-helmet";
 import SectionTitle from "../components/sectionTitle";
 import Footer from "../components/footer";
 import Container from "../components/container";
+import CourseCard from "../components/CourseCard";
 import courseOneImg from "../assets/courses/DF.webp";
 import courseTwoImg from "../assets/courses/DD.webp";
 import courseThreeImg from "../assets/courses/private.webp";
@@ -12,7 +14,31 @@ import courseFiveImg from "../assets/courses/sat2.webp";
 
 const Courses = () => {
   const { t, i18n } = useTranslation();
-  const courses = t('courseslist2', { returnObjects: true });
+  const [courses, setCourses] = useState([]); // State to store courses
+  const [loading, setLoading] = useState(true); // State to handle loading
+  const [error, setError] = useState(null); // State to handle errors
+
+  useEffect(() => {
+    // Fetch courses from the database
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/v1/viewCourse");
+        const data = await response.json();
+        
+        setCourses(data); // Assuming response.data is the courses array
+      } catch (err) {
+        setError("Failed to load courses");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  if (loading) return <div>Loading...</div>; // Show a loading state
+  if (error) return <div>Error: {error}</div>; // Show an error message
 
   return (
     <>
@@ -26,30 +52,11 @@ const Courses = () => {
       <SectionTitle pretitle={t('debateProgramsPretitle')} title={t('debateProgramsTitle')}></SectionTitle>
       <Container>
         <div className="grid gap-10 lg:grid-cols-3 xl:grid-cols-3 max-w-6xl mx-auto">
-          {courses.slice(0, 3).map((course, index) => (
-            <div key={index} className="lg:col-auto xl:col-auto">
-              <div className="flex flex-col justify-between w-full h-full bg-white rounded-2xl shadow-lg overflow-hidden">
-                <div className="relative">
-                  <img
-                    src={index === 0 ? courseOneImg : index === 1 ? courseTwoImg : courseThreeImg}
-                    alt={course.title}
-                    className="w-full h-48 object-cover"
-                  />
-                </div>
-                <div className="px-6 py-4">
-                  <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
-                  <p className="text-gray-600 text-base">{course.description}</p>
-                </div>
-                <div className="px-6 py-4">
-                  <a
-                    href={course.link}
-                    className="inline-block bg-blue-400 hover:bg-blue-600 text-white font-semibold mb-3 py-2 px-4 rounded"
-                  >
-                    {i18n.language === 'en' ? 'View Course' : 'Xem Khóa Học'}
-                  </a>
-                </div>
-              </div>
-            </div>
+          {courses.map((course) => (
+            <CourseCard 
+            course={course}
+            i18n={i18n}
+            />
           ))}
         </div>
       </Container>

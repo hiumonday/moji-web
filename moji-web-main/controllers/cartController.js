@@ -4,10 +4,12 @@ const Course = require("../models/Course");
 // Add course to cart
 module.exports.viewCart = (req, res) => {
   const userId = req.user._id;
+  console.log(userId)
 
   User.findById(userId)
     .populate("cart.courseId")
     .then((user) => {
+      console.log(user.cart);
       res.status(200).json({ cart: user.cart });
     })
     .catch((error) => {
@@ -17,11 +19,13 @@ module.exports.viewCart = (req, res) => {
 
 module.exports.addCourseToCart = (req, res) => {
   const { courseId } = req.body;
-  const { userId } = req.user._id;
+  const user = req.user;
+  const userId = user._id;
 
   Course.findById(courseId)
     .then((course) => {
       if (!course) {
+        // Kiểm tra kỹ xem đã gọi res.response chưa
         return res.status(404).json({ message: "Course not found" });
       }
 
@@ -36,14 +40,19 @@ module.exports.addCourseToCart = (req, res) => {
       return user.save();
     })
     .then((updatedUser) => {
-      res
-        .status(200)
-        .json({ message: "Course added to cart", cart: updatedUser.cart });
+      // Đảm bảo chỉ gọi res một lần
+      if (!res.headersSent) {
+        res.status(200).json({ message: "Course added to cart", cart: updatedUser.cart });
+      }
     })
     .catch((error) => {
-      res.status(500).json({ message: "Error adding course to cart", error });
+      // Đảm bảo chỉ gửi phản hồi lỗi một lần
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error adding course to cart", error });
+      }
     });
 };
+
 
 module.exports.removeCourseFromCart = (req, res) => {
   const { courseId } = req.body;

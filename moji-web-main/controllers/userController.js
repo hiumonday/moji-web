@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler.js");
 const User = require("../models/User");
+const Course = require("../models/Course");
 
 module.exports.register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -176,4 +177,14 @@ exports.chageUserRole = catchAsyncErrors(async (req, res, next) => {
     success: true,
     users,
   });
+});
+
+exports.viewCourse = catchAsyncErrors(async (req, res, next) => {
+  try {
+    courses = await Course.find(); // Fetch all courses
+    console.log(courses);
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching courses", error });
+  }
 });

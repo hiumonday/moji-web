@@ -18,6 +18,8 @@ router.get("/logout", isAuthenticatedUser, userController.logout);
 // Fake login for testing (optional)
 router.post("/fake-login", userController.fakeLogin);
 
+router.get("/viewCourse", userController.viewCourse);
+
 // router.get("/auth/google", passport.authenticate("google"));
 // router.get(
 //   "/auth/google/callback",
