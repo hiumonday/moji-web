@@ -23,7 +23,7 @@ const userSlice = createSlice({
     },
     logoutUser: (state, action) => {
       // state.user = undefined;
-      state.user = null;
+      state.user = undefined;
       state.isAuthenticated = false;
     },
     setAllUsers: (state, action) => {

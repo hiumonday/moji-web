@@ -8,6 +8,8 @@ import {
 import { setError, setSuccess } from "../slices/appSlice";
 import axios from "axios";
 
+axios.defaults.withCredentials = true;
+
 export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
@@ -17,9 +19,10 @@ export const loginAction = (credentials, onSuccess) => async (dispatch) => {
       { withCredentials: true }
     );
 
-    dispatch(setUser(data.user)); // Set user in Redux store
+    dispatch(setUser(data.user));
     dispatch(setLoader(false));
-    onSuccess(); // Callback for navigation
+    dispatch(setSuccess("Login successful"));
+    onSuccess();
   } catch (err) {
     dispatch(setLoader(false));
     dispatch(setError(err.response?.data?.message || "Login failed"));
@@ -45,12 +48,13 @@ export const getUserAction = () => async (dispatch) => {
 // log out user
 export const logoutAction = () => async (dispatch) => {
   try {
+    dispatch(logoutUser());
+
     dispatch(setLoader(true));
     await axios.get(process.env.REACT_APP_API_URL + "/api/v1/logout", {
       withCredentials: true,
     });
 
-    dispatch(logoutUser());
     dispatch(setLoader(false));
     dispatch(setSuccess("Successfully logged out"));
   } catch (err) {
