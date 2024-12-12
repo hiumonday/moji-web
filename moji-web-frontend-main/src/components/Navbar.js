@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutAction } from "../redux/actions/userAction";
 import Logo from "../assets/logo.png";
 import EnFlag from "../assets/en.png";
 import ViFlag from "../assets/vie.webp";
 import { useTranslation } from "react-i18next";
-import { Disclosure, Menu } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const Navbar = ({ changeLanguage }) => {
@@ -17,11 +17,29 @@ const Navbar = ({ changeLanguage }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsMenuOpen(false); // Close mobile menu on route change
+  }, [currentPath]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpen(false);
+        setLanguageOpen(false);
+      }
+
+      const menuPanel = document.getElementById("mobile-menu-panel");
+      const menuButton = document.getElementById("mobile-menu-button");
+      if (
+        isMenuOpen &&
+        menuPanel &&
+        !menuPanel.contains(event.target) &&
+        !menuButton.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
       }
     };
 
@@ -29,10 +47,13 @@ const Navbar = ({ changeLanguage }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isMenuOpen]);
 
   const handleLogout = () => {
     dispatch(logoutAction());
+    setIsMenuOpen(false);
+    navigate("/");
+    window.location.reload();
   };
 
   const getFlag = (language) => {
@@ -65,26 +86,34 @@ const Navbar = ({ changeLanguage }) => {
   };
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <nav className="bg-white navbar-shadow">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
+        <div className="relative flex h-[72px] items-center justify-between">
           {/* Mobile menu button */}
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-              <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-              <XMarkIcon className="hidden h-6 w-6" aria-hidden="true" />
-            </Disclosure.Button>
+            <button
+              id="mobile-menu-button"
+              className="inline-flex items-center justify-center rounded-md p-2.5 text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <span className="sr-only">Open main menu</span>
+              {isMenuOpen ? (
+                <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
           </div>
 
           {/* Logo */}
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
               <NavLink to="/">
-                <img src={Logo} alt="MOJI Logo" className="h-8 w-auto" />
+                <img src={Logo} alt="MOJI Logo" className="h-11 w-auto" />
               </NavLink>
             </div>
 
-            {/* Navigation links */}
+            {/* Desktop Navigation */}
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
@@ -93,9 +122,9 @@ const Navbar = ({ changeLanguage }) => {
                     to={item.href}
                     className={classNames(
                       item.current
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium"
+                        ? "bg-blue-500 text-white"
+                        : "text-blue-600 hover:bg-blue-50 hover:text-blue-700",
+                      "rounded-md px-4 py-2.5 text-base font-medium"
                     )}
                   >
                     {item.name}
@@ -105,13 +134,13 @@ const Navbar = ({ changeLanguage }) => {
             </div>
           </div>
 
-          {/* Language and Profile Section */}
+          {/* Right section - Language and Auth */}
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {/* Language Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
-                className="flex items-center text-sm font-medium text-gray-400 hover:text-white"
-                onClick={() => setOpen(!open)}
+                className="flex items-center text-base font-medium text-blue-600 hover:text-blue-700"
+                onClick={() => setLanguageOpen(!languageOpen)}
               >
                 <img
                   src={getFlag(i18n.language)}
@@ -121,13 +150,13 @@ const Navbar = ({ changeLanguage }) => {
                 <span>{i18n.language === "en" ? "English" : "Tiếng Việt"}</span>
               </button>
 
-              {open && (
+              {languageOpen && (
                 <div className="absolute right-0 mt-2 w-28 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                   <button
                     className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       changeLanguage("en");
-                      setOpen(false);
+                      setLanguageOpen(false);
                     }}
                   >
                     English
@@ -136,7 +165,7 @@ const Navbar = ({ changeLanguage }) => {
                     className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       changeLanguage("vi");
-                      setOpen(false);
+                      setLanguageOpen(false);
                     }}
                   >
                     Tiếng Việt
@@ -144,18 +173,16 @@ const Navbar = ({ changeLanguage }) => {
                 </div>
               )}
             </div>
-            {/* Profile Menu or Login/Register buttons based on authentication state */}
-            <div className="ml-3">
+
+            {/* Auth buttons - Only visible on desktop */}
+            <div className="hidden sm:ml-3 sm:block">
               {isAuthenticated && user ? (
                 <Menu as="div" className="relative">
                   <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={
-                        user.avatar ||
-                        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      }
+                      src={user.avatar || "default-avatar-url"}
                       alt="User avatar"
                     />
                   </Menu.Button>
@@ -190,13 +217,13 @@ const Navbar = ({ changeLanguage }) => {
                 <div className="flex items-center space-x-4">
                   <NavLink
                     to="/login"
-                    className="w-32 text-center text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2"
+                    className="w-36 text-center text-base font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2.5 shadow-sm"
                   >
                     {t("login")}
                   </NavLink>
                   <NavLink
                     to="/register"
-                    className="w-32 text-center text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2"
+                    className="w-36 text-center text-base font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2.5 shadow-sm"
                   >
                     {t("registerNow")}
                   </NavLink>
@@ -207,27 +234,112 @@ const Navbar = ({ changeLanguage }) => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <Disclosure.Panel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
+      {/* Mobile Menu - Sliding Panel */}
+      <div
+        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:hidden z-50`}
+        style={{ top: "72px" }}
+        id="mobile-menu-panel"
+      >
+        <div className="px-2 pt-2 pb-3 space-y-1">
+          {/* Navigation Links */}
           {navigation.map((item) => (
-            <Disclosure.Button
+            <NavLink
               key={item.name}
-              as="a"
-              href={item.href}
+              to={item.href}
               className={classNames(
                 item.current
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                "block rounded-md px-3 py-2 text-base font-medium"
+                  ? "bg-blue-500 text-white"
+                  : "text-blue-600 hover:bg-blue-50 hover:text-blue-700",
+                "block rounded-md px-4 py-2.5 text-base font-medium w-full text-left"
               )}
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
-            </Disclosure.Button>
+            </NavLink>
           ))}
+
+          {/* Divider */}
+          <div className="border-t border-blue-100 my-2"></div>
+
+          {/* Auth Section */}
+          {isAuthenticated && user ? (
+            <>
+              <NavLink
+                to="/profile"
+                className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium w-full"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t("yourProfile")}
+              </NavLink>
+              <NavLink
+                to="/settings"
+                className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium w-full"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t("settings")}
+              </NavLink>
+              <button
+                onClick={handleLogout}
+                className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium w-full text-left"
+              >
+                {t("logout")}
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to="/login"
+                className="block text-white bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2.5 text-base font-medium w-full text-center shadow-sm"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t("login")}
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="block text-white bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2.5 text-base font-medium w-full text-center mt-2 shadow-sm"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t("registerNow")}
+              </NavLink>
+            </>
+          )}
+
+          {/* Language Selection in Mobile Menu */}
+          <div className="border-t border-blue-100 my-2"></div>
+          <div className="px-3 py-2">
+            <div className="flex items-center text-black-300">
+              <button
+                className="flex items-center w-full text-sm font-medium hover:text-white"
+                onClick={() => changeLanguage("en")}
+              >
+                <img src={EnFlag} alt="English" className="h-4 w-6 mr-2" />
+                English
+              </button>
+            </div>
+            <div className="flex items-center text-black-300 mt-2">
+              <button
+                className="flex items-center w-full text-sm font-medium hover:text-white"
+                onClick={() => changeLanguage("vi")}
+              >
+                <img src={ViFlag} alt="Tiếng Việt" className="h-4 w-6 mr-2" />
+                Tiếng Việt
+              </button>
+            </div>
+          </div>
         </div>
-      </Disclosure.Panel>
-    </Disclosure>
+      </div>
+
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
+          isMenuOpen ? "opacity-50" : "opacity-0 pointer-events-none"
+        } sm:hidden z-40`}
+        style={{ top: "72px" }}
+        onClick={() => setIsMenuOpen(false)}
+      ></div>
+    </nav>
   );
 };
 

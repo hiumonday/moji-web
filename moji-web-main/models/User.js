@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema(
     ],
     purchasedCourses: [
       {
+        _id: false,
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
         purchasedAt: { type: Date, default: Date.now },
       },

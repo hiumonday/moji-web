@@ -71,7 +71,12 @@ module.exports.login = catchAsyncErrors(async (req, res, next) => {
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Only use HTTPS in production
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    path: "/",
   };
+
+  console.log(options);
 
   res.status(200).cookie("token", token, options).json({
     success: true,
