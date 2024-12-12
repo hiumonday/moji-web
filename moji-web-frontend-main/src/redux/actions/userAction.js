@@ -7,12 +7,15 @@ import {
 } from "../slices/userSlice";
 import { setError, setSuccess } from "../slices/appSlice";
 import axios from "axios";
+const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+console.log(REACT_APP_API_URL);
 
 export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axios.post(
-      process.env.REACT_APP_API_URL + "/api/v1/login",
+      
+      REACT_APP_API_URL + "/api/v1/login",
       credentials,
       { withCredentials: true }
     );
