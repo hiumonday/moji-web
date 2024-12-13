@@ -16,7 +16,6 @@ export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axios.post(
-      
       REACT_APP_API_URL + "/api/v1/login",
       credentials,
       { withCredentials: true }

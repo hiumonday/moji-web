@@ -101,11 +101,13 @@ exports.logout = catchAsyncErrors((req, res, next) => {
     res.cookie("token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,
+      sameSite: "Lax",
     });
 
     res.status(200).json({
       success: true,
       message: "Logged Out",
+      tokenCleared: true,
     });
   });
 });
