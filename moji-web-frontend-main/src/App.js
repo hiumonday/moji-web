@@ -19,6 +19,8 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Cart from "./screens/Cart";
 import DemoComponent from "./components/DemoComponent";
+import Profile from "./screens/Profile";
+import TransactionHistory from "./screens/TransactionHistory";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -84,7 +86,11 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/demo" element={<DemoComponent />} />
-
+            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/transaction-history"
+              element={<TransactionHistory />}
+            />
             <Route path="/*" element={<NotFound />} />
           </Routes>
           <Snackbar
