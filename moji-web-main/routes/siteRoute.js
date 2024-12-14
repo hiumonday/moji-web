@@ -11,6 +11,7 @@ function route(app) {
   app.use("/api/v1", userRoute);
   app.use("/api/v1", courseRoute);
   app.use("/api/v1", cartRoute);
+  app.use("/api/v1/", transactionRoute);
 
   // Google OAuth routes - these should be at the root level, not under /api/v1
   app.get(
@@ -41,10 +42,9 @@ function route(app) {
       };
 
       res.cookie("token", token, options);
-      res.redirect(`${process.env.FRONTEND_URL}`);
+      res.redirect(`${process.env.FRONTEND_URL}/login`);
     }
   );
 }
-// app.use("/api/v1", transactionRoute);
 
 module.exports = route;
