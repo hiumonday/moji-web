@@ -16,7 +16,6 @@ export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axios.post(
-      
       REACT_APP_API_URL + "/api/v1/login",
       credentials,
       { withCredentials: true }
@@ -31,6 +30,26 @@ export const loginAction = (credentials, onSuccess) => async (dispatch) => {
     dispatch(setError(err.response?.data?.message || "Login failed"));
   }
 };
+
+export const loginGoogleAction =
+  (credentials, onSuccess) => async (dispatch) => {
+    try {
+      dispatch(setLoader(true));
+      const { data } = await axios.get(
+        REACT_APP_API_URL + "/auth/google",
+        credentials,
+        { withCredentials: true }
+      );
+
+      dispatch(setUser(data.user));
+      dispatch(setLoader(false));
+      dispatch(setSuccess("Login successful"));
+      onSuccess();
+    } catch (err) {
+      dispatch(setLoader(false));
+      dispatch(setError(err.response?.data?.message || "Login failed"));
+    }
+  };
 
 // get user
 export const getUserAction = () => async (dispatch) => {
@@ -51,18 +70,25 @@ export const getUserAction = () => async (dispatch) => {
 // log out user
 export const logoutAction = () => async (dispatch) => {
   try {
+    // First dispatch logout to clear the Redux state
     dispatch(logoutUser());
 
-    dispatch(setLoader(true));
-    await axios.get(process.env.REACT_APP_API_URL + "/api/v1/logout", {
-      withCredentials: true,
-    });
+    // Then make the API call
+    const { data } = await axios.get(
+      process.env.REACT_APP_API_URL + "/api/v1/logout",
+      {
+        withCredentials: true,
+      }
+    );
 
+    // Clear any stored data
+    dispatch(setUser(null));
     dispatch(setLoader(false));
-    dispatch(setSuccess("Successfully logged out"));
+
+    // Force a page reload to ensure all states are cleared
   } catch (err) {
     dispatch(setLoader(false));
-    dispatch(setError(err.response.data.message));
+    dispatch(setError(err.response?.data?.message || "Logout failed"));
   }
 };
 

@@ -94,19 +94,26 @@ module.exports.loginSuccess = catchAsyncErrors((req, res, next) => {
 });
 
 // logout user
-exports.logout = catchAsyncErrors((req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(new ErrorHandler("Logout failed", 400));
+exports.logout = catchAsyncErrors(async (req, res, next) => {
+  // Clear the token cookie
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    sameSite: "Lax",
+    path: "/",
+  });
 
-    res.cookie("token", null, {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    });
+  // Clear the session if you're using sessions
+  if (req.session) {
+    req.session.destroy();
+  }
 
-    res.status(200).json({
-      success: true,
-      message: "Logged Out",
-    });
+  // Clear user from request
+  req.user = null;
+
+  res.status(200).json({
+    success: true,
+    message: "Logged Out Successfully",
   });
 });
 
