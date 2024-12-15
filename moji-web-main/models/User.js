@@ -6,7 +6,10 @@ const userSchema = mongoose.Schema(
     name: { type: String, required: true },
     cart: [
       {
+        _id: false,
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        level: { type: String },
+        language: { type: String },
         addedAt: { type: Date, default: Date.now },
       },
     ],
@@ -14,10 +17,13 @@ const userSchema = mongoose.Schema(
       {
         _id: false,
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-        purchasedAt: { type: Date, default: Date.now },
+        level: { type: String },
+        language: { type: String },
+        addedAt: { type: Date, default: Date.now },
       },
     ],
     email: { type: String },
+    phone: { type: String },
     password: { type: String },
     role: {
       type: String,

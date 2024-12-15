@@ -6,11 +6,15 @@ const router = express.Router();
 // View cart
 router.get("/view-cart", isAuthenticatedUser, cartController.viewCart);
 // Add course to cart
-router.post("/add", isAuthenticatedUser, cartController.addCourseToCart);
+router.post(
+  "/add-to-cart",
+  isAuthenticatedUser,
+  cartController.addCourseToCart
+);
 
 // Remove course from cart
-router.post(
-  "/remove",
+router.delete(
+  "/view-cart/remove/:id",
   isAuthenticatedUser,
   cartController.removeCourseFromCart
 );

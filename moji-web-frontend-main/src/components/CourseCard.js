@@ -10,8 +10,8 @@ const CourseCard = ({ course, i18n }) => {
     setError(null);
 
     try {
-        console.log(course._id);
-      const response = await fetch("http://localhost:3001/api/v1/add", {
+      console.log(course._id);
+      const response = await fetch("http://localhost:3001/api/v1/add-to-cart", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -30,6 +30,7 @@ const CourseCard = ({ course, i18n }) => {
       }
     } catch (err) {
       setError(err.message);
+      setTimeout(() => setError(null), 2000);
     } finally {
       setAdding(false);
     }
@@ -70,13 +71,15 @@ const CourseCard = ({ course, i18n }) => {
                 ? "Adding..."
                 : "Đang thêm..."
               : i18n.language === "en"
-              ? "Add to Cart"
-              : "Thêm vào giỏ"}
+                ? "Add to Cart"
+                : "Thêm vào giỏ"}
           </button>
         </div>
         {success && (
           <p className="text-green-600 px-6 py-2">
-            {i18n.language === "en" ? "Added to cart!" : "Đã thêm vào giỏ hàng!"}
+            {i18n.language === "en"
+              ? "Added to cart!"
+              : "Đã thêm vào giỏ hàng!"}
           </p>
         )}
         {error && (

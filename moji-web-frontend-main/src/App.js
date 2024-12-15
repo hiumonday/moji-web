@@ -17,6 +17,7 @@ import Courses from "./screens/Courses";
 import DF from "./screens/DF";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
+import CheckOut from "./screens/CheckOut";
 import Cart from "./screens/Cart";
 import DemoComponent from "./components/DemoComponent";
 i18n.use(initReactI18next).init({
@@ -84,6 +85,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/demo" element={<DemoComponent />} />
+            <Route path="/check-out" element={<CheckOut />} />
 
             <Route path="/*" element={<NotFound />} />
           </Routes>

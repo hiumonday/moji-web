@@ -9,26 +9,36 @@ const learningPlatformSchema = mongoose.Schema({
 const courseSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
-    img: { type: String },
     description: { type: String },
-    format: { type: String },
     price: { type: Number, required: true },
-    original_price: { type: Number, required: true },
-    number_of_lessons: { type: Number },
-    session_time: { type: String },
-    course_duration: { type: Date },
-    discount_code: [{ type: String }],
-    mentor: [{ type: String }],
-    learning_platform: { type: learningPlatformSchema },
-    flash_sale: {
-      type: {
-        is_active: { type: Boolean, default: false },
-        discount_amount: { type: Number },
-        end_date: { type: Date },
+    earlyBirdPrice: { type: Number, required: true },
+    earlyBirdSlot: { type: Number, default: 5 },
+    discounts: [
+      {
+        _id: false,
+        code: { type: String, required: true },
+        percentage: { type: Number },
+        amount: { type: Number },
+        expiresAt: { type: Date },
       },
-      default: {},
-      _id: false,
-    },
+    ],
+    classes: [
+      {
+        _id: {
+          type: mongoose.Schema.Types.ObjectId,
+          default: () => new mongoose.Types.ObjectId(),
+          require: true,
+        },
+        level: { type: String, require: true },
+        language: { type: String, require: true },
+        teacherName: { type: String, require: true },
+        day: { type: String, require: true },
+        startTime: { type: String, required: true },
+        endTime: { type: String, required: true },
+        location: { type: String },
+      },
+    ],
+    learning_platform: { type: learningPlatformSchema },
   },
   {
     timestamps: true,

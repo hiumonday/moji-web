@@ -79,6 +79,11 @@ const Navbar = ({ changeLanguage }) => {
       href: "/courses",
       current: currentPath.startsWith("/courses"),
     },
+    {
+      name: "Cart",
+      href: "/cart",
+      current: currentPath === "/cart",
+    },
   ];
 
   const classNames = (...classes) => {

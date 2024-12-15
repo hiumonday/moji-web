@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import Helmet from "react-helmet";
 import SectionTitle from "../components/sectionTitle";
 import Footer from "../components/footer";
@@ -24,7 +24,7 @@ const Courses = () => {
       try {
         const response = await fetch("http://localhost:3001/api/v1/viewCourse");
         const data = await response.json();
-        
+
         setCourses(data); // Assuming response.data is the courses array
       } catch (err) {
         setError("Failed to load courses");
@@ -37,31 +37,34 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
-  if (loading) return <div>Loading...</div>; // Show a loading state
-  if (error) return <div>Error: {error}</div>; // Show an error message
+  // if (loading) return <div>Loading...</div>; // Show a loading state
+  // if (error) return <div>Error: {error}</div>; // Show an error message
 
   return (
     <>
       <Helmet>
-        <title>{t('coursesPageTitle')}</title>
-        <meta name="description" content={t('coursesPageDescription')} />
-        <meta property="og:title" content={t('coursesPageOgTitle')} />
-        <meta name="keywords" content={t('coursesPageKeywords')} />
+        <title>{t("coursesPageTitle")}</title>
+        <meta name="description" content={t("coursesPageDescription")} />
+        <meta property="og:title" content={t("coursesPageOgTitle")} />
+        <meta name="keywords" content={t("coursesPageKeywords")} />
       </Helmet>
 
-      <SectionTitle pretitle={t('debateProgramsPretitle')} title={t('debateProgramsTitle')}></SectionTitle>
+      <SectionTitle
+        pretitle={t("debateProgramsPretitle")}
+        title={t("debateProgramsTitle")}
+      ></SectionTitle>
       <Container>
         <div className="grid gap-10 lg:grid-cols-3 xl:grid-cols-3 max-w-6xl mx-auto">
           {courses.map((course) => (
-            <CourseCard 
-            course={course}
-            i18n={i18n}
-            />
+            <CourseCard course={course} i18n={i18n} />
           ))}
         </div>
       </Container>
 
-      <SectionTitle pretitle={t('satPrepPretitle')} title={t('satPrepTitle')}></SectionTitle>
+      <SectionTitle
+        pretitle={t("satPrepPretitle")}
+        title={t("satPrepTitle")}
+      ></SectionTitle>
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-2 max-w-4xl mx-auto">
           {courses.slice(3, 5).map((course, index) => (
@@ -76,14 +79,16 @@ const Courses = () => {
                 </div>
                 <div className="px-6 py-4">
                   <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
-                  <p className="text-gray-600 text-base">{course.description}</p>
+                  <p className="text-gray-600 text-base">
+                    {course.description}
+                  </p>
                 </div>
                 <div className="px-6 py-4">
                   <a
                     href={course.link}
                     className="inline-block bg-blue-400 hover:bg-blue-600 text-white font-semibold mb-3 py-2 px-4 rounded"
                   >
-                    {i18n.language === 'en' ? 'View Course' : 'Xem Khóa Học'}
+                    {i18n.language === "en" ? "View Course" : "Xem Khóa Học"}
                   </a>
                 </div>
               </div>
