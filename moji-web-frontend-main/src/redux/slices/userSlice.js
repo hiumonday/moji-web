@@ -21,10 +21,13 @@ const userSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     },
-    logoutUser: (state, action) => {
-      // state.user = undefined;
-      state.user = undefined;
+    logoutUser: (state) => {
+      state.user = null;
       state.isAuthenticated = false;
+      state.isLoading = false;
+      state.allUsers = [];
+      state.isUsersLoading = true;
+      state.referralCode = "";
     },
     setAllUsers: (state, action) => {
       state.allUsers = action.payload;

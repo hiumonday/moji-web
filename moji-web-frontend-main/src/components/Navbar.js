@@ -202,6 +202,14 @@ const Navbar = ({ changeLanguage }) => {
                     </Menu.Item>
                     <Menu.Item>
                       <NavLink
+                        to="/transaction-history"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {t("transactionHistory")}
+                      </NavLink>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <NavLink
                         to="/settings"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
