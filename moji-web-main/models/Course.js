@@ -10,6 +10,7 @@ const courseSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
+    image: { data: Buffer, contentType: String },
     price: { type: Number, required: true },
     earlyBirdPrice: { type: Number, required: true },
     earlyBirdSlot: { type: Number, default: 5 },
