@@ -45,7 +45,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -59,6 +59,12 @@ passportConnect();
 // Routing
 const route = require("./routes/siteRoute");
 route(app);
+
+// Add this with your other route imports
+const adminCourseRoute = require("./routes/admin/courseRoute");
+
+// Make sure this route is registered BEFORE your general routes
+app.use("/api/v1/admin", adminCourseRoute);
 
 // app.use(express.static(path.join(__dirname + "../moji-web-frontend-main/build")));
 

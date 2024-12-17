@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 const TransactionHistory = () => {
   const { t } = useTranslation();
-  const { user } = useSelector((state) => state.userState);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   // Mock data - replace this with actual data from your backend
   const transactions = [
@@ -34,7 +34,7 @@ const TransactionHistory = () => {
     },
   ];
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-xl font-medium text-gray-600">

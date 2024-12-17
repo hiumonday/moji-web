@@ -10,6 +10,8 @@
   "author": "Tushar Biswas",
   "license": "ISC",
   "dependencies": {
+    "@payos/node": "^1.0.10",
+    "@payos/payos-checkout": "^1.0.8",
     "@tryghost/content-api": "^1.11.20",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.37.3",

@@ -13,6 +13,7 @@ const courseSchema = mongoose.Schema(
     price: { type: Number, required: true },
     earlyBirdPrice: { type: Number, required: true },
     earlyBirdSlot: { type: Number, default: 5 },
+    is_active: { type: Boolean, default: false },
     discounts: [
       {
         _id: false,

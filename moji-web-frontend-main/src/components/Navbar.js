@@ -13,7 +13,9 @@ const Navbar = ({ changeLanguage }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const { i18n, t } = useTranslation();
-  const { isAuthenticated, user } = useSelector((state) => state.userState);
+  const userState = useSelector((state) => state.user);
+  const isAuthenticated = userState?.isAuthenticated || false;
+  const user = userState?.user || null;
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);

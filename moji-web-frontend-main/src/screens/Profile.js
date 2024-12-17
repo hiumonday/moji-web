@@ -6,7 +6,7 @@ import { updateUser } from "../redux/actions/userAction";
 const Profile = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.userState);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
@@ -33,7 +33,7 @@ const Profile = () => {
     }
   };
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-xl font-medium text-gray-600">

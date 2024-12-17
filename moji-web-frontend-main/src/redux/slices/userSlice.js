@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: undefined,
+  user: null,
   allUsers: [],
   isUsersLoading: true,
   referralCode: "",
@@ -14,12 +14,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setLoader: (state, action) => {
-      state.isAuthenticated = true;
       state.isLoading = action.payload;
     },
     setUser: (state, action) => {
       state.user = action.payload;
-      state.isAuthenticated = true;
+      state.isAuthenticated = !!action.payload;
     },
     logoutUser: (state) => {
       state.user = null;
@@ -36,7 +35,7 @@ const userSlice = createSlice({
       state.isUsersLoading = action.payload;
     },
     setReferralCode: (state, action) => {
-      state.user.referralCode = action.payload;
+      state.referralCode = action.payload;
     },
   },
 });
@@ -45,7 +44,6 @@ export const {
   setLoader,
   setUser,
   logoutUser,
-  setBookings,
   setAllUsers,
   setUsersLoader,
   setReferralCode,

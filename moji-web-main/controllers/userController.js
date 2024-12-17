@@ -52,7 +52,7 @@ module.exports.login = catchAsyncErrors(async (req, res, next) => {
   // Check if the user exists
   const user = await User.findOne({ email });
   if (!user) {
-    return next(new ErrorHandler("Invalid credentials", 401));
+    return next(new ErrorHandler("Invalid email", 401));
   }
 
   // Compare the passwords
