@@ -11,6 +11,7 @@ import courseTwoImg from "../assets/courses/DD.webp";
 import courseThreeImg from "../assets/courses/private.webp";
 import courseFourImg from "../assets/img/course2.jpeg";
 import courseFiveImg from "../assets/courses/sat2.webp";
+import Cart from "./Cart";
 
 const Courses = () => {
   const { t, i18n } = useTranslation();
@@ -22,10 +23,14 @@ const Courses = () => {
     // Fetch courses from the database
     const fetchCourses = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/v1/viewCourse");
-        const data = await response.json();
+        const response = await fetch("http://localhost:3001/api/v1/courses");
+        const form = await response.json();
 
-        setCourses(data); // Assuming response.data is the courses array
+        console.log(form);
+
+        setCourses(form.data); // Assuming response.data is the courses array
+
+        console.log(courses);
       } catch (err) {
         setError("Failed to load courses");
         console.error(err);

@@ -1,44 +1,45 @@
 const User = require("../models/User");
 const Course = require("../models/Course");
 const moment = require("moment");
+const fs = require("fs");
+const path = require("path");
 
-module.exports.getCourse = (req, res) => {
+module.exports.getCourse = async (req, res) => {
   try {
-    Course.find({})
-      .lean()
-      .then((courses) => {
-        const updatedCourses = courses.map((course) => {
-          if (
-            course.flash_sale &&
-            course.flash_sale.is_active &&
-            moment().isBefore(course.flash_sale.end_date)
-          ) {
-            return {
-              ...course,
-              price: course.price - course.flash_sale.discount_amount,
-            };
-          }
+    // Fetch all courses
+    const courses = await Course.find().lean();
 
-          console.log(course);
-          return course;
-        });
+    // Format response to include image as base64
+    const formattedCourses = courses.map((course) => {
+      // Convert Buffer image data to base64 string (if exists)
+      let imageBase64 = null;
+      if (course.image && course.image.data) {
+        imageBase64 = `data:${
+          course.image.contentType
+        };base64,${course.image.data.toString("base64")}`;
+      }
 
-        res
-          .status(200)
-          .json({ message: "Found all the courses", course: updatedCourses });
-      })
-      .catch((error) => {
-        console.error("Error fetching courses: ", error.message);
-        res.status(400).json({
-          message: "Failed to retrieve courses",
-          error:
-            "Unable to fetch courses at this time. Please try again later.",
-        });
-      });
-  } catch (error) {}
+      return {
+        ...course,
+        image: imageBase64, // Replace `image` with base64 string or null
+      };
+    });
+
+    // Return formatted courses
+    res.status(200).json({
+      message: "Courses fetched successfully",
+      data: formattedCourses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error.message);
+    res.status(500).json({
+      message: "Error fetching courses",
+      error: error.message,
+    });
+  }
 };
 
-module.exports.viewCourse = (req, res) => {
+module.exports.viewCourseDetail = (req, res) => {
   const { courseId } = req.params;
 
   Course.findById(courseId)
@@ -72,25 +73,63 @@ module.exports.viewCourse = (req, res) => {
     });
 };
 
-module.exports.createCourse = (req, res) => {
-  const coursesData = req.body;
+module.exports.createCourse = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      price,
+      earlyBirdPrice,
+      earlyBirdSlot,
+      discounts,
+      classes,
+      learning_platform,
+    } = req.body;
 
-  Course.insertMany(coursesData)
-    .then((newCourses) => {
-      console.log("Courses created:", newCourses);
+    // Validate required fields
+    if (!title || !price || !earlyBirdPrice) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
 
-      res.status(201).json({
-        message: "Courses created successfully",
-        courses: newCourses,
-      });
-    })
-    .catch((error) => {
-      console.error("Error creating courses:", error.message);
-      res.status(400).json({
-        message: "Failed to create courses",
-        error: "Invalid input or server error",
-      });
+    // Parse classes and discounts if they are sent as JSON strings
+    const parsedClasses = classes ? JSON.parse(classes) : [];
+    const parsedDiscounts = discounts ? JSON.parse(discounts) : [];
+
+    // Handle image (if uploaded)
+    let imageData = null;
+    if (req.file) {
+      imageData = {
+        data: req.file.buffer, // Store image data as a Buffer
+        contentType: req.file.mimetype, // Store MIME type (e.g., "image/jpeg")
+      };
+    }
+
+    // Create new course object
+    const newCourse = new Course({
+      title,
+      description,
+      price,
+      earlyBirdPrice,
+      earlyBirdSlot: earlyBirdSlot || 5,
+      discounts: parsedDiscounts,
+      classes: parsedClasses,
+      learning_platform: learning_platform || null,
+      image: imageData,
     });
+
+    // Save course to the database
+    await newCourse.save();
+
+    // Send success response
+    res
+      .status(201)
+      .json({ message: "Course created successfully!", course: newCourse });
+  } catch (error) {
+    console.error("Error creating course:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error.", error: error.message });
+  }
 };
 
 module.exports.editCourse = (req, res) => {

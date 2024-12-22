@@ -22,15 +22,6 @@ import Register from "./screens/Register";
 import CheckOut from "./screens/CheckOut";
 import Cart from "./screens/Cart";
 import DemoComponent from "./components/DemoComponent";
-import Profile from "./screens/Profile";
-import TransactionHistory from "./screens/TransactionHistory";
-import AdminLogin from "./screens/admin/AdminLogin";
-import AdminDashboard from "./screens/admin/AdminDashboard";
-import ProtectedRoute from "./utils/ProtectedRoute";
-import Users from "./screens/admin/Users";
-import TransactionLogs from "./screens/admin/TransactionLogs";
-import AdminCourses from "./screens/admin/Courses";
-
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -162,7 +153,8 @@ const App = () => {
                   <AdminLogin />
                 )
               }
-            />
+            />{" "}
+            <Route path="/admin" element={<AddCourse />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
           <Snackbar
