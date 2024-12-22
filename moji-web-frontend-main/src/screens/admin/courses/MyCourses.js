@@ -36,6 +36,14 @@ const CourseCard = React.memo(({ course, onEdit, onDelete }) => {
     dispatch(toggleCoursePublish(course._id));
   };
 
+  const getImageUrl = () => {
+    if (course.image?.data) {
+      // The data should already be in base64 format from the backend
+      return `data:${course.image.contentType};base64,${course.image.data}`;
+    }
+    return "https://via.placeholder.com/300x140"; // Fallback image
+  };
+
   return (
     <Card
       sx={{
@@ -49,17 +57,37 @@ const CourseCard = React.memo(({ course, onEdit, onDelete }) => {
           transform: "translateY(-2px)",
         },
         transition: "all 0.3s ease",
+        overflow: "hidden",
       }}
     >
-      {/* Course Image */}
-      <CardMedia
-        component="img"
-        height="140"
-        image={course.image || "https://via.placeholder.com/300x140"}
-        alt={course.title}
-      />
+      <Box
+        sx={{
+          width: "100%",
+          height: "140px",
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.04)",
+        }}
+      >
+        <CardMedia
+          component="img"
+          height="140"
+          image={getImageUrl()}
+          alt={course.title}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://via.placeholder.com/340x140";
+          }}
+          sx={{
+            width: "340px",
+            height: "140px",
+            objectFit: "cover",
+          }}
+        />
+      </Box>
 
-      {/* Status Badge */}
       <Chip
         label={course.is_active ? "Active" : "Inactive"}
         color={course.is_active ? "success" : "default"}

@@ -29,9 +29,13 @@ export const createCourse = (courseData) => async (dispatch) => {
     dispatch(setLoading(true));
     const { data } = await axiosInstance.post(
       "/api/v1/admin/courses",
-      courseData
+      courseData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
-    // Instead of addCourse, we'll fetch all courses to ensure sync
     await dispatch(fetchCourses());
     dispatch(setSuccess("Course created successfully"));
   } catch (error) {
@@ -50,7 +54,12 @@ export const updateCourseAction =
       dispatch(setLoading(true));
       const { data } = await axiosInstance.put(
         `/api/v1/admin/courses/${courseId}`,
-        courseData
+        courseData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       dispatch(updateCourse(data.course));
       dispatch(setSuccess("Course updated successfully"));

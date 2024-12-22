@@ -12,7 +12,11 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  CloudUpload as CloudUploadIcon,
+} from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { createCourse } from "../../../redux/actions/courseActions";
 import { styled } from "@mui/material/styles";
@@ -84,6 +88,18 @@ const SubTitle = styled(Typography)(({ theme }) => ({
   marginBottom: "12px",
 }));
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
 const CreateCourse = () => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.course);
@@ -119,15 +135,39 @@ const CreateCourse = () => {
     expiresAt: "",
   });
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
   const handleSubmit = async (e, shouldPublish = false) => {
     e.preventDefault();
     try {
-      await dispatch(
-        createCourse({
-          ...courseData,
-          is_active: shouldPublish,
-        })
+      const formData = new FormData();
+
+      const classesData = courseData.classes.map((classItem) => ({
+        ...classItem,
+        startTime: classItem.startTime || "00:00",
+        endTime: classItem.endTime || "00:00",
+      }));
+
+      formData.append("title", courseData.title);
+      formData.append("description", courseData.description);
+      formData.append("price", courseData.price);
+      formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
+      formData.append("earlyBirdSlot", courseData.earlyBirdSlot);
+      formData.append("is_active", shouldPublish);
+
+      formData.append("classes", JSON.stringify(classesData));
+      formData.append("discounts", JSON.stringify(courseData.discounts));
+      formData.append(
+        "learning_platform",
+        JSON.stringify(courseData.learning_platform)
       );
+
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
+      await dispatch(createCourse(formData));
     } catch (error) {
       console.error("Failed to create course:", error);
     }
@@ -182,6 +222,14 @@ const CreateCourse = () => {
   const removeDiscount = (index) => {
     const newDiscounts = courseData.discounts.filter((_, i) => i !== index);
     setCourseData({ ...courseData, discounts: newDiscounts });
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -252,6 +300,36 @@ const CreateCourse = () => {
               }
               disabled={isLoading}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Box sx={{ mb: 3 }}>
+              <Button
+                component="label"
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                sx={{ mb: 2 }}
+              >
+                Upload Course Image
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                />
+              </Button>
+              {imagePreview && (
+                <Box sx={{ mt: 2 }}>
+                  <img
+                    src={imagePreview}
+                    alt="Course preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "200px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </StyledPaper>

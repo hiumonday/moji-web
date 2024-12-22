@@ -61,10 +61,6 @@ const route = require("./routes/siteRoute");
 route(app);
 
 // Add this with your other route imports
-const adminCourseRoute = require("./routes/admin/courseRoute");
-
-// Make sure this route is registered BEFORE your general routes
-app.use("/api/v1/admin", adminCourseRoute);
 
 // app.use(express.static(path.join(__dirname + "../moji-web-frontend-main/build")));
 

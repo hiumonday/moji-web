@@ -15,12 +15,29 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  CloudUpload as CloudUploadIcon,
+} from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateCourseAction,
   toggleCoursePublish,
 } from "../../../redux/actions/courseActions";
+import { styled } from "@mui/material/styles";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const EditCourseDialog = ({ open, onClose, course }) => {
   const dispatch = useDispatch();
@@ -41,6 +58,9 @@ const EditCourseDialog = ({ open, onClose, course }) => {
     is_active: false,
   });
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
   useEffect(() => {
     if (course) {
       const currentCourse = courses.find((c) => c._id === course._id) || course;
@@ -51,13 +71,39 @@ const EditCourseDialog = ({ open, onClose, course }) => {
         earlyBirdSlot: currentCourse.earlyBirdSlot.toString(),
         is_active: currentCourse.is_active,
       });
+
+      if (currentCourse.image?.data) {
+        setImagePreview(
+          `data:${currentCourse.image.contentType};base64,${currentCourse.image.data}`
+        );
+      }
     }
   }, [course, courses]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(updateCourseAction(course._id, courseData));
+      const formData = new FormData();
+
+      formData.append("title", courseData.title);
+      formData.append("description", courseData.description);
+      formData.append("price", courseData.price);
+      formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
+      formData.append("earlyBirdSlot", courseData.earlyBirdSlot);
+      formData.append("is_active", courseData.is_active);
+
+      formData.append("classes", JSON.stringify(courseData.classes));
+      formData.append("discounts", JSON.stringify(courseData.discounts));
+      formData.append(
+        "learning_platform",
+        JSON.stringify(courseData.learning_platform)
+      );
+
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
+      await dispatch(updateCourseAction(course._id, formData));
       onClose();
     } catch (error) {
       console.error("Failed to update course:", error);
@@ -125,6 +171,18 @@ const EditCourseDialog = ({ open, onClose, course }) => {
         is_active: !prev.is_active,
       }));
       console.error("Failed to toggle publish status:", error);
+    }
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -415,6 +473,45 @@ const EditCourseDialog = ({ open, onClose, course }) => {
                   </Grid>
                 </Paper>
               ))}
+            </Grid>
+
+            <Grid item xs={12}>
+              <Box sx={{ mb: 3 }}>
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ mb: 2 }}
+                >
+                  Update Course Image
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                  />
+                </Button>
+                {imagePreview && (
+                  <Box
+                    sx={{
+                      mt: 2,
+                      width: "340px",
+                      height: "140px",
+                      overflow: "hidden",
+                      margin: "0 auto",
+                    }}
+                  >
+                    <img
+                      src={imagePreview}
+                      alt="Course preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Grid>
           </Grid>
         </DialogContent>

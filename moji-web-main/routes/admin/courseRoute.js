@@ -1,8 +1,24 @@
 const express = require("express");
-const {
-  isAuthenticatedUser,
-  authorizedRole,
-} = require("../../middlewares/auth");
+const router = express.Router();
+const multer = require("multer");
+
+// Configure multer for memory storage
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed!"), false);
+    }
+  },
+});
+
 const {
   getAllCourses,
   createCourse,
@@ -14,11 +30,37 @@ const {
   updateClass,
   deleteClass,
   toggleCoursePublishStatus,
+  getCourseImage,
 } = require("../../controllers/admin/adminCourseController");
 
-const router = express.Router();
+const {
+  isAuthenticatedUser,
+  authorizedRole,
+} = require("../../middlewares/auth");
 
-// Make sure this route is defined before the more general routes
+// Course routes
+router
+  .route("/courses")
+  .get(isAuthenticatedUser, authorizedRole("admin"), getAllCourses)
+  .post(
+    isAuthenticatedUser,
+    authorizedRole("admin"),
+    upload.single("image"),
+    createCourse
+  );
+
+router
+  .route("/courses/:id")
+  .get(isAuthenticatedUser, authorizedRole("admin"), getCourse)
+  .put(
+    isAuthenticatedUser,
+    authorizedRole("admin"),
+    upload.single("image"),
+    updateCourse
+  )
+  .delete(isAuthenticatedUser, authorizedRole("admin"), deleteCourse);
+
+// Other existing routes...
 router.patch(
   "/courses/:id/toggle-publish",
   isAuthenticatedUser,
@@ -26,19 +68,6 @@ router.patch(
   toggleCoursePublishStatus
 );
 
-// Course routes
-router
-  .route("/courses")
-  .get(isAuthenticatedUser, authorizedRole("admin"), getAllCourses)
-  .post(isAuthenticatedUser, authorizedRole("admin"), createCourse);
-
-router
-  .route("/courses/:id")
-  .get(isAuthenticatedUser, authorizedRole("admin"), getCourse)
-  .put(isAuthenticatedUser, authorizedRole("admin"), updateCourse)
-  .delete(isAuthenticatedUser, authorizedRole("admin"), deleteCourse);
-
-// Class routes
 router
   .route("/courses/:id/classes")
   .get(isAuthenticatedUser, authorizedRole("admin"), getCourseClasses)
