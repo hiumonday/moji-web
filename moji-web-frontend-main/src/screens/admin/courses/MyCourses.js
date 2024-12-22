@@ -24,14 +24,136 @@ import {
   toggleCoursePublish,
 } from "../../../redux/actions/courseActions";
 import EditCourseDialog from "./EditCourseDialog";
-import CreateCourseDialog from "./CreateCourseDialog";
+import { useNavigate } from "react-router-dom";
+
+const CourseCard = React.memo(({ course, onEdit, onDelete }) => {
+  const dispatch = useDispatch();
+  const toggleLoading = useSelector(
+    (state) => state.course.toggleLoading[course._id]
+  );
+
+  const handleToggle = () => {
+    dispatch(toggleCoursePublish(course._id));
+  };
+
+  return (
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        "&:hover": {
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
+          transform: "translateY(-2px)",
+        },
+        transition: "all 0.3s ease",
+      }}
+    >
+      {/* Course Image */}
+      <CardMedia
+        component="img"
+        height="140"
+        image={course.image || "https://via.placeholder.com/300x140"}
+        alt={course.title}
+      />
+
+      {/* Status Badge */}
+      <Chip
+        label={course.is_active ? "Active" : "Inactive"}
+        color={course.is_active ? "success" : "default"}
+        size="small"
+        sx={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: course.is_active
+            ? "rgba(46, 125, 50, 0.9)"
+            : "rgba(97, 97, 97, 0.9)",
+          color: "white",
+        }}
+      />
+
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Typography gutterBottom variant="h6" component="h2">
+          {course.title}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {course.description}
+        </Typography>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h6" color="primary">
+            ${course.price}
+          </Typography>
+          {course.earlyBirdPrice && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textDecoration: "line-through" }}
+            >
+              ${course.earlyBirdPrice}
+            </Typography>
+          )}
+        </Box>
+      </CardContent>
+
+      <CardActions
+        sx={{
+          justifyContent: "space-between",
+          p: 2,
+          borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Switch
+              size="small"
+              checked={course.is_active}
+              onChange={handleToggle}
+              disabled={toggleLoading}
+            />
+          }
+          label={course.is_active ? "Published" : "Draft"}
+        />
+        <Box>
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() => onEdit(course)}
+            sx={{ mr: 1 }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => onDelete(course._id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      </CardActions>
+    </Card>
+  );
+});
 
 const MyCourses = () => {
   const dispatch = useDispatch();
   const { courses, isLoading } = useSelector((state) => state.course);
   const [editCourse, setEditCourse] = useState(null);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [publishOnCreate, setPublishOnCreate] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -47,9 +169,8 @@ const MyCourses = () => {
     setEditCourse(course);
   };
 
-  const handleCreateClick = (publish = false) => {
-    setPublishOnCreate(publish);
-    setShowCreateDialog(true);
+  const handleCreateClick = () => {
+    navigate("/admin/courses/create");
   };
 
   const sortedCourses = React.useMemo(() => {
@@ -82,114 +203,11 @@ const MyCourses = () => {
       <Grid container spacing={4}>
         {sortedCourses.map((course) => (
           <Grid item xs={12} sm={6} md={4} key={course._id}>
-            <Card
-              sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                position: "relative",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                "&:hover": {
-                  boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
-                  transform: "translateY(-2px)",
-                },
-                transition: "all 0.3s ease",
-              }}
-            >
-              {/* Course Image */}
-              <CardMedia
-                component="img"
-                height="140"
-                image={course.image || "https://via.placeholder.com/300x140"}
-                alt={course.title}
-              />
-
-              {/* Status Badge */}
-              <Chip
-                label={course.is_active ? "Active" : "Inactive"}
-                color={course.is_active ? "success" : "default"}
-                size="small"
-                sx={{
-                  position: "absolute",
-                  top: 10,
-                  right: 10,
-                  backgroundColor: course.is_active
-                    ? "rgba(46, 125, 50, 0.9)"
-                    : "rgba(97, 97, 97, 0.9)",
-                  color: "white",
-                }}
-              />
-
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography gutterBottom variant="h6" component="h2">
-                  {course.title}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                  }}
-                >
-                  {course.description}
-                </Typography>
-
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="h6" color="primary">
-                    ${course.price}
-                  </Typography>
-                  {course.earlyBirdPrice && (
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ textDecoration: "line-through" }}
-                    >
-                      ${course.earlyBirdPrice}
-                    </Typography>
-                  )}
-                </Box>
-              </CardContent>
-
-              <CardActions
-                sx={{
-                  justifyContent: "space-between",
-                  p: 2,
-                  borderTop: "1px solid rgba(0, 0, 0, 0.12)",
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      size="small"
-                      checked={course.is_active}
-                      onChange={() => dispatch(toggleCoursePublish(course._id))}
-                    />
-                  }
-                  label={course.is_active ? "Published" : "Draft"}
-                />
-                <Box>
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={() => handleEditClick(course)}
-                    sx={{ mr: 1 }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => handleDelete(course._id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </CardActions>
-            </Card>
+            <CourseCard
+              course={course}
+              onEdit={handleEditClick}
+              onDelete={handleDelete}
+            />
           </Grid>
         ))}
       </Grid>
@@ -207,19 +225,13 @@ const MyCourses = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => handleCreateClick(false)}
+            onClick={handleCreateClick}
             sx={{ mt: 2 }}
           >
             Create Your First Course
           </Button>
         </Box>
       )}
-
-      <CreateCourseDialog
-        open={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
-        initialPublishState={publishOnCreate}
-      />
 
       <EditCourseDialog
         open={Boolean(editCourse)}

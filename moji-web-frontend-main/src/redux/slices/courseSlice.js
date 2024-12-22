@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   courses: [],
-  classes: [],
   isLoading: false,
   error: null,
+  toggleLoading: {},
 };
 
 const courseSlice = createSlice({
@@ -14,35 +14,25 @@ const courseSlice = createSlice({
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setToggleLoading: (state, action) => {
+      const { courseId, isLoading } = action.payload;
+      state.toggleLoading[courseId] = isLoading;
+    },
     setCourses: (state, action) => {
       state.courses = action.payload;
     },
-    setClasses: (state, action) => {
-      state.classes = action.payload;
-    },
-    addClass: (state, action) => {
-      state.classes.push(action.payload);
-    },
-    updateClass: (state, action) => {
-      const index = state.classes.findIndex((c) => c.id === action.payload.id);
-      if (index !== -1) {
-        state.classes[index] = action.payload;
-      }
-    },
-    removeClass: (state, action) => {
-      state.classes = state.classes.filter((c) => c.id !== action.payload);
-    },
-    addCourse: (state, action) => {
-      state.courses.push(action.payload);
-    },
     updateCourse: (state, action) => {
-      const index = state.courses.findIndex((c) => c.id === action.payload.id);
-      if (index !== -1) {
-        state.courses[index] = action.payload;
-      }
+      const updatedCourse = action.payload;
+      state.courses = state.courses.map((course) =>
+        course._id === updatedCourse._id
+          ? { ...course, is_active: updatedCourse.is_active }
+          : course
+      );
     },
-    removeCourse: (state, action) => {
-      state.courses = state.courses.filter((c) => c.id !== action.payload);
+    deleteCourseFromState: (state, action) => {
+      state.courses = state.courses.filter(
+        (course) => course._id !== action.payload
+      );
     },
   },
 });
@@ -50,13 +40,8 @@ const courseSlice = createSlice({
 export const {
   setLoading,
   setCourses,
-  setClasses,
-  addClass,
-  updateClass,
-  removeClass,
-  addCourse,
   updateCourse,
-  removeCourse,
+  deleteCourseFromState,
+  setToggleLoading,
 } = courseSlice.actions;
-
 export default courseSlice.reducer;

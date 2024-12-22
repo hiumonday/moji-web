@@ -3,10 +3,9 @@ import { setError, setSuccess } from "../slices/appSlice";
 import {
   setLoading,
   setCourses,
-  setClasses,
-  addCourse,
   updateCourse,
-  removeCourse,
+  deleteCourseFromState,
+  setToggleLoading,
 } from "../slices/courseSlice";
 
 // Fetch all courses
@@ -32,7 +31,8 @@ export const createCourse = (courseData) => async (dispatch) => {
       "/api/v1/admin/courses",
       courseData
     );
-    dispatch(addCourse(data.course));
+    // Instead of addCourse, we'll fetch all courses to ensure sync
+    await dispatch(fetchCourses());
     dispatch(setSuccess("Course created successfully"));
   } catch (error) {
     dispatch(
@@ -68,7 +68,7 @@ export const deleteCourse = (courseId) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     await axiosInstance.delete(`/api/v1/admin/courses/${courseId}`);
-    dispatch(removeCourse(courseId));
+    dispatch(deleteCourseFromState(courseId));
     dispatch(setSuccess("Course deleted successfully"));
   } catch (error) {
     dispatch(
@@ -79,28 +79,10 @@ export const deleteCourse = (courseId) => async (dispatch) => {
   }
 };
 
-// Fetch classes for a course
-export const fetchClasses = (courseId) => async (dispatch) => {
-  try {
-    dispatch(setLoading(true));
-    const { data } = await axiosInstance.get(
-      `/api/v1/admin/courses/${courseId}/classes`
-    );
-    dispatch(setClasses(data.classes));
-  } catch (error) {
-    dispatch(
-      setError(error.response?.data?.message || "Failed to fetch classes")
-    );
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
-
-// Add this new action
+// Toggle course publish state
 export const toggleCoursePublish = (courseId) => async (dispatch) => {
   try {
-    dispatch(setLoading(true));
-
+    dispatch(setToggleLoading({ courseId, isLoading: true }));
     const response = await axiosInstance.patch(
       `/api/v1/admin/courses/${courseId}/toggle-publish`
     );
@@ -108,22 +90,11 @@ export const toggleCoursePublish = (courseId) => async (dispatch) => {
     if (response.data.success) {
       dispatch(updateCourse(response.data.course));
       dispatch(setSuccess(response.data.message));
-      return response.data.course;
-    } else {
-      throw new Error(
-        response.data.message || "Failed to toggle course status"
-      );
     }
   } catch (error) {
-    dispatch(
-      setError(
-        error.response?.data?.message ||
-          error.message ||
-          "Network error occurred while toggling course status"
-      )
-    );
-    throw error;
+    console.error("Error toggling course publish state:", error);
+    dispatch(setError("Failed to toggle course status"));
   } finally {
-    dispatch(setLoading(false));
+    dispatch(setToggleLoading({ courseId, isLoading: false }));
   }
 };

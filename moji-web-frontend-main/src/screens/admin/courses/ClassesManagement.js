@@ -19,7 +19,7 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClasses } from "../../../redux/actions/courseActions";
+import { fetchClasses } from "../../../redux/actions/classActions";
 
 // Row component for expandable content
 function ClassRow({ classData }) {
@@ -92,7 +92,7 @@ function ClassRow({ classData }) {
 
 const ClassesManagement = () => {
   const dispatch = useDispatch();
-  const { classes, isLoading } = useSelector((state) => state.course);
+  const { classes, isLoading } = useSelector((state) => state.class);
 
   useEffect(() => {
     dispatch(fetchClasses());
