@@ -1,24 +1,58 @@
 const User = require("../models/User");
 const Course = require("../models/Course");
 
-// Add course to cart
-module.exports.viewCart = (req, res) => {
+module.exports.viewCart = async (req, res) => {
   const userId = req.user._id;
-  console.log(userId);
+  console.log(req);
 
-  User.findById(userId)
-    .populate("cart.courseId")
-    .then((user) => {
-      console.log(user.cart);
-      res.status(200).json({ cart: user.cart });
-    })
-    .catch((error) => {
-      res.status(500).json({ message: "Error fetching cart", error });
+  try {
+    const user = await User.findById(userId).populate("cart.courseId");
+
+    const cartItems = user.cart.map((item) => {
+      let imageBase64 = null;
+      if (item.courseId.image && item.courseId.image.data) {
+        imageBase64 = `data:${
+          item.courseId.image.contentType
+        };base64,${item.courseId.image.data.toString("base64")}`;
+      }
+
+      return {
+        _id: item.courseId._id,
+        title: item.courseId.title,
+        description: item.courseId.description,
+        price: item.courseId.price,
+        earlyBirdPrice: item.courseId.earlyBirdPrice,
+        earlyBirdSlot: item.courseId.earlyBirdSlot,
+        classes: item.courseId.classes,
+        image: imageBase64,
+      };
     });
+
+    const originalTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
+    const totalPrice = cartItems.reduce((sum, item) => {
+      let price = item.earlyBirdSlot > 0 ? item.earlyBirdPrice : item.price;
+      if (
+        user.appliedCoupon &&
+        user.appliedCoupon.courseId.toString() === item._id.toString()
+      ) {
+        price -= (user.appliedCoupon.percentage / 100) * price;
+      }
+      return sum + price;
+    }, 0);
+    const discount = Math.round(
+      ((originalTotal - totalPrice) / originalTotal) * 100
+    );
+
+    res
+      .status(200)
+      .json({ cart: cartItems, totalPrice, originalTotal, discount });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching cart", error });
+  }
 };
 
 module.exports.addCourseToCart = (req, res) => {
-  const courseId = req.body.courseId;
+  const { courseId, classId, participants } = req.body;
   const user = req.user;
   const userId = user._id;
   console.log(req.body);
@@ -36,7 +70,7 @@ module.exports.addCourseToCart = (req, res) => {
         return res.status(400).json({ message: "Course already in cart" });
       }
 
-      user.cart.push({ courseId });
+      user.cart.push({ courseId, classId, participants });
       return user.save();
     })
     .then((updatedUser) => {
@@ -88,3 +122,51 @@ module.exports.demoApiForwarding = (req, res) => {
   console.log("Successfully");
   res.json({ message: "Forwarded api" });
 };
+
+module.exports.applyCoupon = async (req, res) => {
+  const userId = req.user._id;
+  const { couponCode } = req.body; // Nhận mã giảm giá từ request body
+
+  console.log(req.body);
+
+  try {
+    // Lấy thông tin người dùng và giỏ hàng
+    const user = await User.findById(userId).populate("cart.courseId");
+
+    // Lưu trữ thông tin mã giảm giá hợp lệ
+    let validCoupon = null;
+
+    // Kiểm tra từng khóa học trong giỏ hàng
+    for (const item of user.cart) {
+      const course = await Course.findById(item.courseId._id);
+      if (course) {
+        const discount = course.discounts.find(
+          (discount) =>
+            discount.code === couponCode && discount.expiresAt > new Date()
+        );
+        if (discount) {
+          validCoupon = {
+            code: discount.code,
+            discountValue:
+              discount.amount || course.price * (discount.percentage / 100), // Tính giá trị giảm giá
+            courseId: course._id, // Khóa học mà mã giảm giá áp dụng
+          };
+          break; // Dừng lại khi tìm thấy mã giảm giá hợp lệ
+        }
+      }
+    }
+
+    if (!validCoupon) {
+      return res.status(400).json({ message: "Invalid coupon code" });
+    }
+
+    // Trả về thông tin mã giảm giá hợp lệ
+    res
+      .status(200)
+      .json({ message: "Coupon applied successfully", coupon: validCoupon });
+  } catch (error) {
+    res.status(500).json({ message: "Error applying coupon", error });
+  }
+};
+
+module.exports.removeCoupon = async (req, res) => {};

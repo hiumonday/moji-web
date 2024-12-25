@@ -1,45 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import CartCard from "../components/CartCard";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, BookOpen } from "lucide-react";
+import { Spinner } from "../components/spinner";
 import Footer from "../components/footer";
 
 const Cart = () => {
   const navigate = useNavigate();
-
   const [cart, setCart] = useState([]);
   const [error, setError] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [originalTotal, setOriginalTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const fetchCart = async () => {
-    setIsLoading(true);
+  // Memoize fetchCart to prevent unnecessary recreations
+  const fetchCart = useCallback(async () => {
     try {
       const response = await fetch("http://localhost:3001/api/v1/view-cart", {
         credentials: "include",
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart);
-        setError(null);
-      } else {
-        setError("Failed to fetch cart.");
-      }
+      if (!response.ok) throw new Error("Failed to fetch cart");
+
+      const data = await response.json();
+      setCart(data.cart);
+      setTotalPrice(data.totalPrice);
+      setOriginalTotal(data.originalTotal);
+      setDiscount(data.discount);
+      setError(null);
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError("Error fetching cart.");
-    } finally {
-      setIsLoading(false);
+      setError("Error fetching cart. Please try again.");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchCart().finally(() => setIsLoading(false));
+  }, [fetchCart]);
 
   const removeFromCart = async (courseId) => {
+    setIsActionLoading(true);
     try {
       const response = await fetch(
         `http://localhost:3001/api/v1/view-cart/remove/${courseId}`,
@@ -49,47 +54,48 @@ const Cart = () => {
         }
       );
 
-      if (response.ok) {
-        setCart((prevCart) =>
-          prevCart.filter((item) => item.courseId._id !== courseId)
-        );
-      } else {
-        setError("Failed to remove course from cart.");
-      }
+      if (!response.ok) throw new Error("Failed to remove course");
+
+      // Optimistically update the UI
+      setCart((prevCart) => prevCart.filter((item) => item._id !== courseId));
+      // Then fetch the updated cart data
+      await fetchCart();
     } catch (error) {
       console.error("Error removing course from cart:", error);
-      setError("Error removing course from cart.");
+      setError("Error removing course. Please try again.");
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
   const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+
+    setIsActionLoading(true);
     try {
       const response = await fetch(
         "http://localhost:3001/api/v1/apply-coupon",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ couponCode }),
           credentials: "include",
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        setAppliedCoupon(data.coupon);
-        fetchCart(); // Refresh cart to update prices
-      } else {
-        setError("Invalid coupon code.");
-      }
+      if (!response.ok) throw new Error("Invalid coupon code");
+
+      const data = await response.json();
+      setAppliedCoupon(data.coupon);
+      await fetchCart(); // Refresh cart to update prices
+      setCouponCode(""); // Clear the input
     } catch (error) {
       console.error("Error applying coupon:", error);
-      setError("Error applying coupon.");
+      setError("Invalid coupon code. Please try again.");
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
   const removeCoupon = async () => {
+    setIsActionLoading(true);
     try {
       const response = await fetch(
         "http://localhost:3001/api/v1/remove-coupon",
@@ -99,30 +105,27 @@ const Cart = () => {
         }
       );
 
-      if (response.ok) {
-        setAppliedCoupon(null);
-        fetchCart(); // Refresh cart to update prices
-      } else {
-        setError("Failed to remove coupon.");
-      }
+      if (!response.ok) throw new Error("Failed to remove coupon");
+
+      setAppliedCoupon(null);
+      await fetchCart();
     } catch (error) {
       console.error("Error removing coupon:", error);
-      setError("Error removing coupon.");
+      setError("Error removing coupon. Please try again.");
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
-  // Tính tổng giá trị
-  const totalPrice = cart.reduce((sum, item) => sum + item.courseId.price, 0);
-  const originalTotal = cart.reduce(
-    (sum, item) => sum + item.courseId.originalPrice,
-    0
-  );
-  const discount = Math.round(
-    ((originalTotal - totalPrice) / originalTotal) * 100
-  );
-
   if (isLoading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-center">
+          <Spinner className="mb-4" />
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
   }
 
   return cart.length === 0 ? (
@@ -137,9 +140,7 @@ const Cart = () => {
         </p>
         <div className="mt-6">
           <button
-            onClick={() => {
-              navigate("/courses");
-            }}
+            onClick={() => navigate("/courses")}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <BookOpen className="mr-2 h-5 w-5" />
@@ -164,9 +165,10 @@ const Cart = () => {
             <div className="bg-white rounded-lg shadow-sm">
               {cart.map((item) => (
                 <CartCard
-                  course={item.courseId}
+                  key={item._id}
+                  course={item}
                   removeFromCart={removeFromCart}
-                  key={item.courseId._id}
+                  isLoading={isActionLoading}
                 />
               ))}
             </div>
@@ -179,19 +181,31 @@ const Cart = () => {
                 <div className="text-3xl font-bold text-gray-900">
                   đ{totalPrice.toLocaleString()}
                 </div>
-                <div className="text-gray-500 line-through">
-                  đ{originalTotal.toLocaleString()}
-                </div>
-                <div className="text-sm text-gray-600">{discount}% off</div>
+                {originalTotal > totalPrice && (
+                  <div className="text-gray-500 line-through">
+                    đ{originalTotal.toLocaleString()}
+                  </div>
+                )}
+                {discount > 0 && (
+                  <div className="text-sm text-green-600">{discount}% off</div>
+                )}
               </div>
 
               <button
                 onClick={() =>
                   navigate("/check-out", { state: { totalPrice } })
                 }
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                disabled={isActionLoading}
+                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Checkout
+                {isActionLoading ? (
+                  <span className="flex items-center justify-center">
+                    <Spinner className="mr-2" />
+                    Processing...
+                  </span>
+                ) : (
+                  "Checkout"
+                )}
               </button>
 
               <div className="mt-6">
@@ -202,13 +216,15 @@ const Cart = () => {
                     placeholder="Enter Coupon"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    disabled={isActionLoading}
+                    className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     onClick={applyCoupon}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                    disabled={isActionLoading || !couponCode.trim()}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Apply
+                    {isActionLoading ? <Spinner /> : "Apply"}
                   </button>
                 </div>
                 {appliedCoupon && (
@@ -216,7 +232,8 @@ const Cart = () => {
                     {appliedCoupon.code} is applied
                     <button
                       onClick={removeCoupon}
-                      className="ml-2 text-gray-400 hover:text-gray-500"
+                      disabled={isActionLoading}
+                      className="ml-2 text-gray-400 hover:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       ×
                     </button>

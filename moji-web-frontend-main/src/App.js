@@ -2,6 +2,7 @@ import { useEffect, forwardRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
+import CourseDetail from "./components/CourseDetail";
 import { getUserAction } from "./redux/actions/userAction";
 import NotFound from "./screens/NotFound";
 import { HelmetProvider } from "react-helmet-async";
@@ -21,6 +22,8 @@ import CheckOut from "./screens/CheckOut";
 import Cart from "./screens/Cart";
 import DemoComponent from "./components/DemoComponent";
 import AddCourse from "./screens/AdminTest";
+import Profile from "./screens/Profile";
+import TransactionHistory from "./screens/TransactionHistory";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -30,8 +33,8 @@ i18n.use(initReactI18next).init({
       translation: viTranslation,
     },
   },
-  lng: "en",
-  fallbackLng: "en",
+  lng: "vi",
+  fallbackLng: "vi",
   interpolation: {
     escapeValue: false,
   },
@@ -88,7 +91,12 @@ const App = () => {
             <Route path="/demo" element={<DemoComponent />} />
             <Route path="/check-out" element={<CheckOut />} />
             <Route path="/admin" element={<AddCourse />} />
-
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/courses/:id" element={<CourseDetail i18n={i18n} />} />
+            <Route
+              path="/transaction-history"
+              element={<TransactionHistory />}
+            />
             <Route path="/*" element={<NotFound />} />
           </Routes>
           <Snackbar

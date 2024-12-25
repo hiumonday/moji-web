@@ -8,12 +8,21 @@ const cors = require("cors");
 
 const app = express();
 
-// config
-// if (process.env.NODE_ENV !== "PRODUCTION") {
-
-// require("dotenv").config({ path: "config/config.env" });
 require("dotenv").config({ path: "./.env" });
-// }
+
+const allowedOrigins = ["http://localhost:3000", "https://moji.education/"];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const errorMiddleware = require("./middlewares/errorMiddleware");
 
@@ -43,22 +52,15 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin:
+      process.env.FRONTEND_URL ||
+      "http://localhost:3000" ||
+      "http://localhost:3001",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// Add this after CORS middleware
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
 
 // passport config
 passportConnect();

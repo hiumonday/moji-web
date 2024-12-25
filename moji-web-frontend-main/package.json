@@ -11,6 +11,7 @@
 		"@material-tailwind/react": "^2.0.6",
 		"@mui/icons-material": "^5.14.3",
 		"@mui/material": "^5.14.4",
+		"@payos/payos-checkout": "^1.0.8",
 		"@ramonak/react-progress-bar": "^5.0.3",
 		"@reduxjs/toolkit": "^1.9.5",
 		"@rewind-ui/core": "^0.19.8",

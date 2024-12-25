@@ -66,7 +66,7 @@ const Courses = () => {
         </div>
       </Container>
 
-      <SectionTitle
+      {/* <SectionTitle
         pretitle={t("satPrepPretitle")}
         title={t("satPrepTitle")}
       ></SectionTitle>
@@ -100,7 +100,7 @@ const Courses = () => {
             </div>
           ))}
         </div>
-      </Container>
+      </Container> */}
 
       <Footer />
     </>
