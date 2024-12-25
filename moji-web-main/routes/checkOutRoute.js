@@ -14,7 +14,7 @@ router.get(
   isAuthenticatedUser,
   checkOutController.successfulTransaction
 );
-router.get(
+router.post(
   "/fail-transaction",
   isAuthenticatedUser,
   checkOutController.successfulTransaction

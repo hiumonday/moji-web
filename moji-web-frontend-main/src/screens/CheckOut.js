@@ -64,16 +64,16 @@ const CheckOut = () => {
           <div className="space-y-4 mb-8">
             {cart.map((course) => (
               <div
-                key={course.courseId._id}
+                key={course._id}
                 className="bg-white p-4 rounded-lg shadow flex"
               >
                 <img
-                  src={course.courseId.imageUrl}
-                  alt={course.courseId.title}
+                  src={course.image}
+                  alt={course.title}
                   className="w-48 h-28 object-cover rounded-md mr-4"
                 />
                 <div className="flex-grow">
-                  <h3 className="font-semibold">{course.courseId.title}</h3>
+                  <h3 className="font-semibold">{course.title}</h3>
                 </div>
               </div>
             ))}

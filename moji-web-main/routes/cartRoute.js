@@ -18,6 +18,12 @@ router.delete(
   isAuthenticatedUser,
   cartController.removeCourseFromCart
 );
+
+// Apply coupon
+router.post("/apply-coupon", isAuthenticatedUser, cartController.applyCoupon);
+// Remove coupon
+router.delete("/remove-coupon", isAuthenticatedUser, cartController.removeCoupon);
+
 router.get("/demo", isAuthenticatedUser, cartController.demoApiForwarding);
 
 module.exports = router;

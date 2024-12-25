@@ -9,9 +9,8 @@ module.exports.getCourse = async (req, res) => {
     // Fetch all courses
     const courses = await Course.find().lean();
 
-    // Format response to include image as base64
+    // Format response to include specific information and image as base64
     const formattedCourses = courses.map((course) => {
-      // Convert Buffer image data to base64 string (if exists)
       let imageBase64 = null;
       if (course.image && course.image.data) {
         imageBase64 = `data:${
@@ -20,8 +19,14 @@ module.exports.getCourse = async (req, res) => {
       }
 
       return {
-        ...course,
-        image: imageBase64, // Replace `image` with base64 string or null
+        _id: course._id,
+        title: course.title,
+        description: course.description,
+        price: course.price,
+        earlyBirdPrice: course.earlyBirdPrice,
+        earlyBirdSlot: course.earlyBirdSlot,
+        classes: course.classes,
+        image: imageBase64,
       };
     });
 
@@ -51,22 +56,33 @@ module.exports.viewCourseDetail = (req, res) => {
         });
       }
 
-      if (
-        course.flash_sale &&
-        course.flash_sale.is_active &&
-        moment().isBefore(course.flash_sale.end_date)
-      ) {
-        course.price = course.price - course.flash_sale.discount_amount; // Apply flash sale discount
+      let imageBase64 = null;
+      if (course.image && course.image.data) {
+        imageBase64 = `data:${
+          course.image.contentType
+        };base64,${course.image.data.toString("base64")}`;
       }
 
+      const courseWithImage = {
+        _id: course._id,
+        title: course.title,
+        description: course.description,
+        price: course.price,
+        earlyBirdPrice: course.earlyBirdPrice,
+        earlyBirdSlot: course.earlyBirdSlot,
+        classes: course.classes,
+        image: imageBase64,
+      };
+
+      // Send the response
       res.status(200).json({
         message: "Successfully found course for viewing",
-        course,
+        course: courseWithImage,
       });
     })
     .catch((error) => {
       console.error("Error fetching course:", error.message);
-      res.status(400).json({
+      res.status(500).json({
         message: "Failed to retrieve course for viewing",
         error: "Unable to fetch the course. Please try again later.",
       });

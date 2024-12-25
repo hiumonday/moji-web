@@ -8,8 +8,13 @@ const userSchema = mongoose.Schema(
       {
         _id: false,
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-        level: { type: String },
-        language: { type: String },
+        classId: { type: mongoose.Schema.Types.ObjectId, ref: "Class" },
+        participants: [
+          {
+            name: { type: String, required: true },
+            dateOfBirth: { type: String, required: true },
+          },
+        ],
         addedAt: { type: Date, default: Date.now },
       },
     ],
@@ -17,8 +22,13 @@ const userSchema = mongoose.Schema(
       {
         _id: false,
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-        level: { type: String },
-        language: { type: String },
+        classId: { type: mongoose.Schema.Types.ObjectId, ref: "Class" },
+        participants: [
+          {
+            name: { type: String, required: true },
+            dateOfBirth: { type: String, required: true },
+          },
+        ],
         addedAt: { type: Date, default: Date.now },
       },
     ],
@@ -37,7 +47,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
-//Generate Authentication Token
+// Generate Authentication Token
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,

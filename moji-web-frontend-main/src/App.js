@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Layout from "./components/Layout";
 import AdminLayout from "./components/AdminLayout";
+import CourseDetail from "./components/CourseDetail";
 import { getUserAction } from "./redux/actions/userAction";
 import Navbar from "./components/Navbar";
 import NotFound from "./screens/NotFound";
@@ -30,7 +31,6 @@ import Users from "./screens/admin/Users";
 import TransactionLogs from "./screens/admin/TransactionLogs";
 import AdminLogin from "./screens/admin/AdminLogin";
 import ProtectedRoute from "./utils/ProtectedRoute";
-
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -40,8 +40,8 @@ i18n.use(initReactI18next).init({
       translation: viTranslation,
     },
   },
-  lng: "en",
-  fallbackLng: "en",
+  lng: "vi",
+  fallbackLng: "vi",
   interpolation: {
     escapeValue: false,
   },
@@ -162,6 +162,12 @@ const App = () => {
                   <AdminLogin />
                 )
               }
+            />{" "}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/courses/:id" element={<CourseDetail i18n={i18n} />} />
+            <Route
+              path="/transaction-history"
+              element={<TransactionHistory />}
             />
             <Route path="/*" element={<NotFound />} />
           </Routes>

@@ -38,9 +38,18 @@ const courseSchema = mongoose.Schema(
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
         location: { type: String },
+        learning_platform: { type: learningPlatformSchema },
+        participants: [
+          {
+            user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+            participantId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User.purchasedCourses.participants",
+            },
+          },
+        ],
       },
     ],
-    learning_platform: { type: learningPlatformSchema },
   },
   {
     timestamps: true,
