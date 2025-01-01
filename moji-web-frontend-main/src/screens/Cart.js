@@ -3,10 +3,12 @@ import CartCard from "../components/CartCard";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, BookOpen } from "lucide-react";
 import { Spinner } from "../components/spinner";
+import { useTranslation } from "react-i18next";
 import Footer from "../components/footer";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const [cart, setCart] = useState([]);
   const [error, setError] = useState(null);
   const [couponCode, setCouponCode] = useState("");
@@ -27,11 +29,13 @@ const Cart = () => {
       if (!response.ok) throw new Error("Failed to fetch cart");
 
       const data = await response.json();
+
       setCart(data.cart);
       setTotalPrice(data.totalPrice);
       setOriginalTotal(data.originalTotal);
       setDiscount(data.discount);
       setError(null);
+      console.log(cart);
     } catch (error) {
       console.error("Error fetching cart:", error);
       setError("Error fetching cart. Please try again.");
@@ -40,14 +44,17 @@ const Cart = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchCart().finally(() => setIsLoading(false));
+    setTimeout(() => {
+      fetchCart().finally(() => setIsLoading(false));
+    }, 200);
+    console.log(cart);
   }, [fetchCart]);
 
-  const removeFromCart = async (courseId) => {
+  const removeFromCart = async (courseId, classId) => {
     setIsActionLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3001/api/v1/view-cart/remove/${courseId}`,
+        `http://localhost:3001/api/v1/view-cart/remove/${courseId}/${classId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -57,7 +64,11 @@ const Cart = () => {
       if (!response.ok) throw new Error("Failed to remove course");
 
       // Optimistically update the UI
-      setCart((prevCart) => prevCart.filter((item) => item._id !== courseId));
+      setCart((prevCart) =>
+        prevCart.filter(
+          (item) => item._id !== courseId || item.classInfo.classId !== classId
+        )
+      );
       // Then fetch the updated cart data
       await fetchCart();
     } catch (error) {
@@ -70,6 +81,7 @@ const Cart = () => {
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
+    console.log(cart);
 
     setIsActionLoading(true);
     try {
@@ -133,10 +145,14 @@ const Cart = () => {
       <div className="text-center">
         <ShoppingCart className="mx-auto h-24 w-24 text-gray-400 mb-4" />
         <h2 className="mt-2 text-2xl font-semibold text-gray-900">
-          Your cart is empty
+          {i18n.language === "en"
+            ? "Your cart is empty!"
+            : "Giỏ hàng rỗng rồi!"}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
-          Looks like you haven't added any courses yet.
+          {i18n.language === "en"
+            ? "Looks like you haven't added any courses yet."
+            : "Có vẻ như bạn chưa thêm khóa học nào cả."}
         </p>
         <div className="mt-6">
           <button
@@ -144,7 +160,7 @@ const Cart = () => {
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <BookOpen className="mr-2 h-5 w-5" />
-            Go to Courses
+            {i18n.language === "en" ? "Go to Courses" : "Đi đến trang Khóa học"}
           </button>
         </div>
       </div>
@@ -165,10 +181,11 @@ const Cart = () => {
             <div className="bg-white rounded-lg shadow-sm">
               {cart.map((item) => (
                 <CartCard
-                  key={item._id}
+                  key={`${item._id}-${item.classInfo.classId}`}
                   course={item}
                   removeFromCart={removeFromCart}
                   isLoading={isActionLoading}
+                  i18n={i18n}
                 />
               ))}
             </div>

@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema(
           {
             name: { type: String, required: true },
             dateOfBirth: { type: String, required: true },
+            isAlumni: { type: Boolean, default: false },
           },
         ],
         addedAt: { type: Date, default: Date.now },
@@ -27,6 +28,7 @@ const userSchema = mongoose.Schema(
           {
             name: { type: String, required: true },
             dateOfBirth: { type: String, required: true },
+            isAlumni: { type: Boolean, default: false },
           },
         ],
         addedAt: { type: Date, default: Date.now },

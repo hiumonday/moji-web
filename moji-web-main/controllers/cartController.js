@@ -3,7 +3,6 @@ const Course = require("../models/Course");
 
 module.exports.viewCart = async (req, res) => {
   const userId = req.user._id;
-  console.log(req);
 
   try {
     const user = await User.findById(userId).populate("cart.courseId");
@@ -15,30 +14,59 @@ module.exports.viewCart = async (req, res) => {
           item.courseId.image.contentType
         };base64,${item.courseId.image.data.toString("base64")}`;
       }
+      const classInfo = item.courseId.classes.id(item.classId);
+
+      const participantsWithPrice = item.participants.map((participant) => {
+        let price = item.courseId.price;
+        if (participant.isAlumni) {
+          price = item.courseId.alumniPrice;
+        } else if (item.participants.length > 1) {
+          price = item.courseId.bundlePrice;
+        } else if (classInfo.earlyBirdSlot > 0) {
+          price = item.courseId.earlyBirdPrice;
+        }
+        return {
+          info: participant,
+          price,
+        };
+      });
 
       return {
         _id: item.courseId._id,
         title: item.courseId.title,
         description: item.courseId.description,
         price: item.courseId.price,
-        earlyBirdPrice: item.courseId.earlyBirdPrice,
-        earlyBirdSlot: item.courseId.earlyBirdSlot,
-        classes: item.courseId.classes,
+        classInfo: {
+          level: classInfo.level,
+          language: classInfo.language,
+          teacherName: classInfo.teacherName,
+          day: classInfo.day,
+          startTime: classInfo.startTime,
+          endTime: classInfo.endTime,
+          classId: classInfo._id,
+          earlyBirdSlot: classInfo.earlyBirdSlot,
+        },
         image: imageBase64,
+        participants: participantsWithPrice,
       };
     });
 
-    const originalTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-    const totalPrice = cartItems.reduce((sum, item) => {
-      let price = item.earlyBirdSlot > 0 ? item.earlyBirdPrice : item.price;
-      if (
-        user.appliedCoupon &&
-        user.appliedCoupon.courseId.toString() === item._id.toString()
-      ) {
-        price -= (user.appliedCoupon.percentage / 100) * price;
-      }
-      return sum + price;
+    const originalTotal = cartItems.reduce((sum, item) => {
+      const numParticipants = item.participants.length;
+      let price = item.price;
+
+      return sum + price * numParticipants;
     }, 0);
+
+    const totalPrice = cartItems.reduce((sum, item) => {
+      return (
+        sum +
+        item.participants.reduce((participantSum, participant) => {
+          return participantSum + participant.price;
+        }, 0)
+      );
+    }, 0);
+
     const discount = Math.round(
       ((originalTotal - totalPrice) / originalTotal) * 100
     );
@@ -46,6 +74,8 @@ module.exports.viewCart = async (req, res) => {
     res
       .status(200)
       .json({ cart: cartItems, totalPrice, originalTotal, discount });
+
+    console.log({ cart: cartItems, totalPrice, originalTotal, discount });
   } catch (error) {
     res.status(500).json({ message: "Error fetching cart", error });
   }
@@ -66,11 +96,18 @@ module.exports.addCourseToCart = (req, res) => {
       return User.findById(userId);
     })
     .then((user) => {
-      if (user.cart.some((item) => item.courseId.toString() === courseId)) {
-        return res.status(400).json({ message: "Course already in cart" });
+      const existingItem = user.cart.find(
+        (item) =>
+          item.courseId.toString() === courseId &&
+          item.classId.toString() === classId
+      );
+
+      if (existingItem) {
+        existingItem.participants.push(...participants);
+      } else {
+        user.cart.push({ courseId, classId, participants });
       }
 
-      user.cart.push({ courseId, classId, participants });
       return user.save();
     })
     .then((updatedUser) => {
@@ -89,7 +126,8 @@ module.exports.addCourseToCart = (req, res) => {
 
 module.exports.removeCourseFromCart = async (req, res) => {
   const userId = req.user._id; // ID của người dùng từ middleware xác thực
-  const courseId = req.params.id; // Lấy courseId từ route parameter
+  const { courseId, classId } = req.params;
+  console.log(courseId, classId);
 
   try {
     // Tìm người dùng
@@ -103,7 +141,7 @@ module.exports.removeCourseFromCart = async (req, res) => {
       { _id: userId },
       {
         $pull: {
-          cart: { courseId: courseId }, // Xóa phần tử có courseId tương ứng
+          cart: { courseId: courseId, classId: classId }, // Xóa phần tử có courseId và classId tương ứng
         },
       }
     );
