@@ -241,6 +241,7 @@
   "receipt": "Receipt",
   "invoiceUnavailable": "Invoice unavailable",
   "courses": "Courses",
+  "myProfile": "My Profile",
   "subscriptions": "Subscriptions",
   "refunds": "Refunds",
   "noCourses": "You haven't bought any courses yet",
