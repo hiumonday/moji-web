@@ -22,4 +22,22 @@ export const fetchClasses = () => async (dispatch) => {
   }
 };
 
+export const removeStudentFromClass =
+  (classId, studentId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      await axiosInstance.delete(
+        `/api/v1/admin/classes/${classId}/students/${studentId}`
+      );
+      dispatch(setSuccess("Student removed successfully"));
+      dispatch(fetchClasses()); // Refresh the class list
+    } catch (error) {
+      dispatch(
+        setError(error.response?.data?.message || "Failed to remove student")
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
 // Other class-related actions can be added here

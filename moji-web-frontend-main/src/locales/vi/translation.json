@@ -248,5 +248,19 @@
       "invoiceUnavailable": "Không có hóa đơn",
       "courses": "Khóa học",
       "subscriptions": "Đăng ký",
-      "refunds": "Hoàn tiền"
+      "refunds": "Hoàn tiền",
+      "myCourses": "Khóa học của tôi",
+      "instructor": "Giảng viên",
+      "duration": "Thời lượng",
+      "level": "Trình độ",
+      "className": "Tên lớp",
+      "studentName": "Tên học viên",
+      "teacher": "Giáo viên",
+      "schedule": "Lịch học",
+      "platform": "Nền tảng",
+      "accessDetails": "Thông tin truy cập",
+      "code": "Mã lớp",
+      "joinClass": "Vào lớp",
+      "noCourses": "Bạn chưa đăng ký khóa học nào",
+      "browseCourses": "Xem khóa học"
 }

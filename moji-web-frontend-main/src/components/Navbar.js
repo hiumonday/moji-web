@@ -199,7 +199,15 @@ const Navbar = ({ changeLanguage }) => {
                         to="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        {t("yourProfile")}
+                        {t("myProfile")}
+                      </NavLink>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <NavLink
+                        to="/my-courses"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {t("myCourses")}
                       </NavLink>
                     </Menu.Item>
                     <Menu.Item>
@@ -286,7 +294,7 @@ const Navbar = ({ changeLanguage }) => {
                 className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium w-full"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("yourProfile")}
+                {t("myProfile")}
               </NavLink>
               <NavLink
                 to="/settings"

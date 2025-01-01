@@ -11,18 +11,6 @@ const app = express();
 require("dotenv").config({ path: "./.env" });
 
 const allowedOrigins = ["http://localhost:3000", "https://moji.education/"];
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
 
 const errorMiddleware = require("./middlewares/errorMiddleware");
 
@@ -73,14 +61,14 @@ const route = require("./routes/siteRoute");
 route(app);
 
 // Add this with your other route imports
+const classRoute = require("./routes/admin/classRoute");
+const userRoute = require("./routes/admin/userRoute");
 
-// app.use(express.static(path.join(__dirname + "../moji-web-frontend-main/build")));
+// Add this with your other app.use statements
+app.use("/api/v1/admin", classRoute);
+app.use("/api/v1/admin", userRoute);
 
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build/index.html"));
-// });
-
-// error middileware
+// Add this with your other app.use statements
 app.use(errorMiddleware);
 
 module.exports = app;

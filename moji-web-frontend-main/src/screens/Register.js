@@ -1,17 +1,79 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Fragment } from "react";
-import Meta from "../utils/Meta";
-import React from "react";
-import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router-dom";
 
 const Register = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleGoogleSignup = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // Redirect to home if already logged in
+    }
+  }, [user, navigate]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    // Reset error dynamically when typing
+    if (name === "confirmPassword" || name === "password") {
+      if (
+        name === "confirmPassword" &&
+        formData.password &&
+        value !== formData.password
+      ) {
+        setError(t("passwordNotMatch"));
+      } else if (
+        name === "password" &&
+        formData.confirmPassword &&
+        value !== formData.confirmPassword
+      ) {
+        setError(t("passwordNotMatch"));
+      } else {
+        setError("");
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, email, password, confirmPassword } = formData;
+
+    if (password !== confirmPassword) {
+      setError(t("passwordNotMatch"));
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message);
+        navigate("/login");
+      } else {
+        alert(result.message || "Registration failed!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -27,8 +89,7 @@ const Register = () => {
               {t("registerNow")}
             </h2>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
-            <input type="hidden" name="remember" value="true" />
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
                 <label htmlFor="name" className="sr-only">
@@ -38,10 +99,11 @@ const Register = () => {
                   id="name"
                   name="name"
                   type="text"
-                  autoComplete="name"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Full name"
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -52,10 +114,11 @@ const Register = () => {
                   id="email-address"
                   name="email"
                   type="email"
-                  autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Email address"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -66,28 +129,31 @@ const Register = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder={t("passWord")}
+                  value={formData.password}
+                  onChange={handleChange}
                 />
               </div>
               <div>
                 <label htmlFor="confirm-password" className="sr-only">
-                  Confirm Password
+                  {t("confirmPassWord")}
                 </label>
                 <input
                   id="confirm-password"
-                  name="confirm-password"
+                  name="confirmPassword"
                   type="password"
-                  autoComplete="new-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Confirm Password"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder={t("confirmPassWord")}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                 />
               </div>
             </div>
-
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             <div>
               <button
                 type="submit"
@@ -97,12 +163,6 @@ const Register = () => {
               </button>
             </div>
           </form>
-          <button
-            onClick={handleGoogleSignup}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
-          >
-            Sign up with Google
-          </button>
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               {t("haveAccount")}?{" "}

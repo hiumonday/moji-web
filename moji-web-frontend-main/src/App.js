@@ -31,6 +31,8 @@ import Users from "./screens/admin/Users";
 import TransactionLogs from "./screens/admin/TransactionLogs";
 import AdminLogin from "./screens/admin/AdminLogin";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import ClassList from "./screens/admin/classes/ClassList";
+import MyCourses from "./screens/MyCourses"; // Add this line
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -136,6 +138,7 @@ const App = () => {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/courses" element={<UserCourses />} />
             <Route path="/debating-fundamentals" element={<DF />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route
               path="/admin/*"
               element={
@@ -147,27 +150,30 @@ const App = () => {
                     />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="courses/*" element={<AdminCourses />} />
+                    <Route path="classes" element={<ClassList />} />
                     <Route path="users" element={<Users />} />
                     <Route path="transactions" element={<TransactionLogs />} />
                   </Routes>
                 </AdminLayout>
               }
             />
-            <Route
-              path="/admin/login"
-              element={
-                user?.role === "admin" ? (
-                  <Navigate to="/admin/dashboard" replace />
-                ) : (
-                  <AdminLogin />
-                )
-              }
-            />{" "}
             <Route path="/profile" element={<Profile />} />
             <Route path="/courses/:id" element={<CourseDetail i18n={i18n} />} />
             <Route
               path="/transaction-history"
               element={<TransactionHistory />}
+            />
+            <Route
+              path="/my-courses"
+              element={
+                isAuthenticated ? (
+                  <Layout>
+                    <MyCourses />
+                  </Layout>
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
             <Route path="/*" element={<NotFound />} />
           </Routes>

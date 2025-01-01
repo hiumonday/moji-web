@@ -29,7 +29,7 @@ export const fetchAllUsers = () => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axiosInstance.get("/api/v1/admin/users");
-    dispatch(setUser(data.users));
+    dispatch({ type: "admin/setUsers", payload: data.users });
   } catch (error) {
     dispatch(
       setError(error.response?.data?.message || "Failed to fetch users")

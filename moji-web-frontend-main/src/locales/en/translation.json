@@ -65,8 +65,6 @@
     "partner6": "IGC Group",
     "partner7": "Thang Long University",
     "partner8": "Ban Mai Elementary School",
-
-
     "testimonials": [
         {
             "name": "Nguyễn Trần Nguyên Anh",
@@ -191,7 +189,6 @@
   "courseOverview": "Course Details",
   "debateFundamentalsTitle": "Signing up",
   "debateFundamentalsTitle2": "Additional Information",
-
   "debateFundamentalsImage": "Debate Fundamentals Course Image",
   "debateFundamentalsDescription": "This course is offered throughout the year, in smaller class sizes from 5-10 students to ensure quality and personalized feedback. Middle School classes will be offered in English, and Highschool/College classes will be offered in Vietnamese. Contact us for more information, or click on the button to sign up. ",
   "courseHighlightsTitle": "Highlights",
@@ -206,7 +203,18 @@
   "courseStructureTitle": "Start with the basics",
   "courseStructureImage": "Course Structure Image",
   "courseStructureDescription": "The Debate Fundamentals course is structured to provide a comprehensive learning experience. The course is divided into modules, each focusing on a specific aspect of debating. Students will engage in a mix of lectures, group discussions, and practical exercises to reinforce their understanding of the concepts taught. Throughout the course, students will have the opportunity to participate in mock debates and receive feedback from experienced mentors. Students will then have the opportunity to prepare and be accompanied to recommended tournaments",
-  
+  "myCourses": "My Courses",
+  "instructor": "Instructor",
+  "duration": "Duration",
+  "level": "Level",
+  "className": "Class Name",
+  "studentName": "Student Name",
+  "teacher": "Teacher",
+  "schedule": "Schedule",
+  "platform": "Platform",
+  "accessDetails": "Access Details",
+  "code": "Code",
+  "joinClass": "Join Class",
   "passWord": "Pass word",
   "forgotPassWord": "Forgot your password",
   "accountExist": "Don't have an account",
@@ -234,5 +242,7 @@
   "invoiceUnavailable": "Invoice unavailable",
   "courses": "Courses",
   "subscriptions": "Subscriptions",
-  "refunds": "Refunds"
+  "refunds": "Refunds",
+  "noCourses": "You haven't bought any courses yet",
+  "browseCourses": "Browse Courses"
 }

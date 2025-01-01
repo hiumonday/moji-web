@@ -19,6 +19,7 @@ import {
   Dashboard as DashboardIcon,
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
+  Class as ClassIcon,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -38,6 +39,7 @@ const AdminSidebar = () => {
   const menuItems = [
     { text: "Dashboard", path: "/admin/dashboard", icon: <DashboardIcon /> },
     { text: "Courses", path: "/admin/courses", icon: <CourseIcon /> },
+    { text: "Classes", path: "/admin/classes", icon: <ClassIcon /> },
     { text: "Users", path: "/admin/users", icon: <UsersIcon /> },
     {
       text: "Transactions",

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const learningPlatformSchema = mongoose.Schema({
+  platform: { type: String },
   access_code: { type: String },
   access_link: { type: String },
   _id: false,
@@ -13,8 +14,8 @@ const courseSchema = mongoose.Schema(
     image: { data: Buffer, contentType: String },
     price: { type: Number, required: true },
     earlyBirdPrice: { type: Number, required: true },
-    earlyBirdSlot: { type: Number, default: 5 },
-    is_active: { type: Boolean, default: false },
+    bundlePrice: { type: Number, required: true },
+    alumniPrice: { type: Number, required: true },
     discounts: [
       {
         _id: false,
@@ -37,8 +38,8 @@ const courseSchema = mongoose.Schema(
         day: { type: String, require: true },
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        location: { type: String },
         learning_platform: { type: learningPlatformSchema },
+        earlyBirdSlot: { type: Number, default: 0 },
         participants: [
           {
             user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
