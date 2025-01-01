@@ -76,7 +76,7 @@ module.exports.login = catchAsyncErrors(async (req, res, next) => {
     path: "/",
   };
 
-  console.log(options);
+  // console.log(options);
 
   res.status(200).cookie("token", token, options).json({
     success: true,
