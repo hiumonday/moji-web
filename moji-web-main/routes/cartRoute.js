@@ -14,7 +14,7 @@ router.post(
 
 // Remove course from cart
 router.delete(
-  "/view-cart/remove/:id",
+  "/view-cart/remove/:courseId/:classId",
   isAuthenticatedUser,
   cartController.removeCourseFromCart
 );
@@ -22,7 +22,11 @@ router.delete(
 // Apply coupon
 router.post("/apply-coupon", isAuthenticatedUser, cartController.applyCoupon);
 // Remove coupon
-router.delete("/remove-coupon", isAuthenticatedUser, cartController.removeCoupon);
+router.delete(
+  "/remove-coupon",
+  isAuthenticatedUser,
+  cartController.removeCoupon
+);
 
 router.get("/demo", isAuthenticatedUser, cartController.demoApiForwarding);
 
