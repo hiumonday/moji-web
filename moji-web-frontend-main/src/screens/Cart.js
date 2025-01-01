@@ -22,7 +22,7 @@ const Cart = () => {
   // Memoize fetchCart to prevent unnecessary recreations
   const fetchCart = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/view-cart", {
+      const response = await fetch("/api/v1/view-cart", {
         credentials: "include",
       });
 
@@ -54,7 +54,7 @@ const Cart = () => {
     setIsActionLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3001/api/v1/view-cart/remove/${courseId}/${classId}`,
+        `/api/v1/view-cart/remove/${courseId}/${classId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -86,7 +86,7 @@ const Cart = () => {
     setIsActionLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:3001/api/v1/apply-coupon",
+        "/api/v1/apply-coupon",
         {
           credentials: "include",
         }
@@ -110,7 +110,7 @@ const Cart = () => {
     setIsActionLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:3001/api/v1/remove-coupon",
+        "/api/v1/remove-coupon",
         {
           method: "DELETE",
           credentials: "include",

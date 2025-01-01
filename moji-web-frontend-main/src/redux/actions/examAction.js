@@ -23,7 +23,7 @@ export const completeModule =
 	(examId, moduleId, answers, totalTime) => async (dispatch) => {
 		try {
 			dispatch(setLoader(true));
-			const { data } = await axios.put(process.env.REACT_APP_API_URL +
+			const { data } = await axios.put(REACT_APP_API_URL +
 				`/api/v1/exam/${examId}/${moduleId}/submit`,
 				{ answers, totalTime },
 				{ withCredentials: true },
@@ -48,7 +48,7 @@ export const completeModule =
 export const skipModuleBreak = (examId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/exam/${examId}/break/skip`, {
+		const { data } = await axios.get(`/api/v1/exam/${examId}/break/skip`, {
 			withCredentials: true,
 		});
 
@@ -68,7 +68,7 @@ export const finishModuleBreak = (examId) => async (dispatch) => {
 	setTimeout(async () => {
 		try {
 			dispatch(setLoader(true));
-			const { data } = await axios.get(process.env.REACT_APP_API_URL + 
+			const { data } = await axios.get(
 				`/api/v1/exam/${examId}/break/finish`,
 				{
 					withCredentials: true,
@@ -91,7 +91,7 @@ export const finishModuleBreak = (examId) => async (dispatch) => {
 export const finishExam = (examId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/exam/${examId}/complete`, {
+		const { data } = await axios.get(`/api/v1/exam/${examId}/complete`, {
 			withCredentials: true,
 		});
 
@@ -107,7 +107,7 @@ export const finishExam = (examId) => async (dispatch) => {
 export const getExamDetails = (examId) => async (dispatch) => {
 	try {
 		dispatch(setDetailLoading(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/admin/exam/${examId}`, {
+		const { data } = await axios.get(`/api/v1/admin/exam/${examId}`, {
 			withCredentials: true,
 		});
 
@@ -123,7 +123,7 @@ export const getExamDetails = (examId) => async (dispatch) => {
 export const getUserExamDetails = (examId) => async (dispatch) => {
 	try {
 		dispatch(setDetailLoading(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/admin/exam/${examId}`, {
+		const { data } = await axios.get(`/api/v1/admin/exam/${examId}`, {
 			withCredentials: true,
 		});
 
@@ -139,7 +139,7 @@ export const getUserExamDetails = (examId) => async (dispatch) => {
 export const getOwnExams = () => async (dispatch) => {
 	try {
 		dispatch(setDetailsLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL +`/api/v1/me/exams`, {
+		const { data } = await axios.get(REACT_APP_API_URL +`/api/v1/me/exams`, {
 			withCredentials: true,
 		});
 
@@ -156,7 +156,7 @@ export const getOwnExams = () => async (dispatch) => {
 export const getAllExams = () => async (dispatch) => {
 	try {
 		dispatch(setDetailsLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/admin/exams`, {
+		const { data } = await axios.get(`/api/v1/admin/exams`, {
 			withCredentials: true,
 		});
 
@@ -203,7 +203,7 @@ export const fetchMissingFields = (exam, dataToSend, examId) => async (dispatch)
 		};
   
 		const response = await axios.put(
-		  `${process.env.REACT_APP_API_URL}/api/v1/exam/${examId}/results`,
+		  `${REACT_APP_API_URL}/api/v1/exam/${examId}/results`,
 		  updatedData,
 		  { withCredentials: true }
 		);
@@ -232,7 +232,7 @@ export const updateExamScores = (examId, scores) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.put(
-			`${process.env.REACT_APP_API_URL}/api/v1/exam/${examId}/scores`,
+			`${REACT_APP_API_URL}/api/v1/exam/${examId}/scores`,
 			scores,
 			{ withCredentials: true }
 		);

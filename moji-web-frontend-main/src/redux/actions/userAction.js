@@ -8,7 +8,6 @@ import {
 import { setError, setSuccess } from "../slices/appSlice";
 import axios from "axios";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
-console.log(REACT_APP_API_URL);
 
 axios.defaults.withCredentials = true;
 
@@ -16,10 +15,11 @@ export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axios.post(
-      REACT_APP_API_URL + "/api/v1/login",
+      "/api/v1/login",
       credentials,
       { withCredentials: true }
     );
+    console.log(REACT_APP_API_URL);
 
     dispatch(setUser(data.user));
     dispatch(setLoader(false));
@@ -36,7 +36,7 @@ export const loginGoogleAction =
     try {
       dispatch(setLoader(true));
       const { data } = await axios.get(
-        REACT_APP_API_URL + "/auth/google",
+        "/auth/google",
         credentials,
         { withCredentials: true }
       );
@@ -56,7 +56,7 @@ export const getUserAction = () => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + "/api/v1/login/success",
+      "/api/v1/login/success",
       { withCredentials: true }
     );
 
@@ -75,7 +75,7 @@ export const logoutAction = () => async (dispatch) => {
 
     // Then make the API call
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + "/api/v1/logout",
+      "/api/v1/logout",
       {
         withCredentials: true,
       }
@@ -97,7 +97,7 @@ export const getAllUsers = () => async (dispatch) => {
   try {
     dispatch(setUsersLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + "/api/v1/admin/users",
+      "/api/v1/admin/users",
       { withCredentials: true }
     );
 
@@ -113,7 +113,7 @@ export const getAllUsers = () => async (dispatch) => {
 export const updateUserRole = (id, role) => async (dispatch) => {
   try {
     const { data } = await axios.put(
-      process.env.REACT_APP_API_URL + `/api/v1/admin/user/${id}`,
+      `/api/v1/admin/user/${id}`,
       { role },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
@@ -127,7 +127,7 @@ export const updateUserRole = (id, role) => async (dispatch) => {
 export const updateUser = async (id, desiredScore, satPurpose) => {
   try {
     const { data } = await axios.put(
-      process.env.REACT_APP_API_URL + `/api/v1/update/${id}`,
+      `/api/v1/update/${id}`,
       { desiredScore, satPurpose },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
@@ -143,7 +143,7 @@ export const updateUser = async (id, desiredScore, satPurpose) => {
 export const updateUserNoReload = async (id, desiredScore, satPurpose) => {
   try {
     const { data } = await axios.put(
-      process.env.REACT_APP_API_URL + `/api/v1/update/${id}`,
+      `/api/v1/update/${id}`,
       { desiredScore, satPurpose },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
@@ -159,7 +159,7 @@ export const updateReferralStatus =
     try {
       dispatch(setLoader(true));
       const { data } = await axios.put(
-        process.env.REACT_APP_API_URL +
+        REACT_APP_API_URL +
           `/api/v1/referral/${referrerId}/${referredId}`,
         {},
         { withCredentials: true }

@@ -2,7 +2,7 @@ const app = require('./app');
 const databaseConnect = require('./config/database');
 const cloudinary = require('cloudinary').v2;
 
-const port = 3001; //process.env.PORT
+const port = 3001; //PORT
 
 // database connect
 databaseConnect();

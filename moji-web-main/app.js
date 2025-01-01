@@ -16,7 +16,7 @@ const errorMiddleware = require("./middlewares/errorMiddleware");
 
 app.use(
   session({
-    secret: process.env.SESSION_KEY,
+    secret: process.env.SESSION_KEY || 'your-fallback-secret-key',
     resave: false,
     saveUninitialized: true,
   })
@@ -31,7 +31,7 @@ app.use(cookieParser());
 // cors cofiguration
 // app.use(
 //   require("cors")({
-//     origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL : "/",
+//     origin: FRONTEND_URL ? FRONTEND_URL : "/",
 //     optionsSuccessStatus: 200,
 //     credentials: true,
 //   })
@@ -40,10 +40,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin:
-      process.env.FRONTEND_URL ||
-      "http://localhost:3000" ||
-      "http://localhost:3001",
+    origin: ["http://localhost:3000", "https://moji.education"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -53,9 +50,6 @@ app.use(
 // passport config
 passportConnect();
 
-// test module schedule
-// scheduler();
-
 // Routing
 const route = require("./routes/siteRoute");
 route(app);
@@ -64,11 +58,19 @@ route(app);
 const classRoute = require("./routes/admin/classRoute");
 const userRoute = require("./routes/admin/userRoute");
 
-// Add this with your other app.use statements
+// API routes
 app.use("/api/v1/admin", classRoute);
 app.use("/api/v1/admin", userRoute);
 
-// Add this with your other app.use statements
+// Error handling middleware
 app.use(errorMiddleware);
+
+// // Serve static files from the React frontend build folder
+// app.use(express.static(path.join(__dirname, "../moji-web-frontend-main/build")));
+
+// // Catch-all route to serve the React app for any non-API route
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
+// });
 
 module.exports = app;

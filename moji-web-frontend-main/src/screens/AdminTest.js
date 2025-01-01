@@ -202,7 +202,7 @@ const AddCourse = () => {
 
         // Send the request to the backend
         const response = await fetch(
-          "http://localhost:3001/api/v1/courses/create",
+          "/api/v1/courses/create",
           {
             method: "POST",
             body: formData,

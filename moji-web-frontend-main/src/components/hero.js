@@ -23,7 +23,7 @@ const Hero = () => {
 
             <div className="flex flex-col items-start space-y-3 sm:space-x-4 sm:space-y-0 sm:items-center sm:flex-row">
               <a
-                href={process.env.REACT_APP_API_URL + "/api/v1/auth/google"}
+                href={"/api/v1/auth/google"}
                 className="h-16 px-8 py-4 text-lg font-medium text-center text-white bg-indigo-600 rounded-md"
               >
                 <div className="flex items-center">

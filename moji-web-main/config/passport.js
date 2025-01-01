@@ -2,14 +2,15 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const passport = require("passport");
 const User = require("../models/User");
-require("dotenv").config({ path: "config/config.env" });
+require("dotenv").config();
+
 const passportConnect = () => {
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.REACT_API_APP_URL}/auth/google/callback`,
+        callbackURL: `/auth/google/callback`,
         passReqToCallback: true,
       },
       async (req, accessToken, refreshToken, profile, done) => {

@@ -24,7 +24,7 @@ const CheckOut = () => {
   const fetchCart = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/api/v1/view-cart", {
+      const response = await fetch("/api/v1/view-cart", {
         credentials: "include",
       });
 
@@ -175,7 +175,7 @@ const CheckOut = () => {
                 onClick={async () => {
                   try {
                     const response = await fetch(
-                      "http://localhost:3001/api/v1/create-embedded-payment-link",
+                      "/api/v1/create-embedded-payment-link",
                       {
                         method: "POST",
                         headers: {

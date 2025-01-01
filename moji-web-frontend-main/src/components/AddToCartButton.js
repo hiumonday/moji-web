@@ -21,7 +21,7 @@ const AddToCartButton = ({ course, i18n }) => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/add-to-cart", {
+      const response = await fetch("/api/v1/add-to-cart", {
         method: "POST",
         credentials: "include",
         headers: {

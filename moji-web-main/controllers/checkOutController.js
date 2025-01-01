@@ -16,8 +16,8 @@ module.exports.generateQR = async (req, res) => {
     orderCode: Number(String(Date.now()).slice(-6)),
     amount,
     description,
-    returnUrl: `http://localhost:3001/api/v1/success-transaction`,
-    cancelUrl: `http://localhost:3001/api/v1/fail-transaction`,
+    returnUrl: `/api/v1/success-transaction`,
+    cancelUrl: `/api/v1/fail-transaction`,
   };
 
   try {

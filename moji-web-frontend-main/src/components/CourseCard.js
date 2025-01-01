@@ -52,7 +52,7 @@ const CourseCard = ({ course, i18n }) => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/add-to-cart", {
+      const response = await fetch("/api/v1/add-to-cart", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -124,7 +124,7 @@ const CourseCard = ({ course, i18n }) => {
     const couponCode = participants[index].alumniCoupon;
     try {
       const response = await fetch(
-        "http://localhost:3001/api/v1/check-alumni",
+        "/api/v1/check-alumni",
         {
           method: "POST",
           headers: {

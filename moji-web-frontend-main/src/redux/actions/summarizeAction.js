@@ -17,7 +17,7 @@ export const getSummaryData = (userId) => async (dispatch) => {
       dispatch(setLoader(true));
   
       const { data } = await axios.get(
-        process.env.REACT_APP_API_URL + `/api/v1/passages/${userId}`, {
+        `/api/v1/passages/${userId}`, {
           withCredentials: true,
         }
       );
@@ -89,7 +89,7 @@ export const submitSummary = (userId, data) => {
 
             // Create a summary result in the database 
 
-            const response2 = await axios.post(process.env.REACT_APP_API_URL + `/api/v1/summary/${userId}`, {
+            const response2 = await axios.post(`/api/v1/summary/${userId}`, {
                 comments: response.data.sentence_scores_explained,
                 user: userId,
                 score: totalScore,
@@ -126,7 +126,7 @@ export const getSummaryResult = (resultsId) => async (dispatch) => {
       dispatch(setLoader(true));
   
       const { data } = await axios.get(
-        process.env.REACT_APP_API_URL + `/api/v1/summary_results/${resultsId}`, {
+        `/api/v1/summary_results/${resultsId}`, {
           withCredentials: true,
         }
       );
@@ -143,7 +143,7 @@ export const getSummaryResult = (resultsId) => async (dispatch) => {
       dispatch(setLoader(true));
   
       const { data } = await axios.get(
-        process.env.REACT_APP_API_URL + '/api/v1/leaderboard', {
+        '/api/v1/leaderboard', {
           withCredentials: true,
         }
       );
@@ -164,7 +164,7 @@ export const getOwnSummary = (userId) => async (dispatch) => {
 	try {
 
 		dispatch(setLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL +`/api/v1/me/own-summary/${userId}`, {
+		const { data } = await axios.get(REACT_APP_API_URL +`/api/v1/me/own-summary/${userId}`, {
 			withCredentials: true,
 		});
         // console.log(data)
@@ -181,7 +181,7 @@ export const getPercentile = () => async (dispatch) => {
 	try {
 
 		dispatch(setLoader(true));
-		const { data } = await axios.get(process.env.REACT_APP_API_URL +`/api/v1/me/percentile`, {
+		const { data } = await axios.get(REACT_APP_API_URL +`/api/v1/me/percentile`, {
 			withCredentials: true,
 		});
 		dispatch(setPercentile(data.data));
@@ -197,7 +197,7 @@ export const getPercentile = () => async (dispatch) => {
 // export const getAllExams = () => async (dispatch) => {
 // 	try {
 // 		dispatch(setDetailsLoader(true));
-// 		const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/admin/exams`, {
+// 		const { data } = await axios.get(`/api/v1/admin/exams`, {
 // 			withCredentials: true,
 // 		});
 
