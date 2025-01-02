@@ -3,7 +3,7 @@ const passport = require("passport");
 const passportConnect = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const path = require("path");
+
 const cors = require("cors");
 
 const app = express();
@@ -37,18 +37,27 @@ app.use(cookieParser());
 //   })
 // );
 // app.use(cors());
-
 app.use(
   cors({
-    origin:
-      process.env.FRONTEND_URL ||
-      "http://localhost:3000" ||
-      "http://localhost:3001",
+    origin: [
+      "https://vdrlh08h-3000.asse.devtunnels.ms", // Remote frontend URL
+      "http://localhost:3000", // Local frontend URL
+    ], // Allow frontend access
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// app.use(
+//   cors({
+//     origin:
+//       process.env.FRONTEND_URL ||
+//       "http://localhost:3000" ||
+//       "http://localhost:3001",
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 // passport config
 passportConnect();
