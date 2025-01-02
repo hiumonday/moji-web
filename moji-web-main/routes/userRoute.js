@@ -20,23 +20,4 @@ router.post("/fake-login", userController.fakeLogin);
 
 router.get("/viewCourse", userController.viewCourse);
 
-// router.get("/login/fake", fakeLogin);
-// router.get("/login/success", isAuthenticatedUser, loginSuccess);
-// router.get("/logout", logout);
-// router
-//   .route("/admin/user/:id")
-//   .get(isAuthenticatedUser, authorizedRole("admin"), getUserDetails)
-//   .put(isAuthenticatedUser, authorizedRole("admin"), chageUserRole);
-// router
-//   .route("/admin/users")
-//   .get(isAuthenticatedUser, authorizedRole("admin"), getAllUsers);
-
-// router.route("/update/:id").put(isAuthenticatedUser, updateUser1);
-
-// router.put(
-//   "/referral/:referrerId/:referredId",
-//   isAuthenticatedUser,
-//   updateReferralStatus
-// );
-
 module.exports = router;

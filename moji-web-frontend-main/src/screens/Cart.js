@@ -22,9 +22,12 @@ const Cart = () => {
   // Memoize fetchCart to prevent unnecessary recreations
   const fetchCart = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/view-cart", {
-        credentials: "include",
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_URL + "/api/v1/view-cart",
+        {
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to fetch cart");
 
@@ -54,7 +57,8 @@ const Cart = () => {
     setIsActionLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3001/api/v1/view-cart/remove/${courseId}/${classId}`,
+        process.env.REACT_APP_API_URL +
+          `/api/v1/view-cart/remove/${courseId}/${classId}`,
         {
           method: "DELETE",
           credentials: "include",

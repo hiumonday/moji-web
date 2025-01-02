@@ -9,7 +9,7 @@ const CourseDetail = (i18n) => {
   const [isSticky, setIsSticky] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/v1/courses/${id}`)
+    fetch(process.env.REACT_APP_API_URL + `/api/v1/courses/${id}`)
       .then((response) => response.json())
       .then((data) => setCourse(data.course))
       .catch((error) => console.error("Error fetching course:", error));

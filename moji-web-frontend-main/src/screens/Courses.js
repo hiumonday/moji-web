@@ -6,12 +6,6 @@ import SectionTitle from "../components/sectionTitle";
 import Footer from "../components/footer";
 import Container from "../components/container";
 import CourseCard from "../components/CourseCard";
-import courseOneImg from "../assets/courses/DF.webp";
-import courseTwoImg from "../assets/courses/DD.webp";
-import courseThreeImg from "../assets/courses/private.webp";
-import courseFourImg from "../assets/img/course2.jpeg";
-import courseFiveImg from "../assets/courses/sat2.webp";
-import Cart from "./Cart";
 import { Spinner } from "../components/spinner"; // Import Spinner component
 
 const Courses = () => {
@@ -24,7 +18,9 @@ const Courses = () => {
     // Fetch courses from the database
     const fetchCourses = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/v1/courses");
+        const response = await fetch(
+          process.env.REACT_APP_API_URL + "/api/v1/courses"
+        );
         const form = await response.json();
 
         console.log(form);

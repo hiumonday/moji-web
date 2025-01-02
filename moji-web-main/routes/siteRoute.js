@@ -4,6 +4,7 @@ const userRoute = require("./userRoute");
 const adminRoute = require("./admin/adminRoute");
 const checkOutRoute = require("./checkOutRoute");
 const transactionRoute = require("./transactionRoute");
+const webHookRoute = require("./webHookRoute");
 const myCourseRoute = require("./myCourseRoute");
 const express = require("express");
 const passport = require("passport");
@@ -19,6 +20,7 @@ function route(app) {
   app.use("/api/v1", cartRoute);
   app.use("/api/v1", checkOutRoute);
   app.use("/api/v1", transactionRoute);
+  app.use("/api/v1", webHookRoute);
   app.use("/api/v1", myCourseRoute);
 
   // Google OAuth routes - these should be at the root level, not under /api/v1
