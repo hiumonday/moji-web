@@ -22,7 +22,6 @@ module.exports.generateQR = async (req, res) => {
 
   try {
     const paymentLinkResponse = await payOS.createPaymentLink(body);
-    console.log(paymentLinkResponse);
 
     res.send(paymentLinkResponse);
   } catch (error) {

@@ -74,8 +74,6 @@ module.exports.viewCart = async (req, res) => {
     res
       .status(200)
       .json({ cart: cartItems, totalPrice, originalTotal, discount });
-
-    console.log({ cart: cartItems, totalPrice, originalTotal, discount });
   } catch (error) {
     res.status(500).json({ message: "Error fetching cart", error });
   }
@@ -85,7 +83,6 @@ module.exports.addCourseToCart = (req, res) => {
   const { courseId, classId, participants } = req.body;
   const user = req.user;
   const userId = user._id;
-  console.log(req.body);
 
   Course.findById(courseId)
     .then((course) => {

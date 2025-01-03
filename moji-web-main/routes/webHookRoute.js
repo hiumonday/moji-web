@@ -5,6 +5,6 @@ const { isAuthenticatedUser, authorizedRole } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/webhook-event-handler", webHookController.webhook);
+router.post("/webhook", webHookController.webhook);
 
 module.exports = router;

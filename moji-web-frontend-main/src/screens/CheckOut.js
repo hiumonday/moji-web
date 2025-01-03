@@ -47,7 +47,8 @@ const CheckOut = () => {
   };
 
   const paymentData = {
-    amount: totalPrice,
+    // amount: totalPrice,
+    amount: 5000,
     description: "Thanh toan khoa hoc",
     items: cart,
   };

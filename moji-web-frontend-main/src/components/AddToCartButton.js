@@ -49,18 +49,21 @@ const AddToCartButton = ({ course, i18n }) => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/add-to-cart", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          courseId: course._id,
-          classId: selectedClass._id,
-          participants,
-        }),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_URL + "/api/v1/add-to-cart",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            courseId: course._id,
+            classId: selectedClass._id,
+            participants,
+          }),
+        }
+      );
 
       const result = await response.json();
 
