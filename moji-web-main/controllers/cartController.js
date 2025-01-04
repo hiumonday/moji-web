@@ -162,7 +162,7 @@ module.exports.applyCoupon = async (req, res) => {
   const userId = req.user._id;
   const { couponCode } = req.body; // Nhận mã giảm giá từ request body
 
-  console.log(req.body);
+  console.log(req.user);
 
   try {
     // Lấy thông tin người dùng và giỏ hàng

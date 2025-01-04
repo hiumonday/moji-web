@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import Container from "./container";
 import heroImg from "../assets/thanhcong.webp";
 import Google from "../assets/google.png";
@@ -15,10 +15,10 @@ const Hero = () => {
         <div className="flex items-center w-full lg:w-1/2">
           <div className="max-w-2xl mb-8">
             <h1 className="text-4xl font-bold leading-snug tracking-tight text-gray-800 lg:text-4xl lg:leading-tight xl:text-6xl xl:leading-tight dark:text-white">
-              {t('heroTitle')}
+              {t("heroTitle")}
             </h1>
             <p className="py-5 text-xl leading-normal text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300">
-              {t('heroSubtitle')}
+              {t("heroSubtitle")}
             </p>
 
             <div className="flex flex-col items-start space-y-3 sm:space-x-4 sm:space-y-0 sm:items-center sm:flex-row">
@@ -28,7 +28,9 @@ const Hero = () => {
               >
                 <div className="flex items-center">
                   <img src={Logo} alt="Google" className="h-8" />
-                  <span className="ml-2 font-medium text-white">{t('startLearning')}</span>
+                  <span className="ml-2 font-medium text-white">
+                    {t("startLearning")}
+                  </span>
                 </div>
               </a>
               <a
@@ -37,7 +39,9 @@ const Hero = () => {
               >
                 <div className="flex items-center">
                   <img src={Facebook} alt="Google" className="h-6" />
-                  <span className="ml-2 font-medium text-black">{t('contactUs')}</span>
+                  <span className="ml-2 font-medium text-black">
+                    {t("contactUs")}
+                  </span>
                 </div>
               </a>
             </div>
@@ -59,6 +63,6 @@ const Hero = () => {
       </Container>
     </>
   );
-}
+};
 
 export default Hero;

@@ -20,7 +20,7 @@ router.delete(
 );
 
 // Apply coupon
-router.post("/apply-coupon", isAuthenticatedUser, cartController.applyCoupon);
+router.get("/apply-coupon", isAuthenticatedUser, cartController.applyCoupon);
 // Remove coupon
 router.delete(
   "/remove-coupon",

@@ -36,16 +36,17 @@ app.use(cookieParser());
 //     credentials: true,
 //   })
 // );
-app.use(cors());
-// app.use(
-//   cors({
-//     origin: [
-//       "https://vdrlh08h-3000.asse.devtunnels.ms", // Remote frontend URL
-//       "http://localhost:3000", // Local frontend URL
-//     ], // Allow frontend access
-//     credentials: true,
-//   })
-// );
+// app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://14d6-2a09-bac5-d45b-16c8-00-245-7.ngrok-free.app/", // Remote frontend URL
+      "http://localhost:3000", // Local frontend URL
+    ], // Allow frontend access
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // app.use(
 //   cors({

@@ -7,7 +7,7 @@ export const adminLoginAction = (formData, callback) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
     const { data } = await axiosInstance.post("/api/v1/admin/login", formData);
-
+    console.log(data);
     if (data.success) {
       dispatch(setUser(data.admin));
       dispatch(setSuccess("Admin login successful"));

@@ -18,9 +18,7 @@ const Courses = () => {
     // Fetch courses from the database
     const fetchCourses = async () => {
       try {
-        const response = await fetch(
-          process.env.REACT_APP_API_URL + "/api/v1/courses"
-        );
+        const response = await fetch("/api/v1/courses");
         const form = await response.json();
 
         console.log(form);

@@ -49,21 +49,18 @@ const AddToCartButton = ({ course, i18n }) => {
     setError(null);
 
     try {
-      const response = await fetch(
-        process.env.REACT_APP_API_URL + "/api/v1/add-to-cart",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            courseId: course._id,
-            classId: selectedClass._id,
-            participants,
-          }),
-        }
-      );
+      const response = await fetch("/api/v1/add-to-cart", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId: course._id,
+          classId: selectedClass._id,
+          participants,
+        }),
+      });
 
       const result = await response.json();
 
@@ -123,16 +120,7 @@ const AddToCartButton = ({ course, i18n }) => {
   const checkAlumniCoupon = async (index) => {
     const couponCode = participants[index].alumniCoupon;
     try {
-      const response = await fetch(
-        process.env.REACT_APP_API_URL + "/api/v1/check-alumni",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ couponCode }),
-        }
-      );
+      const response = await fetch("/api/v1/check-alumni");
 
       const result = await response.json();
 
