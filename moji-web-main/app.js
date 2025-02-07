@@ -3,7 +3,7 @@ const passport = require("passport");
 const passportConnect = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const path = require("path");
+
 const cors = require("cors");
 
 const app = express();
@@ -37,15 +37,28 @@ app.use(cookieParser());
 //   })
 // );
 // app.use(cors());
-
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://moji.education"],
+    origin: [
+      "https://14d6-2a09-bac5-d45b-16c8-00-245-7.ngrok-free.app/", // Remote frontend URL
+      "http://localhost:3000", // Local frontend URL
+    ], // Allow frontend access
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// app.use(
+//   cors({
+//     origin:
+//       process.env.FRONTEND_URL ||
+//       "http://localhost:3000" ||
+//       "http://localhost:3001",
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 // passport config
 passportConnect();
@@ -65,12 +78,12 @@ app.use("/api/v1/admin", userRoute);
 // Error handling middleware
 app.use(errorMiddleware);
 
-// Serve static files from the React frontend build folder
-app.use(express.static(path.join(__dirname, "../moji-web-frontend-main/build")));
+// // Serve static files from the React frontend build folder
+// app.use(express.static(path.join(__dirname, "../moji-web-frontend-main/build")));
 
-// Catch-all route to serve the React app for any non-API route
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
-});
+// // Catch-all route to serve the React app for any non-API route
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
+// });
 
 module.exports = app;

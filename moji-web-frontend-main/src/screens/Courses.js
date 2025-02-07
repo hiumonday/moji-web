@@ -6,12 +6,7 @@ import SectionTitle from "../components/sectionTitle";
 import Footer from "../components/footer";
 import Container from "../components/container";
 import CourseCard from "../components/CourseCard";
-import courseOneImg from "../assets/courses/DF.webp";
-import courseTwoImg from "../assets/courses/DD.webp";
-import courseThreeImg from "../assets/courses/private.webp";
-import courseFourImg from "../assets/img/course2.jpeg";
-import courseFiveImg from "../assets/courses/sat2.webp";
-import Cart from "./Cart";
+import { Spinner } from "../components/spinner"; // Import Spinner component
 
 const Courses = () => {
   const { t, i18n } = useTranslation();
@@ -42,8 +37,19 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
-  // if (loading) return <div>Loading...</div>; // Show a loading state
-  // if (error) return <div>Error: {error}</div>; // Show an error message
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-center">
+          <Spinner className="mb-4" />
+          <p className="text-gray-600">
+            {i18n.language === "en" ? "Loading..." : "Đang tải..."}{" "}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  if (error) return <div>Error: {error}</div>; // Show an error message
 
   return (
     <>

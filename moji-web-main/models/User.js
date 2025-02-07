@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema(
           },
         ],
         addedAt: { type: Date, default: Date.now },
+        orderCode: { type: Number },
       },
     ],
     purchasedCourses: [

@@ -8,6 +8,8 @@ import ViFlag from "../assets/vie.webp";
 import { useTranslation } from "react-i18next";
 import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Avatar } from "@mui/material";
+import { deepOrange } from "@mui/material/colors";
 
 const Navbar = ({ changeLanguage }) => {
   const location = useLocation();
@@ -67,6 +69,16 @@ const Navbar = ({ changeLanguage }) => {
       default:
         return null;
     }
+  };
+
+  const stringAvatar = (name) => {
+    console.log(user);
+    return {
+      sx: {
+        bgcolor: deepOrange[500],
+      },
+      children: `${name.split(" ")[0][0].toUpperCase()}`,
+    };
   };
 
   const navigation = [
@@ -187,11 +199,7 @@ const Navbar = ({ changeLanguage }) => {
                 <Menu as="div" className="relative">
                   <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src={user.avatar || "default-avatar-url"}
-                      alt="User avatar"
-                    />
+                    <Avatar {...stringAvatar(user.name)} />
                   </Menu.Button>
                   <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white py-1 ring-1 ring-black ring-opacity-5 z-20">
                     <Menu.Item>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AddToCartButton from "./AddToCartButton";
 import Footer from "./footer";
+import { Spinner } from "./spinner"; // Import Spinner component
 
 const CourseDetail = (i18n) => {
   const { id } = useParams();
@@ -27,7 +28,17 @@ const CourseDetail = (i18n) => {
     };
   }, []);
 
-  if (!course) return <div>Loading...</div>;
+  if (!course)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-center">
+          <Spinner className="mb-4" />
+          <p className="text-gray-600">
+            {i18n.language === "en" ? "Loading..." : "Đang tải..."}{" "}
+          </p>
+        </div>
+      </div>
+    );
 
   const hasEarlyBirdSlots = course.earlyBirdSlot > 0;
 

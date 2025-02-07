@@ -11,18 +11,27 @@ const payOS = new PayOS(
 
 module.exports.generateQR = async (req, res) => {
   const YOUR_DOMAIN = `http://localhost:3000`;
+
   const { amount, description } = req.body;
+  const orderCode = Number(String(Date.now()).slice(-8));
   const body = {
-    orderCode: Number(String(Date.now()).slice(-6)),
+    orderCode,
     amount,
     description,
     returnUrl: `/api/v1/success-transaction`,
     cancelUrl: `/api/v1/fail-transaction`,
   };
 
+  console.log(body);
   try {
     const paymentLinkResponse = await payOS.createPaymentLink(body);
     console.log(paymentLinkResponse);
+
+    // Assign orderCode to all products in the user's cart
+    await User.updateOne(
+      { _id: req.user._id },
+      { $set: { "cart.$[].orderCode": orderCode } }
+    );
 
     res.send(paymentLinkResponse);
   } catch (error) {
@@ -31,25 +40,4 @@ module.exports.generateQR = async (req, res) => {
   }
 };
 
-module.exports.successfulTransaction = async (req, res) => {
-  const userId = req.user._id;
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    // Xóa tất cả các sản phẩm trong giỏ hàng của người dùng
-    await User.updateOne(
-      { _id: userId },
-      {
-        $push: { purchasedCourses: user.cart }, //chuyển sang cho purchased
-        $set: { cart: [] }, // Đặt mảng cart thành rỗng
-      }
-    );
-
-    res.status(200).json({ message: "Cart cleared successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching or clearing cart", error });
-  }
-};
+module.exports.successfulTransaction = async (req, res) => {};

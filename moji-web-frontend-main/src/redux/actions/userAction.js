@@ -14,12 +14,9 @@ axios.defaults.withCredentials = true;
 export const loginAction = (credentials, onSuccess) => async (dispatch) => {
   try {
     dispatch(setLoader(true));
-    const { data } = await axios.post(
-      "/api/v1/login",
-      credentials,
-      { withCredentials: true }
-    );
-    console.log(REACT_APP_API_URL);
+    const { data } = await axios.post("/api/v1/login", credentials, {
+      withCredentials: true,
+    });
 
     dispatch(setUser(data.user));
     dispatch(setLoader(false));
@@ -55,10 +52,9 @@ export const loginGoogleAction =
 export const getUserAction = () => async (dispatch) => {
   try {
     dispatch(setLoader(true));
-    const { data } = await axios.get(
-      "/api/v1/login/success",
-      { withCredentials: true }
-    );
+    const { data } = await axios.get("/api/v1/login/success", {
+      withCredentials: true,
+    });
 
     dispatch(setUser(data.user));
     dispatch(setLoader(false));
@@ -74,12 +70,9 @@ export const logoutAction = () => async (dispatch) => {
     dispatch(logoutUser());
 
     // Then make the API call
-    const { data } = await axios.get(
-      "/api/v1/logout",
-      {
-        withCredentials: true,
-      }
-    );
+    const { data } = await axios.get("/api/v1/logout", {
+      withCredentials: true,
+    });
 
     // Clear any stored data
     dispatch(setUser(null));
