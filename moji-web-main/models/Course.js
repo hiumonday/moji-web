@@ -13,9 +13,10 @@ const courseSchema = mongoose.Schema(
     description: { type: String },
     image: { data: Buffer, contentType: String },
     price: { type: Number, required: true },
-    earlyBirdPrice: { type: Number},
-    bundlePrice: { type: Number},
-    alumniPrice: { type: Number},
+    earlyBirdPrice: { type: Number },
+    bundlePrice: { type: Number },
+    alumniPrice: { type: Number },
+    is_active: { type: Boolean, default: false },
     discounts: [
       {
         _id: false,

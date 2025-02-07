@@ -66,10 +66,16 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       const currentCourse = courses.find((c) => c._id === course._id) || course;
       setCourseData({
         ...currentCourse,
-        price: currentCourse.price.toString(),
-        earlyBirdPrice: currentCourse.earlyBirdPrice.toString(),
-        earlyBirdSlot: currentCourse.earlyBirdSlot.toString(),
-        is_active: currentCourse.is_active,
+        price: currentCourse.price?.toString() || "0",
+        earlyBirdPrice: currentCourse.earlyBirdPrice?.toString() || "0",
+        earlyBirdSlot: currentCourse.earlyBirdSlot?.toString() || "0",
+        is_active: currentCourse.is_active || false,
+        learning_platform: currentCourse.learning_platform || {
+          access_code: "",
+          access_link: "",
+        },
+        classes: currentCourse.classes || [],
+        discounts: currentCourse.discounts || [],
       });
 
       if (currentCourse.image?.data) {

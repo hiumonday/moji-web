@@ -6,8 +6,8 @@ const path = require("path");
 
 module.exports.getCourse = async (req, res) => {
   try {
-    // Fetch all courses
-    const courses = await Course.find().lean();
+    // Fetch only active courses
+    const courses = await Course.find({ is_active: true }).lean();
 
     // Format response to include specific information and image as base64
     const formattedCourses = courses.map((course) => {
@@ -24,9 +24,14 @@ module.exports.getCourse = async (req, res) => {
         description: course.description,
         price: course.price,
         earlyBirdPrice: course.earlyBirdPrice,
-        earlyBirdSlot: course.earlyBirdSlot,
-        classes: course.classes,
+        bundlePrice: course.bundlePrice,
+        alumniPrice: course.alumniPrice,
+        classes: course.classes.map((classItem) => ({
+          ...classItem,
+          earlyBirdSlot: classItem.earlyBirdSlot || 0,
+        })),
         image: imageBase64,
+        is_active: course.is_active,
       };
     });
 

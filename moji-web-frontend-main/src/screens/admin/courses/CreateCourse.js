@@ -108,7 +108,8 @@ const CreateCourse = () => {
     description: "",
     price: "",
     earlyBirdPrice: "",
-    earlyBirdSlot: "5",
+    bundlePrice: "",
+    alumniPrice: "",
     is_active: false,
     discounts: [],
     classes: [
@@ -120,6 +121,7 @@ const CreateCourse = () => {
         startTime: "",
         endTime: "",
         location: "",
+        earlyBirdSlot: "0",
       },
     ],
     learning_platform: {
@@ -147,13 +149,15 @@ const CreateCourse = () => {
         ...classItem,
         startTime: classItem.startTime || "00:00",
         endTime: classItem.endTime || "00:00",
+        earlyBirdSlot: parseInt(classItem.earlyBirdSlot) || 0,
       }));
 
       formData.append("title", courseData.title);
       formData.append("description", courseData.description);
       formData.append("price", courseData.price);
       formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
-      formData.append("earlyBirdSlot", courseData.earlyBirdSlot);
+      formData.append("bundlePrice", courseData.bundlePrice);
+      formData.append("alumniPrice", courseData.alumniPrice);
       formData.append("is_active", shouldPublish);
 
       formData.append("classes", JSON.stringify(classesData));
@@ -186,6 +190,7 @@ const CreateCourse = () => {
           startTime: "",
           endTime: "",
           location: "",
+          earlyBirdSlot: "0",
         },
       ],
     });
@@ -254,7 +259,7 @@ const CreateCourse = () => {
               required
               fullWidth
               type="number"
-              label="Price"
+              label="Regular Price"
               value={courseData.price}
               onChange={(e) =>
                 setCourseData({ ...courseData, price: e.target.value })
@@ -277,14 +282,30 @@ const CreateCourse = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <StyledTextField
+              required
               fullWidth
               type="number"
-              label="Early Bird Slots"
-              value={courseData.earlyBirdSlot}
+              label="Bundle Price (2+ students)"
+              value={courseData.bundlePrice}
               onChange={(e) =>
-                setCourseData({ ...courseData, earlyBirdSlot: e.target.value })
+                setCourseData({ ...courseData, bundlePrice: e.target.value })
               }
               disabled={isLoading}
+              helperText="Price per student when 2 or more sign up together"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              type="number"
+              label="Alumni Price"
+              value={courseData.alumniPrice}
+              onChange={(e) =>
+                setCourseData({ ...courseData, alumniPrice: e.target.value })
+              }
+              disabled={isLoading}
+              helperText="Special price for returning students"
             />
           </Grid>
           <Grid item xs={12}>
@@ -575,6 +596,20 @@ const CreateCourse = () => {
                     handleClassChange(index, "location", e.target.value)
                   }
                   disabled={isLoading}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <StyledTextField
+                  required
+                  fullWidth
+                  type="number"
+                  label="Early Bird Slots"
+                  value={classItem.earlyBirdSlot}
+                  onChange={(e) =>
+                    handleClassChange(index, "earlyBirdSlot", e.target.value)
+                  }
+                  disabled={isLoading}
+                  helperText="Number of early bird slots for this class"
                 />
               </Grid>
             </Grid>
