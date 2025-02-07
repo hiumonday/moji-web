@@ -65,12 +65,12 @@ app.use("/api/v1/admin", userRoute);
 // Error handling middleware
 app.use(errorMiddleware);
 
-// // Serve static files from the React frontend build folder
-// app.use(express.static(path.join(__dirname, "../moji-web-frontend-main/build")));
+// Serve static files from the React frontend build folder
+app.use(express.static(path.join(__dirname, "../moji-web-frontend-main/build")));
 
-// // Catch-all route to serve the React app for any non-API route
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
-// });
+// Catch-all route to serve the React app for any non-API route
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
+});
 
 module.exports = app;
