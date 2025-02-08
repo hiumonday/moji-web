@@ -28,7 +28,7 @@ const AdminLayout = ({ children }) => {
           width: { sm: `calc(100% - 240px)` },
           minHeight: "100vh",
           backgroundColor: "#FFFFFF",
-          pt: "64px",
+          pt: "24px",
         }}
       >
         {children}

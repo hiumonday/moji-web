@@ -65,7 +65,7 @@ const AdminSidebar = () => {
         )}
       </Toolbar>
       <Divider />
-      <List>
+      <List sx={{ px: 1 }}>
         {menuItems.map((item) => (
           <ListItem
             button
@@ -73,33 +73,36 @@ const AdminSidebar = () => {
             onClick={() => handleNavigation(item.path)}
             selected={location.pathname === item.path}
             sx={{
+              height: 48,
+              borderRadius: "8px",
+              mb: 0.5,
+              color: "text.secondary",
               "&.Mui-selected": {
-                backgroundColor: "primary.light",
+                backgroundColor: "primary.lighter",
+                color: "primary.main",
                 "&:hover": {
-                  backgroundColor: "primary.light",
+                  backgroundColor: "primary.lighter",
                 },
               },
               "&:hover": {
                 backgroundColor: "action.hover",
+                color: "text.primary",
               },
-              borderRadius: 1,
-              mx: 1,
-              width: "auto",
             }}
           >
             <ListItemIcon
               sx={{
-                color:
-                  location.pathname === item.path ? "primary.main" : "inherit",
+                minWidth: 40,
+                color: "inherit",
               }}
             >
               {item.icon}
             </ListItemIcon>
             <ListItemText
               primary={item.text}
-              sx={{
-                color:
-                  location.pathname === item.path ? "primary.main" : "inherit",
+              primaryTypographyProps={{
+                fontSize: "0.875rem",
+                fontWeight: location.pathname === item.path ? 600 : 400,
               }}
             />
           </ListItem>

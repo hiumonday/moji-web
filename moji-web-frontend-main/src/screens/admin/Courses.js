@@ -14,7 +14,7 @@ function TabPanel(props) {
       aria-labelledby={`course-tab-${index}`}
       {...other}
     >
-      {value === index && <Box>{children}</Box>}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -110,7 +110,7 @@ const Courses = () => {
         </Tabs>
       </Box>
 
-      <Box sx={{ mt: 3 }}>
+      <Box>
         <TabPanel value={tabValue} index={0}>
           <MyCourses />
         </TabPanel>
