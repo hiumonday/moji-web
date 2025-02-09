@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler.js");
 const User = require("../models/User");
+const Course = require("../models/Course");
 
 module.exports.register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -51,7 +52,7 @@ module.exports.login = catchAsyncErrors(async (req, res, next) => {
   // Check if the user exists
   const user = await User.findOne({ email });
   if (!user) {
-    return next(new ErrorHandler("Invalid credentials", 401));
+    return next(new ErrorHandler("Invalid email", 401));
   }
 
   // Compare the passwords
@@ -70,7 +71,12 @@ module.exports.login = catchAsyncErrors(async (req, res, next) => {
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Only use HTTPS in production
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    path: "/",
   };
+
+  // console.log(options);
 
   res.status(200).cookie("token", token, options).json({
     success: true,
@@ -88,19 +94,26 @@ module.exports.loginSuccess = catchAsyncErrors((req, res, next) => {
 });
 
 // logout user
-exports.logout = catchAsyncErrors((req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(new ErrorHandler("Logout failed", 400));
+exports.logout = catchAsyncErrors(async (req, res, next) => {
+  // Clear the token cookie
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    sameSite: "Lax",
+    path: "/",
+  });
 
-    res.cookie("token", null, {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    });
+  // Clear the session if you're using sessions
+  if (req.session) {
+    req.session.destroy();
+  }
 
-    res.status(200).json({
-      success: true,
-      message: "Logged Out",
-    });
+  // Clear user from request
+  req.user = null;
+
+  res.status(200).json({
+    success: true,
+    message: "Logged Out Successfully",
   });
 });
 
@@ -176,4 +189,14 @@ exports.chageUserRole = catchAsyncErrors(async (req, res, next) => {
     success: true,
     users,
   });
+});
+
+exports.viewCourse = catchAsyncErrors(async (req, res, next) => {
+  try {
+    courses = await Course.find(); // Fetch all courses
+    console.log(courses);
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching courses", error });
+  }
 });

@@ -14,7 +14,7 @@ export const createNote = (noteData) => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.post(
-      process.env.REACT_APP_API_URL + `/api/v1/notes`,
+      `/api/v1/notes`,
       noteData,
       {
         withCredentials: true,
@@ -35,7 +35,7 @@ export const getNotes = () => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + `/api/v1/notes`,
+      `/api/v1/notes`,
       {
         withCredentials: true,
       }
@@ -52,7 +52,7 @@ export const getNote = (id) => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + `/api/v1/notes/${id}`,
+      `/api/v1/notes/${id}`,
       {
         withCredentials: true,
       }
@@ -67,7 +67,7 @@ export const updateNote = (passageId, passageData) => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.put(
-      process.env.REACT_APP_API_URL + `/api/v1/notes/${passageId}`,
+      `/api/v1/notes/${passageId}`,
       passageData,
       {
         withCredentials: true,
@@ -84,7 +84,7 @@ export const updateNote = (passageId, passageData) => async (dispatch) => {
 export const deleteNote = (id) => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
-    await axios.delete(process.env.REACT_APP_API_URL + `/api/v1/notes/${id}`, {
+    await axios.delete(`/api/v1/notes/${id}`, {
       withCredentials: true,
     });
     dispatch(removeNote(id)); // Dispatch the action to remove the note from the state
@@ -100,7 +100,7 @@ export const getNotesByUserId = (userId) => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + `/api/v1/user/${userId}`,
+      `/api/v1/user/${userId}`,
       {
         withCredentials: true,
       }
@@ -117,7 +117,7 @@ export const getUsersWithNotesCount = () => async (dispatch) => {
   try {
     dispatch(setDetailsLoader(true));
     const { data } = await axios.get(
-      process.env.REACT_APP_API_URL + `/api/v1/counter`,
+      `/api/v1/counter`,
       {
         withCredentials: true,
       }

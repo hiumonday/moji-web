@@ -22,7 +22,7 @@ export const getAllTests = () => async (dispatch) => {
 	try {
 		dispatch(setIsTestsLoading(true));
 		const { data } = await axios.get(
-			process.env.REACT_APP_API_URL + "/api/v1/tests",
+			"/api/v1/tests",
 			{ withCredentials: true },
 		);
 		dispatch(setTests(data.tests));
@@ -38,7 +38,7 @@ export const getTestsModules = (id) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.get(
-			process.env.REACT_APP_API_URL + `/api/v1/test/${id}/modules`,
+			`/api/v1/test/${id}/modules`,
 			{ withCredentials: true },
 		);
 
@@ -55,7 +55,7 @@ export const createTest = (formData) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		await axios.post(
-			process.env.REACT_APP_API_URL + `/api/v1/test/new`,
+			`/api/v1/test/new`,
 			formData,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ export const updateTest = (formData, testId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		await axios.put(
-			process.env.REACT_APP_API_URL + `/api/v1/test/${testId}`,
+			`/api/v1/test/${testId}`,
 			formData,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -99,7 +99,7 @@ export const deleteTest = (id) => async (dispatch) => {
 	try {
 		dispatch(setIsTestsLoading(true));
 		const { data } = await axios.delete(
-			process.env.REACT_APP_API_URL + `/api/v1/test/${id}`,
+			`/api/v1/test/${id}`,
 			{ withCredentials: true },
 		);
 
@@ -117,7 +117,7 @@ export const createModule = (formData, testId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		await axios.post(
-			process.env.REACT_APP_API_URL + `/api/v1/test/${testId}/module/new`,
+			`/api/v1/test/${testId}/module/new`,
 			formData,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -138,7 +138,7 @@ export const updateModule = (formData, moduleId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		await axios.put(
-			process.env.REACT_APP_API_URL + `/api/v1/module/${moduleId}`,
+			`/api/v1/module/${moduleId}`,
 			formData,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -159,7 +159,7 @@ export const deleteModule = (id) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.delete(
-			process.env.REACT_APP_API_URL + `/api/v1/module/${id}`,
+			`/api/v1/module/${id}`,
 			{ withCredentials: true },
 		);
 
@@ -177,7 +177,7 @@ export const getModule = (testId, moduleId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.get(
-			process.env.REACT_APP_API_URL +
+			REACT_APP_API_URL +
 				`/api/v1/test/${testId}/module/${moduleId}`,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -198,7 +198,7 @@ export const getModuleQuestions = (testId, moduleId) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.get(
-			process.env.REACT_APP_API_URL +
+			REACT_APP_API_URL +
 				`/api/v1/test/${testId}/module/${moduleId}/questions`,
 			{
 				headers: { "Content-Type": "application/json" },
@@ -219,7 +219,7 @@ export const uploadTileImage = (id, formData) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.put(
-			process.env.REACT_APP_API_URL + `/api/v1/question/${id}`,
+			`/api/v1/question/${id}`,
 			formData,
 			{
 				withCredentials: true,
@@ -242,7 +242,7 @@ export const deleteQuestionImage = (testId, moduleId, questionId) => async (disp
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.delete(
-			`${process.env.REACT_APP_API_URL}/api/v1/test/${testId}/module/${moduleId}/question/${questionId}/image/delete`,
+			`${REACT_APP_API_URL}/api/v1/test/${testId}/module/${moduleId}/question/${questionId}/image/delete`,
 			{ withCredentials: true }
 		);
 
@@ -261,7 +261,7 @@ export const changeQuestionNumber =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.put(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/${questionId}/number/update`,
 				{ questionNumber },
 				{ withCredentials: true },
@@ -281,7 +281,7 @@ export const deleteQuestion = (id) => async (dispatch) => {
 	try {
 		dispatch(setLoader(true));
 		const { data } = await axios.delete(
-			process.env.REACT_APP_API_URL + `/api/v1/question/${id}`,
+			`/api/v1/question/${id}`,
 			{ withCredentials: true },
 		);
 
@@ -300,7 +300,7 @@ export const createStringQuestion =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.post(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/string/new`,
 				question,
 				{ withCredentials: true },
@@ -322,7 +322,7 @@ export const updateStringQuestion =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.post(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/${questionId}/string/update`,
 				question,
 				{ withCredentials: true },
@@ -344,7 +344,7 @@ export const createImageQuestion =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.post(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/image/new`,
 				question,
 				{
@@ -371,7 +371,7 @@ export const updateImageQuestion =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.post(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/${questionId}/image/update`,
 				formData,
 				{
@@ -398,7 +398,7 @@ export const getQuestionDetails =
 		try {
 			dispatch(setLoader(true));
 			const { data } = await axios.get(
-				process.env.REACT_APP_API_URL +
+				REACT_APP_API_URL +
 					`/api/v1/test/${id}/module/${moduleId}/question/${questionId}`,
 				{ withCredentials: true },
 			);
@@ -414,7 +414,7 @@ export const getTestCompletionCounts = () => async (dispatch) => {
 	try {
 		dispatch(setIsLoading(true));
 		const { data } = await axios.get(
-			process.env.REACT_APP_API_URL + "/api/v1/exams/completion-count",
+			"/api/v1/exams/completion-count",
 			{ withCredentials: true },
 		);
 

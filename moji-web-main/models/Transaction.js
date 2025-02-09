@@ -10,22 +10,29 @@ const transactionSchema = mongoose.Schema(
     courses: [
       {
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        classId: { type: mongoose.Schema.Types.ObjectId, ref: "Class" }, // Added classId
         price: { type: Number },
         discountCode: { type: String },
         purchasedAt: { type: Date, default: Date.now },
+        participants: [
+          {
+            name: { type: String, required: true },
+            price: { type: Number, required: true },
+          },
+        ],
       },
     ],
-    content: { type: String, required: true },
+
     totalAmount: { type: Number, required: true },
-    paymentMethod: { type: String, enum: ["PayOS", "VNPAY"], required: true },
+
     status: {
-      type: String,
-      enum: ["Pending", "Completed", "Failed"],
-      default: "Completed",
+      type: Boolean,
     },
   },
   {
-    timestamps: true,
+    timestamps: {
+      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+    },
   }
 );
 
