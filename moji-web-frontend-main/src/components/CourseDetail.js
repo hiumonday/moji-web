@@ -42,6 +42,23 @@ const CourseDetail = (i18n) => {
 
   const hasEarlyBirdSlots = course.earlyBirdSlot > 0;
 
+  const renderActionButton = () => {
+    if (course.type === "contact_based") {
+      return (
+        <button
+          onClick={() => (window.location.href = "tel:+84123456789")} // Replace with actual contact number
+          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
+        >
+          {i18n.language === "en"
+            ? "Contact for consultation"
+            : "Liên hệ tư vấn"}
+        </button>
+      );
+    }
+
+    return <AddToCartButton course={course} i18n={i18n} />;
+  };
+
   return (
     <>
       <div className="min-h-screen bg-white">
@@ -58,7 +75,13 @@ const CourseDetail = (i18n) => {
               <h1 className="text-5xl font-bold text-white mb-4">
                 {course.title}
               </h1>
-              {hasEarlyBirdSlots ? (
+              {course.type === "contact_based" ? (
+                <p className="text-3xl font-bold text-white">
+                  {i18n.language === "en"
+                    ? "Contact for pricing"
+                    : "Liên hệ để biết giá"}
+                </p>
+              ) : hasEarlyBirdSlots ? (
                 <div className="space-y-1">
                   <p className="text-3xl font-bold text-green-400">
                     {course.earlyBirdPrice.toLocaleString()} VNĐ
@@ -69,7 +92,7 @@ const CourseDetail = (i18n) => {
                 </div>
               ) : (
                 <p className="text-3xl font-bold text-white">
-                  ${course.price.toLocaleString()}
+                  {course.price.toLocaleString()} VNĐ
                 </p>
               )}
             </div>
@@ -120,12 +143,7 @@ const CourseDetail = (i18n) => {
             {/* Sidebar */}
             <div className="md:col-span-1">
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24">
-                <div className="flex space-x-4">
-                  <AddToCartButton course={course} i18n={i18n} />
-                  <button className="flex-1 bg-amber-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors duration-300">
-                    {i18n.language === "en" ? "Buy now" : "Mua ngay"}
-                  </button>
-                </div>
+                <div className="flex space-x-4">{renderActionButton()}</div>
 
                 <h2 className="text-xl font-bold mb-4">Course Highlights</h2>
                 <ul className="space-y-3">
@@ -164,23 +182,35 @@ const CourseDetail = (i18n) => {
         >
           <div className="px-4 py-3 flex justify-between items-center">
             <div>
-              {hasEarlyBirdSlots ? (
+              {course.type === "contact_based" ? (
+                <p className="text-lg font-bold">
+                  {i18n.language === "en"
+                    ? "Contact for pricing"
+                    : "Liên hệ tư vấn"}
+                </p>
+              ) : hasEarlyBirdSlots ? (
                 <div className="flex items-center">
                   <p className="text-sm line-through text-gray-400 mr-2">
-                    ${course.price.toLocaleString()}
+                    {course.price.toLocaleString()} VNĐ
                   </p>
                   <p className="text-lg font-bold text-green-600">
-                    ${course.earlyBirdPrice.toLocaleString()}
+                    {course.earlyBirdPrice.toLocaleString()} VNĐ
                   </p>
                 </div>
               ) : (
                 <p className="text-lg font-bold">
-                  ${course.price.toLocaleString()}
+                  {course.price.toLocaleString()} VNĐ
                 </p>
               )}
             </div>
             <button className="bg-blue-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300">
-              Enroll Now
+              {course.type === "contact_based"
+                ? i18n.language === "en"
+                  ? "Contact Us"
+                  : "Liên Hệ"
+                : i18n.language === "en"
+                  ? "Enroll Now"
+                  : "Đăng Ký"}
             </button>
           </div>
         </div>

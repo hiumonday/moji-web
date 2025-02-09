@@ -32,7 +32,8 @@ import TransactionLogs from "./screens/admin/TransactionLogs";
 import AdminLogin from "./screens/admin/AdminLogin";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import ClassList from "./screens/admin/classes/ClassList";
-import MyCourses from "./screens/MyCourses"; // Add this line
+import MyCourses from "./screens/MyCourses";
+import ConsultationManagement from "./screens/admin/Consultation";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -152,6 +153,10 @@ const App = () => {
                     <Route path="courses/*" element={<AdminCourses />} />
                     <Route path="classes" element={<ClassList />} />
                     <Route path="users" element={<Users />} />
+                    <Route
+                      path="consultations"
+                      element={<ConsultationManagement />}
+                    />
                     <Route path="transactions" element={<TransactionLogs />} />
                   </Routes>
                 </AdminLayout>

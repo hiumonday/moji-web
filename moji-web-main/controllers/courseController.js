@@ -22,6 +22,7 @@ module.exports.getCourse = async (req, res) => {
         _id: course._id,
         title: course.title,
         description: course.description,
+        type: course.type,
         price: course.price,
         earlyBirdPrice: course.earlyBirdPrice,
         bundlePrice: course.bundlePrice,

@@ -13,6 +13,7 @@ export const fetchCourses = () => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const { data } = await axiosInstance.get("/api/v1/admin/courses");
+    console.log("Fetched courses:", data.courses); // Debug log
     dispatch(setCourses(data.courses));
   } catch (error) {
     dispatch(
@@ -39,9 +40,14 @@ export const createCourse = (courseData) => async (dispatch) => {
     await dispatch(fetchCourses());
     dispatch(setSuccess("Course created successfully"));
   } catch (error) {
-    dispatch(
-      setError(error.response?.data?.message || "Failed to create course")
-    );
+    const errorMessage =
+      error.response?.data?.message ||
+      (error.response?.data?.error
+        ? typeof error.response.data.error === "string"
+          ? error.response.data.error
+          : Object.values(error.response.data.error).join(", ")
+        : "Failed to create course");
+    dispatch(setError(errorMessage));
   } finally {
     dispatch(setLoading(false));
   }
@@ -105,5 +111,25 @@ export const toggleCoursePublish = (courseId) => async (dispatch) => {
     dispatch(setError("Failed to toggle course status"));
   } finally {
     dispatch(setToggleLoading({ courseId, isLoading: false }));
+  }
+};
+
+// Create consultation request
+export const createConsultation = (consultationData) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const { data } = await axiosInstance.post(
+      "/api/v1/consultation",
+      consultationData
+    );
+    dispatch(setSuccess("Consultation request sent successfully"));
+  } catch (error) {
+    dispatch(
+      setError(
+        error.response?.data?.message || "Failed to send consultation request"
+      )
+    );
+  } finally {
+    dispatch(setLoading(false));
   }
 };

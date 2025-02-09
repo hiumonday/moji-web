@@ -30,7 +30,9 @@ const transactionSchema = mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: {
+      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+    },
   }
 );
 

@@ -11,6 +11,7 @@ import {
   ButtonGroup,
   FormControlLabel,
   Switch,
+  MenuItem,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -128,6 +129,7 @@ const CreateCourse = () => {
       access_code: "",
       access_link: "",
     },
+    type: "non_contact_based",
   });
 
   const [discountData, setDiscountData] = useState({
@@ -143,23 +145,45 @@ const CreateCourse = () => {
   const handleSubmit = async (e, shouldPublish = false) => {
     e.preventDefault();
     try {
+      // Basic validation for all course types
+      if (!courseData.title || !courseData.type) {
+        throw new Error("Title and course type are required fields");
+      }
+
+      // Additional validation for non_contact_based courses
+      if (courseData.type === "non_contact_based") {
+        if (!courseData.price || !courseData.earlyBirdPrice) {
+          throw new Error(
+            "Price and early bird price are required for non-contact based courses"
+          );
+        }
+      }
+
       const formData = new FormData();
 
       const classesData = courseData.classes.map((classItem) => ({
         ...classItem,
         startTime: classItem.startTime || "00:00",
         endTime: classItem.endTime || "00:00",
-        earlyBirdSlot: parseInt(classItem.earlyBirdSlot) || 0,
+        earlyBirdSlot:
+          courseData.type === "non_contact_based"
+            ? parseInt(classItem.earlyBirdSlot) || 0
+            : 0,
       }));
 
       formData.append("title", courseData.title);
+      formData.append("type", courseData.type);
       formData.append("description", courseData.description);
-      formData.append("price", courseData.price);
-      formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
-      formData.append("bundlePrice", courseData.bundlePrice);
-      formData.append("alumniPrice", courseData.alumniPrice);
-      formData.append("is_active", shouldPublish);
 
+      // Only append price-related fields for non_contact_based courses
+      if (courseData.type === "non_contact_based") {
+        formData.append("price", courseData.price);
+        formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
+        formData.append("bundlePrice", courseData.bundlePrice);
+        formData.append("alumniPrice", courseData.alumniPrice);
+      }
+
+      formData.append("is_active", shouldPublish);
       formData.append("classes", JSON.stringify(classesData));
       formData.append("discounts", JSON.stringify(courseData.discounts));
       formData.append(
@@ -174,6 +198,7 @@ const CreateCourse = () => {
       await dispatch(createCourse(formData));
     } catch (error) {
       console.error("Failed to create course:", error);
+      // You might want to show this error to the user through a notification system
     }
   };
 
@@ -239,9 +264,26 @@ const CreateCourse = () => {
 
   return (
     <Box component="form" sx={{ fontFamily: "'Inter', sans-serif" }}>
+      {/* Basic Course Information Card */}
       <StyledPaper>
         <SectionTitle>Basic Course Information</SectionTitle>
         <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              select
+              required
+              fullWidth
+              label="Course Type"
+              value={courseData.type}
+              onChange={(e) =>
+                setCourseData({ ...courseData, type: e.target.value })
+              }
+              disabled={isLoading}
+            >
+              <MenuItem value="non_contact_based">Non Contact Based</MenuItem>
+              <MenuItem value="contact_based">Contact Based</MenuItem>
+            </StyledTextField>
+          </Grid>
           <Grid item xs={12} md={6}>
             <StyledTextField
               required
@@ -252,60 +294,6 @@ const CreateCourse = () => {
                 setCourseData({ ...courseData, title: e.target.value })
               }
               disabled={isLoading}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              required
-              fullWidth
-              type="number"
-              label="Regular Price"
-              value={courseData.price}
-              onChange={(e) =>
-                setCourseData({ ...courseData, price: e.target.value })
-              }
-              disabled={isLoading}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              required
-              fullWidth
-              type="number"
-              label="Early Bird Price"
-              value={courseData.earlyBirdPrice}
-              onChange={(e) =>
-                setCourseData({ ...courseData, earlyBirdPrice: e.target.value })
-              }
-              disabled={isLoading}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              required
-              fullWidth
-              type="number"
-              label="Bundle Price (2+ students)"
-              value={courseData.bundlePrice}
-              onChange={(e) =>
-                setCourseData({ ...courseData, bundlePrice: e.target.value })
-              }
-              disabled={isLoading}
-              helperText="Price per student when 2 or more sign up together"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              required
-              fullWidth
-              type="number"
-              label="Alumni Price"
-              value={courseData.alumniPrice}
-              onChange={(e) =>
-                setCourseData({ ...courseData, alumniPrice: e.target.value })
-              }
-              disabled={isLoading}
-              helperText="Special price for returning students"
             />
           </Grid>
           <Grid item xs={12}>
@@ -355,131 +343,220 @@ const CreateCourse = () => {
         </Grid>
       </StyledPaper>
 
-      <StyledPaper>
-        <SectionTitle>Learning Platform</SectionTitle>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              fullWidth
-              label="Access Code"
-              value={courseData.learning_platform.access_code}
-              onChange={(e) =>
-                setCourseData({
-                  ...courseData,
-                  learning_platform: {
-                    ...courseData.learning_platform,
-                    access_code: e.target.value,
-                  },
-                })
-              }
-              disabled={isLoading}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledTextField
-              fullWidth
-              label="Access Link"
-              value={courseData.learning_platform.access_link}
-              onChange={(e) =>
-                setCourseData({
-                  ...courseData,
-                  learning_platform: {
-                    ...courseData.learning_platform,
-                    access_link: e.target.value,
-                  },
-                })
-              }
-              disabled={isLoading}
-            />
-          </Grid>
-        </Grid>
-      </StyledPaper>
-
-      <StyledPaper>
-        <SectionTitle>Discounts</SectionTitle>
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
-            <StyledTextField
-              fullWidth
-              label="Discount Code"
-              value={discountData.code}
-              onChange={(e) =>
-                setDiscountData({ ...discountData, code: e.target.value })
-              }
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <StyledTextField
-              fullWidth
-              type="number"
-              label="Percentage"
-              value={discountData.percentage}
-              onChange={(e) =>
-                setDiscountData({ ...discountData, percentage: e.target.value })
-              }
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <StyledTextField
-              fullWidth
-              type="number"
-              label="Amount"
-              value={discountData.amount}
-              onChange={(e) =>
-                setDiscountData({ ...discountData, amount: e.target.value })
-              }
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <StyledTextField
-              fullWidth
-              type="datetime-local"
-              label="Expires At"
-              value={discountData.expiresAt}
-              onChange={(e) =>
-                setDiscountData({ ...discountData, expiresAt: e.target.value })
-              }
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <StyledButton
-              variant="contained"
-              onClick={addDiscount}
-              fullWidth
-              sx={{ height: "100%" }}
-            >
-              Add Discount
-            </StyledButton>
-          </Grid>
-        </Grid>
-
-        {courseData.discounts.length > 0 && (
-          <Box sx={{ mt: 3 }}>
-            <SubTitle>Added Discounts:</SubTitle>
-            <Grid container spacing={2}>
-              {courseData.discounts.map((discount, index) => (
-                <Grid item xs={12} key={index}>
-                  <Paper sx={{ p: 2, display: "flex", alignItems: "center" }}>
-                    <Typography sx={{ flex: 1 }}>
-                      Code: {discount.code} |
-                      {discount.percentage ? ` ${discount.percentage}% ` : ""}
-                      {discount.amount ? ` $${discount.amount} ` : ""}| Expires:{" "}
-                      {new Date(discount.expiresAt).toLocaleDateString()}
-                    </Typography>
-                    <IconButton
-                      color="error"
-                      onClick={() => removeDiscount(index)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Paper>
-                </Grid>
-              ))}
+      {/* Pricing Card - Only show for non_contact_based courses */}
+      {courseData.type === "non_contact_based" && (
+        <StyledPaper>
+          <SectionTitle>Course Pricing</SectionTitle>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Regular Price"
+                value={courseData.price}
+                onChange={(e) =>
+                  setCourseData({ ...courseData, price: e.target.value })
+                }
+                disabled={isLoading}
+              />
             </Grid>
-          </Box>
-        )}
-      </StyledPaper>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Early Bird Price"
+                value={courseData.earlyBirdPrice}
+                onChange={(e) =>
+                  setCourseData({
+                    ...courseData,
+                    earlyBirdPrice: e.target.value,
+                  })
+                }
+                disabled={isLoading}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Bundle Price (2+ students)"
+                value={courseData.bundlePrice}
+                onChange={(e) =>
+                  setCourseData({
+                    ...courseData,
+                    bundlePrice: e.target.value,
+                  })
+                }
+                disabled={isLoading}
+                helperText="Price per student when 2 or more sign up together"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Alumni Price"
+                value={courseData.alumniPrice}
+                onChange={(e) =>
+                  setCourseData({
+                    ...courseData,
+                    alumniPrice: e.target.value,
+                  })
+                }
+                disabled={isLoading}
+                helperText="Special price for returning students"
+              />
+            </Grid>
+          </Grid>
+        </StyledPaper>
+      )}
+
+      {courseData.type === "non_contact_based" && (
+        <>
+          <StyledPaper>
+            <SectionTitle>Learning Platform</SectionTitle>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <StyledTextField
+                  required={courseData.type === "non_contact_based"}
+                  fullWidth
+                  label="Access Code"
+                  value={courseData.learning_platform.access_code}
+                  onChange={(e) =>
+                    setCourseData({
+                      ...courseData,
+                      learning_platform: {
+                        ...courseData.learning_platform,
+                        access_code: e.target.value,
+                      },
+                    })
+                  }
+                  disabled={isLoading}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StyledTextField
+                  required={courseData.type === "non_contact_based"}
+                  fullWidth
+                  label="Access Link"
+                  value={courseData.learning_platform.access_link}
+                  onChange={(e) =>
+                    setCourseData({
+                      ...courseData,
+                      learning_platform: {
+                        ...courseData.learning_platform,
+                        access_link: e.target.value,
+                      },
+                    })
+                  }
+                  disabled={isLoading}
+                />
+              </Grid>
+            </Grid>
+          </StyledPaper>
+
+          <StyledPaper>
+            <SectionTitle>Discounts</SectionTitle>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid item xs={12} md={3}>
+                <StyledTextField
+                  fullWidth
+                  label="Discount Code"
+                  value={discountData.code}
+                  onChange={(e) =>
+                    setDiscountData({ ...discountData, code: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <StyledTextField
+                  fullWidth
+                  type="number"
+                  label="Percentage"
+                  value={discountData.percentage}
+                  onChange={(e) =>
+                    setDiscountData({
+                      ...discountData,
+                      percentage: e.target.value,
+                    })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <StyledTextField
+                  fullWidth
+                  type="number"
+                  label="Amount"
+                  value={discountData.amount}
+                  onChange={(e) =>
+                    setDiscountData({ ...discountData, amount: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <StyledTextField
+                  fullWidth
+                  type="datetime-local"
+                  label="Expires At"
+                  value={discountData.expiresAt}
+                  onChange={(e) =>
+                    setDiscountData({
+                      ...discountData,
+                      expiresAt: e.target.value,
+                    })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <StyledButton
+                  variant="contained"
+                  onClick={addDiscount}
+                  fullWidth
+                  sx={{ height: "100%" }}
+                >
+                  Add Discount
+                </StyledButton>
+              </Grid>
+            </Grid>
+
+            {courseData.discounts.length > 0 && (
+              <Box sx={{ mt: 3 }}>
+                <SubTitle>Added Discounts:</SubTitle>
+                <Grid container spacing={2}>
+                  {courseData.discounts.map((discount, index) => (
+                    <Grid item xs={12} key={index}>
+                      <Paper
+                        sx={{ p: 2, display: "flex", alignItems: "center" }}
+                      >
+                        <Typography sx={{ flex: 1 }}>
+                          Code: {discount.code} |
+                          {discount.percentage
+                            ? ` ${discount.percentage}% `
+                            : ""}
+                          {discount.amount ? ` $${discount.amount} ` : ""}|
+                          Expires:{" "}
+                          {new Date(discount.expiresAt).toLocaleDateString()}
+                        </Typography>
+                        <IconButton
+                          color="error"
+                          onClick={() => removeDiscount(index)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+          </StyledPaper>
+        </>
+      )}
 
       <StyledPaper>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -600,7 +677,7 @@ const CreateCourse = () => {
               </Grid>
               <Grid item xs={12} md={4}>
                 <StyledTextField
-                  required
+                  required={courseData.type === "non_contact_based"}
                   fullWidth
                   type="number"
                   label="Early Bird Slots"

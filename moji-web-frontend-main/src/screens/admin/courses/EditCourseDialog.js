@@ -14,6 +14,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Switch,
+  MenuItem,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -56,6 +57,7 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       access_link: "",
     },
     is_active: false,
+    type: "non_contact_based",
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -97,6 +99,7 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
       formData.append("earlyBirdSlot", courseData.earlyBirdSlot);
       formData.append("is_active", courseData.is_active);
+      formData.append("type", courseData.type);
 
       formData.append("classes", JSON.stringify(courseData.classes));
       formData.append("discounts", JSON.stringify(courseData.discounts));
@@ -200,47 +203,30 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <Grid container spacing={3}>
-            {/* Basic Course Information */}
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Basic Course Information
               </Typography>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mb: 3,
-                  p: 2,
-                  bgcolor: courseData.is_active ? "success.light" : "grey.100",
-                  borderRadius: 1,
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={courseData.is_active}
-                      onChange={handlePublishToggle}
-                      disabled={isLoading}
-                      color={courseData.is_active ? "success" : "default"}
-                    />
-                  }
-                  label={
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        {courseData.is_active ? "Published" : "Draft"}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {courseData.is_active
-                          ? "This course is visible to students"
-                          : "This course is hidden from students"}
-                      </Typography>
-                    </Box>
-                  }
-                />
-              </Box>
-
               <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    select
+                    required
+                    fullWidth
+                    label="Course Type"
+                    value={courseData.type}
+                    onChange={(e) =>
+                      setCourseData({ ...courseData, type: e.target.value })
+                    }
+                    disabled={isLoading}
+                  >
+                    <MenuItem value="non_contact_based">
+                      Non Contact Based
+                    </MenuItem>
+                    <MenuItem value="contact_based">Contact Based</MenuItem>
+                  </TextField>
+                </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
                     required
@@ -254,17 +240,24 @@ const EditCourseDialog = ({ open, onClose, course }) => {
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    type="number"
-                    label="Price"
-                    value={courseData.price}
-                    onChange={(e) =>
-                      setCourseData({ ...courseData, price: e.target.value })
-                    }
-                    disabled={isLoading}
-                  />
+                  {courseData.type === "non_contact_based" && (
+                    <>
+                      <TextField
+                        required
+                        fullWidth
+                        type="number"
+                        label="Price"
+                        value={courseData.price}
+                        onChange={(e) =>
+                          setCourseData({
+                            ...courseData,
+                            price: e.target.value,
+                          })
+                        }
+                        disabled={isLoading}
+                      />
+                    </>
+                  )}
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -317,48 +310,51 @@ const EditCourseDialog = ({ open, onClose, course }) => {
               </Grid>
             </Grid>
 
-            {/* Learning Platform */}
-            <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>
-                Learning Platform
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Access Code"
-                    value={courseData.learning_platform.access_code}
-                    onChange={(e) =>
-                      setCourseData({
-                        ...courseData,
-                        learning_platform: {
-                          ...courseData.learning_platform,
-                          access_code: e.target.value,
-                        },
-                      })
-                    }
-                    disabled={isLoading}
-                  />
+            {courseData.type === "non_contact_based" && (
+              <>
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Learning Platform
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Access Code"
+                        value={courseData.learning_platform.access_code}
+                        onChange={(e) =>
+                          setCourseData({
+                            ...courseData,
+                            learning_platform: {
+                              ...courseData.learning_platform,
+                              access_code: e.target.value,
+                            },
+                          })
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Access Link"
+                        value={courseData.learning_platform.access_link}
+                        onChange={(e) =>
+                          setCourseData({
+                            ...courseData,
+                            learning_platform: {
+                              ...courseData.learning_platform,
+                              access_link: e.target.value,
+                            },
+                          })
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Access Link"
-                    value={courseData.learning_platform.access_link}
-                    onChange={(e) =>
-                      setCourseData({
-                        ...courseData,
-                        learning_platform: {
-                          ...courseData.learning_platform,
-                          access_link: e.target.value,
-                        },
-                      })
-                    }
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
+              </>
+            )}
 
             {/* Classes */}
             <Grid item xs={12}>

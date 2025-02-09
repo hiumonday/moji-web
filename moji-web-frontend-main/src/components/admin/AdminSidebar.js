@@ -20,6 +20,7 @@ import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   Class as ClassIcon,
+  Chat as ConsultationIcon,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -41,6 +42,11 @@ const AdminSidebar = () => {
     { text: "Courses", path: "/admin/courses", icon: <CourseIcon /> },
     { text: "Classes", path: "/admin/classes", icon: <ClassIcon /> },
     { text: "Users", path: "/admin/users", icon: <UsersIcon /> },
+    {
+      text: "Consultations",
+      path: "/admin/consultations",
+      icon: <ConsultationIcon />,
+    },
     {
       text: "Transactions",
       path: "/admin/transactions",

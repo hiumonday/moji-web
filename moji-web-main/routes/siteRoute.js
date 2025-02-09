@@ -3,19 +3,22 @@ const courseRoute = require("./courseRoute");
 const userRoute = require("./userRoute");
 const adminRoute = require("./admin/adminRoute");
 const checkOutRoute = require("./checkOutRoute");
-
+const consultationRoute = require("./consultationRoute");
 const webHookRoute = require("./webHookRoute");
 const myCourseRoute = require("./myCourseRoute");
 const express = require("express");
 const passport = require("passport");
 const adminCourseRoute = require("./admin/courseRoute");
+const adminConsultationRoute = require("./admin/consultationRoute");
 const app = express();
 
 function route(app) {
   // API routes
   app.use("/api/v1", userRoute);
+  app.use("/api/v1", consultationRoute);
   app.use("/api/v1/admin", adminRoute);
   app.use("/api/v1/admin", adminCourseRoute);
+  app.use("/api/v1/admin", adminConsultationRoute);
   app.use("/api/v1", courseRoute);
   app.use("/api/v1", cartRoute);
   app.use("/api/v1", checkOutRoute);

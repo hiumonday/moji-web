@@ -19,16 +19,17 @@ const Courses = () => {
     const fetchCourses = async () => {
       try {
         const response = await fetch("/api/v1/courses");
-        const form = await response.json();
+        const data = await response.json();
+        console.log("API Response:", data);
 
-        console.log(form);
-
-        setCourses(form.data); // Assuming response.data is the courses array
-
-        console.log(courses);
+        if (data.data) {
+          setCourses(data.data);
+        } else {
+          throw new Error(data.message || "Failed to fetch courses");
+        }
       } catch (err) {
-        setError("Failed to load courses");
-        console.error(err);
+        setError(err.message || "Failed to load courses");
+        console.error("Error fetching courses:", err);
       } finally {
         setLoading(false);
       }
@@ -43,13 +44,22 @@ const Courses = () => {
         <div className="text-center">
           <Spinner className="mb-4" />
           <p className="text-gray-600">
-            {i18n.language === "en" ? "Loading..." : "Đang tải..."}{" "}
+            {i18n.language === "en" ? "Loading..." : "Đang tải..."}
           </p>
         </div>
       </div>
     );
   }
-  if (error) return <div>Error: {error}</div>; // Show an error message
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-center">
+          <p className="text-red-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -60,17 +70,19 @@ const Courses = () => {
         <meta name="keywords" content={t("coursesPageKeywords")} />
       </Helmet>
 
-      <SectionTitle
-        pretitle={t("debateProgramsPretitle")}
-        title={t("debateProgramsTitle")}
-      ></SectionTitle>
-      <Container>
-        <div className="grid gap-10 lg:grid-cols-3 xl:grid-cols-3 max-w-6xl mx-auto">
-          {courses.map((course) => (
-            <CourseCard key={course.title} course={course} i18n={i18n} />
-          ))}
-        </div>
-      </Container>
+      <section className="bg-gray-50">
+        <Container>
+          <SectionTitle
+            pretitle={t("debateProgramsPretitle")}
+            title={t("debateProgramsTitle")}
+          ></SectionTitle>
+          <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3 py-12 px-10">
+            {courses.map((course) => (
+              <CourseCard key={course._id} course={course} i18n={i18n} />
+            ))}
+          </div>
+        </Container>
+      </section>
 
       {/* <SectionTitle
         pretitle={t("satPrepPretitle")}

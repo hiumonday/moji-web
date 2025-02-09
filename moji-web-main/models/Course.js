@@ -10,17 +10,32 @@ const learningPlatformSchema = mongoose.Schema({
 const courseSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
+    type: {
+      type: String,
+      enum: ["contact_based", "non_contact_based"],
+      required: true,
+    },
     description: { type: String },
     image: { data: Buffer, contentType: String },
-    price: { type: Number, required: true },
-    earlyBirdPrice: { type: Number },
+    price: {
+      type: Number,
+      required: function () {
+        return this.type === "non_contact_based";
+      },
+    },
+    earlyBirdPrice: {
+      type: Number,
+      required: function () {
+        return this.type === "non_contact_based";
+      },
+    },
     bundlePrice: { type: Number },
     alumniPrice: { type: Number },
     is_active: { type: Boolean, default: false },
     discounts: [
       {
         _id: false,
-        code: { type: String, required: true },
+        code: { type: String },
         percentage: { type: Number },
         amount: { type: Number },
         expiresAt: { type: Date },
@@ -31,16 +46,22 @@ const courseSchema = mongoose.Schema(
         _id: {
           type: mongoose.Schema.Types.ObjectId,
           default: () => new mongoose.Types.ObjectId(),
-          require: true,
+          required: true,
         },
-        level: { type: String, require: true },
-        language: { type: String, require: true },
-        teacherName: { type: String, require: true },
-        day: { type: String, require: true },
+        level: { type: String, required: true },
+        language: { type: String, required: true },
+        teacherName: { type: String, required: true },
+        day: { type: String, required: true },
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
         learning_platform: { type: learningPlatformSchema },
-        earlyBirdSlot: { type: Number, default: 0 },
+        earlyBirdSlot: {
+          type: Number,
+          default: 0,
+          required: function () {
+            return this.parent().parent().type === "non_contact_based";
+          },
+        },
         participants: [
           {
             user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -54,7 +75,9 @@ const courseSchema = mongoose.Schema(
     ],
   },
   {
-    timestamps: true,
+    timestamps: {
+      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+    },
   }
 );
 

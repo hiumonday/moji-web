@@ -47,14 +47,21 @@ exports.createCourse = catchAsyncErrors(async (req, res, next) => {
       };
     }
 
-    // Validate required fields
-    if (!courseData.title || !courseData.price || !courseData.earlyBirdPrice) {
-      return next(
-        new ErrorHandler(
-          "Title, price, and early bird price are required fields",
-          400
-        )
-      );
+    // Validate required fields based on course type
+    if (!courseData.title) {
+      return next(new ErrorHandler("Title is a required field", 400));
+    }
+
+    // Additional validation for non-contact based courses
+    if (courseData.type === "non_contact_based") {
+      if (!courseData.price || !courseData.earlyBirdPrice) {
+        return next(
+          new ErrorHandler(
+            "Price and early bird price are required for non-contact based courses",
+            400
+          )
+        );
+      }
     }
 
     // Validate classes if provided
