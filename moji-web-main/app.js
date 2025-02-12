@@ -16,7 +16,7 @@ const errorMiddleware = require("./middlewares/errorMiddleware");
 
 app.use(
   session({
-    secret: process.env.SESSION_KEY || 'your-fallback-secret-key',
+    secret: process.env.SESSION_KEY || "your-fallback-secret-key",
     resave: false,
     saveUninitialized: true,
   })

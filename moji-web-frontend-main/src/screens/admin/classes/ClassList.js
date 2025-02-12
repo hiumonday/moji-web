@@ -77,14 +77,6 @@ const ClassRow = ({ classItem, onDeleteStudent }) => {
                 borderRadius: 1,
               }}
             >
-              {/* <Typography
-                variant="h6"
-                gutterBottom
-                component="div"
-                sx={{ fontWeight: 600 }}
-              >
-                Students
-              </Typography> */}
               <Table size="small" aria-label="students">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#E8F0FE" }}>
