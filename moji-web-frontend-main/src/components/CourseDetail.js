@@ -44,7 +44,7 @@ const CourseDetail = (i18n) => {
 
   return (
     <>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white relative z-50">
         {/* Hero Section */}
         <div className="relative h-[400px] w-full">
           <img

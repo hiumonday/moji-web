@@ -209,9 +209,27 @@ const Cart = () => {
               </div>
 
               <button
-                onClick={() =>
-                  navigate("/check-out", { state: { totalPrice } })
-                }
+                onClick={() => {
+                  const transactionData = {
+                    totalAmount: totalPrice,
+                    participants: cart.flatMap((item) =>
+                      item.participants.map((participant) => ({
+                        course_title: item.title,
+                        class_title: `${item.classInfo.level} - ${item.classInfo.language}`,
+                        name: participant.info.name,
+                        tution_fee: participant.price,
+                        discount_type: participant.discount_type,
+                      }))
+                    ),
+                  };
+
+                  navigate("/check-out", {
+                    state: {
+                      totalPrice,
+                      transactionData,
+                    },
+                  });
+                }}
                 disabled={isActionLoading}
                 className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >

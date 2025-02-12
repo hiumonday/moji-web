@@ -27,12 +27,12 @@ const CourseCard = ({ course, i18n }) => {
             alt={course.title}
             className="w-full h-60 object-cover"
           />
-          <div className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
+          {/* <div className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
             {course.earlyBirdSlot > 0
               ? course.earlyBirdPrice.toLocaleString()
               : course.price.toLocaleString()}{" "}
             VND
-          </div>
+          </div> */}
         </div>
         <div className="px-6 py-4 flex-grow">
           <h3 className="text-xl font-bold mb-2 text-gray-800">

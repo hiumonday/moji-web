@@ -4,9 +4,10 @@ const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler.js");
 const User = require("../models/User");
 const Course = require("../models/Course");
+const Transaction = require("../models/Transaction.js");
 
 module.exports.register = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, phone } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -23,6 +24,7 @@ module.exports.register = catchAsyncErrors(async (req, res, next) => {
     name,
     email,
     password: hashedPassword,
+    phone,
   });
 
   await newUser.save();
@@ -199,4 +201,16 @@ exports.viewCourse = catchAsyncErrors(async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ message: "Error fetching courses", error });
   }
+});
+
+exports.getTransactionHistory = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.user._id);
+  const transactions = await Transaction.find({ user_id: req.user._id }).sort({
+    createdAt: -1,
+  }); // Sắp xếp theo thời gian mới nhất
+
+  res.status(200).json({
+    success: true,
+    transactions,
+  });
 });

@@ -20,6 +20,7 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    phone: "",
   });
   const [error, setError] = useState("");
 
@@ -49,7 +50,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword, phone } = formData;
 
     if (password !== confirmPassword) {
       setError(t("passwordNotMatch"));
@@ -60,7 +61,7 @@ const Register = () => {
       const response = await fetch("/api/v1/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, phone }), // Include phone
       });
 
       const result = await response.json();
@@ -103,6 +104,21 @@ const Register = () => {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Full name"
                   value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="phone" className="sr-only">
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Phone Number"
+                  value={formData.phone}
                   onChange={handleChange}
                 />
               </div>

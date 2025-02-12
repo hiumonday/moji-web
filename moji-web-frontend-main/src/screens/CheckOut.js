@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import "../index.css";
 import { redirect, useLocation } from "react-router-dom";
 import { Spinner } from "../components/spinner";
@@ -7,16 +8,19 @@ import { Spinner } from "../components/spinner";
 const CheckOut = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [isCreatingLink, setIsCreatingLink] = useState(false);
   const [cart, setCart] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState("bank");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const { i18n } = useTranslation();
 
+  const userState = useSelector((state) => state.user);
+  const user = userState?.user || null;
+
   const location = useLocation();
-  const totalPrice = location.state?.totalPrice || 0;
+  const transactionData = location.state?.transactionData;
 
   useEffect(() => {
     fetchCart();
@@ -32,6 +36,7 @@ const CheckOut = () => {
       if (response.ok) {
         const data = await response.json();
         setCart(data.cart);
+        setTotalPrice(data.totalPrice);
         setError(null);
       } else {
         setError("Failed to fetch cart.");
@@ -45,10 +50,19 @@ const CheckOut = () => {
   };
 
   const paymentData = {
-    // amount: totalPrice,
-    amount: 5000,
+    amount: totalPrice,
     description: "Thanh toan khoa hoc",
     items: cart,
+    transactionData: {
+      ...transactionData,
+      user_id: user?._id, // Thêm user_id vào transaction data
+      status: "PENDING",
+      description: "Thanh toan khoa hoc",
+      date: new Date().toISOString(),
+      name: user?.name,
+      email: user?.email,
+      phone: user?.phone || "Chưa cập nhật",
+    },
   };
 
   return message ? (
@@ -138,16 +152,24 @@ const CheckOut = () => {
               {/* Customer Information */}
               <div className="mb-6">
                 <h3 className="font-semibold mb-2">Người mua hàng</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Tài khoản</p>
-                    <p>Nguyễn Đức</p>
+                {user ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Tài khoản</p>
+                      <p>{user.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Email</p>
+                      <p>{user.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Số điện thoại</p>
+                      <p>{user.phone || "Chưa cập nhật"}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Số điện thoại</p>
-                    <p>0365 383 285</p>
-                  </div>
-                </div>
+                ) : (
+                  <p>Vui lòng đăng nhập để tiếp tục</p>
+                )}
               </div>
 
               <hr className="my-4" />
@@ -167,14 +189,6 @@ const CheckOut = () => {
 
               {/* Price Summary */}
               <div className="mb-6">
-                {/* {promoCodeFromCart && (
-                  <div className="flex justify-between mb-2 text-green-600">
-                    <span>Khuyến mại</span>
-                    <span>
-                      -đ{(totalPrice - discountedPrice).toLocaleString()}
-                    </span>
-                  </div>
-                )} */}
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Tổng</span>
                   <span>đ{totalPrice.toLocaleString()}</span>
