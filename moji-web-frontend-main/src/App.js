@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import NotFound from "./screens/NotFound";
 import { HelmetProvider } from "react-helmet-async";
 import Home from "./screens/Home";
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Snackbar, Box } from "@mui/material";
 import { clearError, clearSuccess } from "./redux/slices/appSlice";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
@@ -94,7 +94,9 @@ const App = () => {
     <HelmetProvider>
       <BrowserRouter>
         <div className="bg-white min-h-screen">
-          <Navbar changeLanguage={changeLanguage} />
+          {!window.location.pathname.startsWith("/admin") && (
+            <Navbar changeLanguage={changeLanguage} />
+          )}
           <Routes>
             <Route
               path="/"
@@ -143,23 +145,28 @@ const App = () => {
             <Route
               path="/admin/*"
               element={
-                <AdminLayout>
-                  <Routes>
-                    <Route
-                      index
-                      element={<Navigate to="dashboard" replace />}
-                    />
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="courses/*" element={<AdminCourses />} />
-                    <Route path="classes" element={<ClassList />} />
-                    <Route path="users" element={<Users />} />
-                    <Route
-                      path="consultations"
-                      element={<ConsultationManagement />}
-                    />
-                    <Route path="transactions" element={<TransactionLogs />} />
-                  </Routes>
-                </AdminLayout>
+                <Box sx={{ height: "100vh", overflow: "hidden" }}>
+                  <AdminLayout>
+                    <Routes>
+                      <Route
+                        index
+                        element={<Navigate to="dashboard" replace />}
+                      />
+                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="courses/*" element={<AdminCourses />} />
+                      <Route path="classes" element={<ClassList />} />
+                      <Route path="users" element={<Users />} />
+                      <Route
+                        path="consultations"
+                        element={<ConsultationManagement />}
+                      />
+                      <Route
+                        path="transactions"
+                        element={<TransactionLogs />}
+                      />
+                    </Routes>
+                  </AdminLayout>
+                </Box>
               }
             />
             <Route path="/profile" element={<Profile />} />

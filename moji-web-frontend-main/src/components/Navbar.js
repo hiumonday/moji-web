@@ -13,7 +13,6 @@ import { deepOrange } from "@mui/material/colors";
 
 const Navbar = ({ changeLanguage }) => {
   const location = useLocation();
-  const currentPath = location.pathname;
   const { i18n, t } = useTranslation();
   const userState = useSelector((state) => state.user);
   const isAuthenticated = userState?.isAuthenticated || false;
@@ -24,6 +23,8 @@ const Navbar = ({ changeLanguage }) => {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  const currentPath = location.pathname;
 
   useEffect(() => {
     setIsMenuOpen(false); // Close mobile menu on route change
@@ -52,6 +53,10 @@ const Navbar = ({ changeLanguage }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMenuOpen]);
+
+  if (currentPath.startsWith("/admin")) {
+    return null; // Don't render navbar for admin routes
+  }
 
   const handleLogout = () => {
     dispatch(logoutAction());

@@ -17,21 +17,23 @@ const AdminLayout = ({ children }) => {
   }
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <AdminNavbar />
-      <AdminSidebar />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - 240px)` },
-          minHeight: "100vh",
-          backgroundColor: "#FFFFFF",
-          pt: "24px",
-        }}
-      >
-        {children}
+      <Box sx={{ display: "flex", flex: 1 }}>
+        <AdminSidebar />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - 240px)` },
+            minHeight: "calc(100vh - 72px)",
+            backgroundColor: "#FFFFFF",
+            marginTop: "72px",
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Box>
   );
