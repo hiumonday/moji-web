@@ -105,7 +105,7 @@ const Navbar = ({ changeLanguage }) => {
   };
 
   return (
-    <nav className="bg-white navbar-shadow">
+    <nav className="bg-white navbar-shadow sticky top-0 z-[9999]">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-[72px] items-center justify-between">
           {/* Mobile menu button */}
@@ -201,7 +201,7 @@ const Navbar = ({ changeLanguage }) => {
                     <span className="sr-only">Open user menu</span>
                     <Avatar {...stringAvatar(user.name)} />
                   </Menu.Button>
-                  <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white py-1 ring-1 ring-black ring-opacity-5 z-20">
+                  <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white py-1 ring-1 ring-black ring-opacity-5 z-50">
                     <Menu.Item>
                       <NavLink
                         to="/profile"

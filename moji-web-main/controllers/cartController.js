@@ -6,7 +6,7 @@ module.exports.viewCart = async (req, res) => {
 
   try {
     const user = await User.findById(userId).populate("cart.courseId");
-
+    console.log(user);
     const cartItems = user.cart.map((item) => {
       let imageBase64 = null;
       if (item.courseId.image && item.courseId.image.data) {
@@ -15,19 +15,28 @@ module.exports.viewCart = async (req, res) => {
         };base64,${item.courseId.image.data.toString("base64")}`;
       }
       const classInfo = item.courseId.classes.id(item.classId);
+      let discount_type = "";
+      let earlyBirdSlot = classInfo.earlyBirdSlot;
 
       const participantsWithPrice = item.participants.map((participant) => {
         let price = item.courseId.price;
         if (participant.isAlumni) {
           price = item.courseId.alumniPrice;
+          discount_type = "Alumni";
+        } else if (earlyBirdSlot > 0) {
+          price = item.courseId.earlyBirdPrice;
+          discount_type = "Early Bird";
+          earlyBirdSlot--;
         } else if (item.participants.length > 1) {
           price = item.courseId.bundlePrice;
-        } else if (classInfo.earlyBirdSlot > 0) {
-          price = item.courseId.earlyBirdPrice;
+          discount_type = "Bundle";
         }
+        console.log(discount_type);
+        console.log(participant);
         return {
           info: participant,
           price,
+          discount_type,
         };
       });
 

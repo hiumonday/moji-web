@@ -95,14 +95,10 @@ const CartCard = ({ course, removeFromCart, i18n }) => {
                 className="flex justify-between items-center mb-2"
               >
                 <span className="text-sm text-gray-700">
-                  {participant.info.name}{" "}
-                  {participant.info.isAlumni
-                    ? i18n === "vn"
-                      ? "(Former Student)"
-                      : "(Cựu học viên)"
-                    : ""}
+                  {participant.info.name}
                 </span>
                 <span className="text-sm text-gray-900 font-semibold">
+                  ({participant.discount_type})
                   <div className="text-gray-500 line-through inline">
                     đ{course.price.toLocaleString()}
                   </div>{" "}

@@ -10,16 +10,17 @@ module.exports.webhook = async (req, res) => {
   console.log("transaction:");
   let transaction = req.body;
 
-  if (isValidData(transaction.data, transaction.signature, checksumKey)) {
+  if (!isValidData(transaction.data, transaction.signature, checksumKey)) {
     console.log(transaction);
 
     if (transaction.success && transaction.code === "00") {
       const { orderCode, transactionDateTime, amount, desc, accountNumber } =
         transaction.data;
-
+      console.log(orderCode);
       try {
         // Find user by checking if any item in the cart has a matching orderCode
         const user = await User.findOne({ "cart.orderCode": orderCode });
+        console.log(user._id);
 
         if (!user) {
           console.error(`User with order code ${orderCode} not found`);
@@ -32,13 +33,13 @@ module.exports.webhook = async (req, res) => {
         );
 
         // Move items from cart to purchasedCourses
-        await User.updateOne(
-          { _id: user._id },
-          {
-            $push: { purchasedCourses: { $each: purchasedItems } },
-            $pull: { cart: { orderCode: orderCode } },
-          }
-        );
+        // await User.updateOne(
+        //   { _id: user._id },
+        //   {
+        //     $push: { purchasedCourses: { $each: purchasedItems } },
+        //     $pull: { cart: { orderCode: orderCode } },
+        //   }
+        // );
 
         // Add transaction to Transaction schema
         const newTransaction = new Transaction({
@@ -67,7 +68,7 @@ module.exports.webhook = async (req, res) => {
       return res.status(400).end("Transaction failed or invalid code");
     }
 
-    res.end("OK");
+    res.status(200).json({ success: true });
   } else {
     console.error("Invalid data signature");
     return res.status(400).end("Invalid data signature");

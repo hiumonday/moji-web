@@ -20,4 +20,10 @@ router.post("/fake-login", userController.fakeLogin);
 
 router.get("/viewCourse", userController.viewCourse);
 
+router.get(
+  "/transaction-history",
+  isAuthenticatedUser,
+  userController.getTransactionHistory
+);
+
 module.exports = router;

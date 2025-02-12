@@ -5,11 +5,10 @@ const ErrorHandler = require("../utils/errorHandler");
 
 // Get enrolled courses for the logged-in user
 exports.getEnrolledCourses = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.user._id)
-    .populate({
-      path: "purchasedCourses.courseId",
-      select: "title description price level classes",
-    });
+  const user = await User.findById(req.user._id).populate({
+    path: "purchasedCourses.courseId",
+    select: "title description price level classes image",
+  });
 
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
@@ -22,18 +21,31 @@ exports.getEnrolledCourses = catchAsyncErrors(async (req, res, next) => {
       (cls) => cls._id.toString() === purchase.classId.toString()
     );
 
+    // Handle image conversion to base64
+    let imageBase64 = null;
+    if (purchase.courseId?.image && purchase.courseId.image.data) {
+      imageBase64 = `data:${
+        purchase.courseId.image.contentType
+      };base64,${purchase.courseId.image.data.toString("base64")}`;
+    }
+
     return {
       id: purchase._id || purchase.courseId?._id,
       courseId: {
         title: purchase.courseId?.title || "",
         instructor: courseClass?.teacherName || "",
-        duration: `${courseClass?.startTime || ""} - ${courseClass?.endTime || ""}`,
+        duration: `${courseClass?.startTime || ""} - ${
+          courseClass?.endTime || ""
+        }`,
         level: courseClass?.level || "",
+        image: imageBase64, // Add image to the response
       },
       classId: {
         name: `${purchase.courseId?.title || ""} - ${courseClass?.level || ""}`,
         teacherName: courseClass?.teacherName || "",
-        studyTime: `${courseClass?.startTime || ""} - ${courseClass?.endTime || ""}`,
+        studyTime: `${courseClass?.startTime || ""} - ${
+          courseClass?.endTime || ""
+        }`,
         day: courseClass?.day || "",
         startTime: courseClass?.startTime || "",
         endTime: courseClass?.endTime || "",
@@ -43,10 +55,11 @@ exports.getEnrolledCourses = catchAsyncErrors(async (req, res, next) => {
           access_link: "",
         },
       },
-      participants: purchase.participants?.map((participant) => ({
-        name: participant?.name || "",
-        dateOfBirth: participant?.dateOfBirth || "",
-      })) || [],
+      participants:
+        purchase.participants?.map((participant) => ({
+          name: participant?.name || "",
+          dateOfBirth: participant?.dateOfBirth || "",
+        })) || [],
     };
   });
 
