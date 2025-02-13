@@ -80,6 +80,14 @@ const Login = () => {
                 />
               </div>
             </div>
+            <div className="text-right">
+              <NavLink
+                to="/password/forgot"
+                className="text-sm text-blue-500 hover:text-blue-600"
+              >
+                {t("forgotPassword")}
+              </NavLink>
+            </div>
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

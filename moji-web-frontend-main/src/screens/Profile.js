@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { updateUser } from "../redux/actions/userAction";
+import axios from "axios";
+import { setError, setSuccess } from "../redux/slices/appSlice";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -15,6 +17,12 @@ const Profile = () => {
     desiredScore: user?.desiredScore || "",
     satPurpose: user?.satPurpose || "",
   });
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -30,6 +38,33 @@ const Profile = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+    }
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      dispatch(setError("Passwords do not match"));
+      return;
+    }
+    try {
+      const response = await axios.put("/api/v1/password/update", {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
+      });
+      if (response.data.success) {
+        dispatch(setSuccess("Password updated successfully"));
+        setPasswordData({
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        setShowPasswordChange(false);
+      }
+    } catch (error) {
+      dispatch(
+        setError(error.response?.data?.message || "Password update failed")
+      );
     }
   };
 
@@ -148,6 +183,82 @@ const Profile = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Password Change Section */}
+              <div className="col-span-2 mt-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Change Password
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordChange(!showPasswordChange)}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    {showPasswordChange ? "Cancel" : "Change Password"}
+                  </button>
+                </div>
+
+                {showPasswordChange && (
+                  <div className="bg-gray-50 rounded-xl p-6 space-y-4 mt-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Current Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordData.oldPassword}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            oldPassword: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            newPassword: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handlePasswordChange}
+                      className="w-full px-6 py-2 mt-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                    >
+                      Update Password
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -5,6 +5,8 @@ const ErrorHandler = require("../utils/errorHandler.js");
 const User = require("../models/User");
 const Course = require("../models/Course");
 const Transaction = require("../models/Transaction.js");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 module.exports.register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password, phone } = req.body;
@@ -97,21 +99,26 @@ module.exports.loginSuccess = catchAsyncErrors((req, res, next) => {
 
 // logout user
 exports.logout = catchAsyncErrors(async (req, res, next) => {
-  // Clear the token cookie
-  res.cookie("token", null, {
+  // Delete the token cookie by setting an empty value and immediate expiration
+  res.cookie("token", "logout", {
     expires: new Date(Date.now()),
     httpOnly: true,
-    sameSite: "Lax",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     path: "/",
+    domain: "localhost", // Explicitly set domain in development
   });
-
-  // Clear the session if you're using sessions
-  if (req.session) {
-    req.session.destroy();
-  }
 
   // Clear user from request
   req.user = null;
+
+  // Set no-cache headers
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+    "Surrogate-Control": "no-store",
+  });
 
   res.status(200).json({
     success: true,
@@ -212,5 +219,117 @@ exports.getTransactionHistory = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     transactions,
+  });
+});
+
+exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  // Generate Reset Token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Hash and save to database
+  user.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+  await user.save({ validateBeforeSave: false });
+
+  // Create reset url
+  const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+
+  const message = `Your password reset link is:\n\n${resetUrl}\n\nIf you have not requested this, please ignore.`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Recovery",
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Email sent to ${user.email} successfully`,
+    });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
+  // Hash token from URL
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorHandler("Reset token is invalid or has expired", 400));
+  }
+
+  // Set new password
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(req.body.password, salt);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  // Log the user in
+  const token = user.generateAuthToken();
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  };
+
+  res.status(200).cookie("token", token, options).json({
+    success: true,
+    message: "Password reset successful",
+    user,
+  });
+});
+
+exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  // Check old password
+  const isPasswordMatch = await bcrypt.compare(
+    req.body.oldPassword,
+    user.password
+  );
+  if (!isPasswordMatch) {
+    return next(new ErrorHandler("Old password is incorrect", 400));
+  }
+
+  // Update to new password
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(req.body.newPassword, salt);
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password updated successfully",
   });
 });

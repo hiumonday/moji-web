@@ -32,11 +32,9 @@ export const loginGoogleAction =
   (credentials, onSuccess) => async (dispatch) => {
     try {
       dispatch(setLoader(true));
-      const { data } = await axios.get(
-        "/auth/google",
-        credentials,
-        { withCredentials: true }
-      );
+      const { data } = await axios.get("/auth/google", credentials, {
+        withCredentials: true,
+      });
 
       dispatch(setUser(data.user));
       dispatch(setLoader(false));
@@ -65,34 +63,39 @@ export const getUserAction = () => async (dispatch) => {
 
 // log out user
 export const logoutAction = () => async (dispatch) => {
-  try {
-    // First dispatch logout to clear the Redux state
-    dispatch(logoutUser());
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get("/api/v1/logout", {
+        withCredentials: true, // Ensures cookies are sent
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
 
-    // Then make the API call
-    const { data } = await axios.get("/api/v1/logout", {
-      withCredentials: true,
-    });
+      if (response.data.success) {
+        dispatch(logoutUser());
+        dispatch(setUser(null));
+      }
 
-    // Clear any stored data
-    dispatch(setUser(null));
-    dispatch(setLoader(false));
-
-    // Force a page reload to ensure all states are cleared
-  } catch (err) {
-    dispatch(setLoader(false));
-    dispatch(setError(err.response?.data?.message || "Logout failed"));
-  }
+      resolve(); // Notify that logout is done
+    } catch (err) {
+      console.error("Logout error:", err);
+      dispatch(setError(err.response?.data?.message || "Logout failed"));
+      reject(err); // Reject on error
+    } finally {
+      dispatch(setLoader(false));
+    }
+  });
 };
 
 // get all users -- admin
 export const getAllUsers = () => async (dispatch) => {
   try {
     dispatch(setUsersLoader(true));
-    const { data } = await axios.get(
-      "/api/v1/admin/users",
-      { withCredentials: true }
-    );
+    const { data } = await axios.get("/api/v1/admin/users", {
+      withCredentials: true,
+    });
 
     dispatch(setAllUsers(data.users));
     dispatch(setUsersLoader(false));
@@ -152,8 +155,7 @@ export const updateReferralStatus =
     try {
       dispatch(setLoader(true));
       const { data } = await axios.put(
-        REACT_APP_API_URL +
-          `/api/v1/referral/${referrerId}/${referredId}`,
+        REACT_APP_API_URL + `/api/v1/referral/${referrerId}/${referredId}`,
         {},
         { withCredentials: true }
       );

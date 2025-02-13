@@ -26,4 +26,13 @@ router.get(
   userController.getTransactionHistory
 );
 
+// Add these new routes
+router.post("/password/forgot", userController.forgotPassword);
+router.put("/password/reset/:token", userController.resetPassword);
+router.put(
+  "/password/update",
+  isAuthenticatedUser,
+  userController.updatePassword
+);
+
 module.exports = router;

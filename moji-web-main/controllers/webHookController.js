@@ -42,21 +42,6 @@ module.exports.webhook = async (req, res) => {
         // );
 
         // Add transaction to Transaction schema
-        const newTransaction = new Transaction({
-          _id: orderCode,
-          userId: user._id,
-          courses: purchasedItems.map((item) => ({
-            courseId: item.courseId,
-            classId: item.classId,
-            price: amount,
-            participants: item.participants,
-            purchasedAt: transactionDateTime,
-          })),
-          totalAmount: amount,
-          status: transaction.success,
-        });
-
-        await newTransaction.save();
 
         console.log(`Transaction for user ${user._id} processed successfully`);
       } catch (error) {

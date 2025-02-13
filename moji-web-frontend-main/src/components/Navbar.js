@@ -58,11 +58,19 @@ const Navbar = ({ changeLanguage }) => {
     return null; // Don't render navbar for admin routes
   }
 
-  const handleLogout = () => {
-    dispatch(logoutAction());
-    setIsMenuOpen(false);
-    navigate("/");
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutAction());
+      setIsMenuOpen(false);
+      navigate("/");
+      window.location.reload();
+      // setTimeout(() => {
+      //   navigate("/");
+      //   window.location.reload();
+      // }, 100);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const getFlag = (language) => {

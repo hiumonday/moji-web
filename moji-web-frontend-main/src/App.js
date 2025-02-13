@@ -34,6 +34,8 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import ClassList from "./screens/admin/classes/ClassList";
 import MyCourses from "./screens/MyCourses";
 import ConsultationManagement from "./screens/admin/Consultation";
+import ForgotPassword from "./screens/ForgotPassword";
+import ResetPassword from "./screens/ResetPassword";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -187,6 +189,8 @@ const App = () => {
                 )
               }
             />
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+            <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
           <Snackbar
