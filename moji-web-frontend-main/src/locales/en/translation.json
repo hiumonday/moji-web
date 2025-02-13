@@ -222,6 +222,8 @@
   "accountExist": "Don't have an account",
   "haveAccount": "Already have an account",
   "logout": "Log out",
+  "debateProgramsPretitleTrainingProgram": "Training Programs",
+  "debateProgramsPretitleCoachingProgram": "Coaching Programs",
   "sendResetLink": "Send Reset link",
   "resetPassword": "Reset Password",
   "resetting": "Resetting...",
@@ -253,5 +255,7 @@
   "subscriptions": "Subscriptions",
   "refunds": "Refunds",
   "noCourses": "You haven't bought any courses yet",
-  "browseCourses": "Browse Courses"
+  "browseCourses": "Browse Courses",
+  "trainingProgramsTitle": "Training Programs",
+  "coachingProgramsTitle": "Coaching Programs"
 }

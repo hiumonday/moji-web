@@ -10,6 +10,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Avatar } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 const Navbar = ({ changeLanguage }) => {
   const location = useLocation();
@@ -64,10 +65,6 @@ const Navbar = ({ changeLanguage }) => {
       setIsMenuOpen(false);
       navigate("/");
       window.location.reload();
-      // setTimeout(() => {
-      //   navigate("/");
-      //   window.location.reload();
-      // }, 100);
     } catch (error) {
       console.error("Logout failed:", error);
     }
