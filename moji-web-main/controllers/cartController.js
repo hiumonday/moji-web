@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Course = require("../models/Course");
+const DiscountCode = require("../models/DiscountCode");
 
 module.exports.viewCart = async (req, res) => {
   const userId = req.user._id;
@@ -67,7 +68,7 @@ module.exports.viewCart = async (req, res) => {
       return sum + price * numParticipants;
     }, 0);
 
-    const totalPrice = cartItems.reduce((sum, item) => {
+    const totalBeforeDiscount = cartItems.reduce((sum, item) => {
       return (
         sum +
         item.participants.reduce((participantSum, participant) => {
@@ -76,13 +77,32 @@ module.exports.viewCart = async (req, res) => {
       );
     }, 0);
 
-    const discount = Math.round(
-      ((originalTotal - totalPrice) / originalTotal) * 100
-    );
+    // Check if coupon is still valid
+    let finalTotal = totalBeforeDiscount;
+    let discountPercentage = 0;
 
-    res
-      .status(200)
-      .json({ cart: cartItems, totalPrice, originalTotal, discount });
+    if (user.appliedDiscount && user.appliedDiscount.expiryDate > new Date()) {
+      discountPercentage = user.appliedDiscount.percentage;
+      const discountAmount = (totalBeforeDiscount * discountPercentage) / 100;
+      finalTotal = totalBeforeDiscount - discountAmount;
+    } else if (user.appliedDiscount) {
+      // Remove expired discount
+      await User.findByIdAndUpdate(userId, {
+        $unset: { appliedDiscount: "" },
+      });
+    }
+
+    let discountAmount =
+      originalTotal > 0
+        ? ((originalTotal - finalTotal) / originalTotal) * 100
+        : 0;
+
+    res.status(200).json({
+      cart: cartItems,
+      totalPrice: finalTotal,
+      originalTotal: originalTotal,
+      discount: discountAmount,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching cart", error });
   }
@@ -162,55 +182,54 @@ module.exports.removeCourseFromCart = async (req, res) => {
   }
 };
 
-module.exports.demoApiForwarding = (req, res) => {
-  console.log("Successfully");
-  res.json({ message: "Forwarded api" });
-};
-
-module.exports.applyCoupon = async (req, res) => {
+module.exports.verifyCoupon = async (req, res) => {
   const userId = req.user._id;
-  const { couponCode } = req.body; // Nhận mã giảm giá từ request body
-
-  console.log(req.user);
+  const { couponCode } = req.body;
 
   try {
-    // Lấy thông tin người dùng và giỏ hàng
-    const user = await User.findById(userId).populate("cart.courseId");
+    const discountCode = await DiscountCode.findOne({
+      discount_code: couponCode,
+      isActive: true,
+      expiresAt: { $gt: new Date() },
+    });
 
-    // Lưu trữ thông tin mã giảm giá hợp lệ
-    let validCoupon = null;
-
-    // Kiểm tra từng khóa học trong giỏ hàng
-    for (const item of user.cart) {
-      const course = await Course.findById(item.courseId._id);
-      if (course) {
-        const discount = course.discounts.find(
-          (discount) =>
-            discount.code === couponCode && discount.expiresAt > new Date()
-        );
-        if (discount) {
-          validCoupon = {
-            code: discount.code,
-            discountValue:
-              discount.amount || course.price * (discount.percentage / 100), // Tính giá trị giảm giá
-            courseId: course._id, // Khóa học mà mã giảm giá áp dụng
-          };
-          break; // Dừng lại khi tìm thấy mã giảm giá hợp lệ
-        }
-      }
+    if (!discountCode) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired coupon code" });
     }
 
-    if (!validCoupon) {
-      return res.status(400).json({ message: "Invalid coupon code" });
-    }
+    await User.findByIdAndUpdate(userId, {
+      appliedDiscount: {
+        percentage: discountCode.percentage,
+        couponCode: discountCode.discount_code,
+        expiryDate: discountCode.expiresAt,
+      },
+    });
 
-    // Trả về thông tin mã giảm giá hợp lệ
-    res
-      .status(200)
-      .json({ message: "Coupon applied successfully", coupon: validCoupon });
+    res.status(200).json({
+      success: true,
+      coupon: {
+        code: discountCode.discount_code,
+        percentage: discountCode.percentage,
+        expiryDate: discountCode.expiresAt,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error applying coupon", error });
+    res.status(500).json({ message: "Error verifying coupon", error });
   }
 };
 
-module.exports.removeCoupon = async (req, res) => {};
+module.exports.removeCoupon = async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    await User.findByIdAndUpdate(userId, {
+      $unset: { appliedDiscount: "" },
+    });
+
+    res.status(200).json({ message: "Coupon removed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing coupon", error });
+  }
+};

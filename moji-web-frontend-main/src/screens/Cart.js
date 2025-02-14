@@ -29,13 +29,11 @@ const Cart = () => {
       if (!response.ok) throw new Error("Failed to fetch cart");
 
       const data = await response.json();
-
       setCart(data.cart);
       setTotalPrice(data.totalPrice);
       setOriginalTotal(data.originalTotal);
       setDiscount(data.discount);
       setError(null);
-      console.log(cart);
     } catch (error) {
       console.error("Error fetching cart:", error);
       setError("Error fetching cart. Please try again.");
@@ -81,23 +79,26 @@ const Cart = () => {
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
-    console.log(cart);
-
     setIsActionLoading(true);
     try {
-      const response = await fetch(
-        "/api/v1/apply-coupon",
-        {
-          credentials: "include",
-        }
-      );
+      // First verify the coupon
+      const verifyResponse = await fetch("/api/v1/verify-coupon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ couponCode }),
+      });
 
-      if (!response.ok) throw new Error("Invalid coupon code");
+      if (!verifyResponse.ok) {
+        throw new Error("Invalid coupon code");
+      }
 
-      const data = await response.json();
-      setAppliedCoupon(data.coupon);
-      await fetchCart(); // Refresh cart to update prices
-      setCouponCode(""); // Clear the input
+      const { coupon } = await verifyResponse.json();
+      setAppliedCoupon(coupon);
+      await fetchCart(); // Fetch cart normally, discount will be applied from server
+      setCouponCode("");
     } catch (error) {
       console.error("Error applying coupon:", error);
       setError("Invalid coupon code. Please try again.");
@@ -109,15 +110,14 @@ const Cart = () => {
   const removeCoupon = async () => {
     setIsActionLoading(true);
     try {
-      const response = await fetch(
-        "/api/v1/remove-coupon",
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const response = await fetch("/api/v1/remove-coupon", {
+        method: "DELETE",
+        credentials: "include",
+      });
 
-      if (!response.ok) throw new Error("Failed to remove coupon");
+      if (!response.ok) {
+        throw new Error("Failed to remove coupon");
+      }
 
       setAppliedCoupon(null);
       await fetchCart();
