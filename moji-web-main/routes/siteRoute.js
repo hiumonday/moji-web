@@ -10,6 +10,7 @@ const express = require("express");
 const passport = require("passport");
 const adminCourseRoute = require("./admin/courseRoute");
 const adminConsultationRoute = require("./admin/consultationRoute");
+const adminTransactionRoute = require("./admin/transactionRoute");
 const app = express();
 
 function route(app) {
@@ -19,6 +20,7 @@ function route(app) {
   app.use("/api/v1/admin", adminRoute);
   app.use("/api/v1/admin", adminCourseRoute);
   app.use("/api/v1/admin", adminConsultationRoute);
+  app.use("/api/v1/admin", adminTransactionRoute);
   app.use("/api/v1", courseRoute);
   app.use("/api/v1", cartRoute);
   app.use("/api/v1", checkOutRoute);
