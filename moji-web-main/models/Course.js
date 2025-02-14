@@ -32,15 +32,6 @@ const courseSchema = mongoose.Schema(
     bundlePrice: { type: Number },
     alumniPrice: { type: Number },
     is_active: { type: Boolean, default: false },
-    discounts: [
-      {
-        _id: false,
-        code: { type: String },
-        percentage: { type: Number },
-        amount: { type: Number },
-        expiresAt: { type: Date },
-      },
-    ],
     classes: [
       {
         _id: {

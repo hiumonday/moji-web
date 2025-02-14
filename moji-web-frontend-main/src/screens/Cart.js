@@ -33,6 +33,10 @@ const Cart = () => {
       setTotalPrice(data.totalPrice);
       setOriginalTotal(data.originalTotal);
       setDiscount(data.discount);
+      // Set applied coupon from response
+      if (data.appliedCoupon) {
+        setAppliedCoupon(data.appliedCoupon);
+      }
       setError(null);
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -134,7 +138,11 @@ const Cart = () => {
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="text-center">
           <Spinner className="mb-4" />
-          <p className="text-gray-600">Loading your cart...</p>
+          <p className="text-gray-600">
+            {i18n.language === "en"
+              ? "Loading your cart..."
+              : "Đang tải giỏ hàng..."}
+          </p>
         </div>
       </div>
     );
@@ -147,12 +155,12 @@ const Cart = () => {
         <h2 className="mt-2 text-2xl font-semibold text-gray-900">
           {i18n.language === "en"
             ? "Your cart is empty!"
-            : "Giỏ hàng rỗng rồi!"}
+            : "Giỏ hàng của bạn đang trống!"}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
           {i18n.language === "en"
             ? "Looks like you haven't added any courses yet."
-            : "Có vẻ như bạn chưa thêm khóa học nào cả."}
+            : "Có vẻ như bạn chưa thêm khóa học nào."}
         </p>
         <div className="mt-6">
           <button
@@ -169,10 +177,15 @@ const Cart = () => {
   ) : (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          {i18n.language === "en" ? "Shopping Cart" : "Giỏ hàng"}
+        </h1>
 
         <h2 className="text-lg font-semibold text-gray-700 mb-2">
-          {cart.length} Course{cart.length !== 1 ? "s" : ""} in Cart
+          {cart.length}{" "}
+          {i18n.language === "en"
+            ? `Course${cart.length !== 1 ? "s" : ""} in Cart`
+            : `Khóa học trong giỏ hàng`}
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -194,7 +207,9 @@ const Cart = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
               <div className="mb-6">
-                <div className="text-lg font-semibold mb-2">Total:</div>
+                <div className="text-lg font-semibold mb-2">
+                  {i18n.language === "en" ? "Total:" : "Tổng cộng:"}
+                </div>
                 <div className="text-3xl font-bold text-gray-900">
                   đ{totalPrice.toLocaleString()}
                 </div>
@@ -204,7 +219,9 @@ const Cart = () => {
                   </div>
                 )}
                 {discount > 0 && (
-                  <div className="text-sm text-green-600">{discount}% off</div>
+                  <div className="text-sm text-green-600">
+                    {discount}% {i18n.language === "en" ? "off" : "giảm"}
+                  </div>
                 )}
               </div>
 
@@ -225,7 +242,7 @@ const Cart = () => {
 
                   navigate("/check-out", {
                     state: {
-                      totalPrice,
+                      totalPrice, // Make sure this is passed
                       transactionData,
                     },
                   });
@@ -236,19 +253,27 @@ const Cart = () => {
                 {isActionLoading ? (
                   <span className="flex items-center justify-center">
                     <Spinner className="mr-2" />
-                    Processing...
+                    {i18n.language === "en" ? "Processing..." : "Đang xử lý..."}
                   </span>
-                ) : (
+                ) : i18n.language === "en" ? (
                   "Checkout"
+                ) : (
+                  "Thanh toán"
                 )}
               </button>
 
               <div className="mt-6">
-                <div className="text-lg font-semibold mb-4">Promotions</div>
+                <div className="text-lg font-semibold mb-4">
+                  {i18n.language === "en" ? "Promotions" : "Khuyến mãi"}
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Enter Coupon"
+                    placeholder={
+                      i18n.language === "en"
+                        ? "Enter Coupon"
+                        : "Nhập mã giảm giá"
+                    }
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     disabled={isActionLoading}
@@ -259,12 +284,19 @@ const Cart = () => {
                     disabled={isActionLoading || !couponCode.trim()}
                     className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isActionLoading ? <Spinner /> : "Apply"}
+                    {isActionLoading ? (
+                      <Spinner />
+                    ) : i18n.language === "en" ? (
+                      "Apply"
+                    ) : (
+                      "Áp dụng"
+                    )}
                   </button>
                 </div>
                 {appliedCoupon && (
                   <div className="mt-2 text-sm text-gray-600">
-                    {appliedCoupon.code} is applied
+                    {appliedCoupon.code}{" "}
+                    {i18n.language === "en" ? "is applied" : "đã được áp dụng"}
                     <button
                       onClick={removeCoupon}
                       disabled={isActionLoading}

@@ -47,12 +47,7 @@ const userSchema = mongoose.Schema(
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     appliedDiscount: {
-      percentage: {
-        type: Number,
-        default: 0,
-      },
-      couponCode: String,
-      expiryDate: Date,
+      type: String, // Just store the coupon code
     },
   },
   {

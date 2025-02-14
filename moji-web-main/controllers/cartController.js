@@ -7,7 +7,6 @@ module.exports.viewCart = async (req, res) => {
 
   try {
     const user = await User.findById(userId).populate("cart.courseId");
-    console.log(user);
     const cartItems = user.cart.map((item) => {
       let imageBase64 = null;
       if (item.courseId.image && item.courseId.image.data) {
@@ -32,8 +31,6 @@ module.exports.viewCart = async (req, res) => {
           price = item.courseId.bundlePrice;
           discount_type = "Bundle";
         }
-        console.log(discount_type);
-        console.log(participant);
         return {
           info: participant,
           price,
@@ -77,19 +74,33 @@ module.exports.viewCart = async (req, res) => {
       );
     }, 0);
 
-    // Check if coupon is still valid
+    // Check if coupon exists and is valid
     let finalTotal = totalBeforeDiscount;
     let discountPercentage = 0;
 
-    if (user.appliedDiscount && user.appliedDiscount.expiryDate > new Date()) {
-      discountPercentage = user.appliedDiscount.percentage;
-      const discountAmount = (totalBeforeDiscount * discountPercentage) / 100;
-      finalTotal = totalBeforeDiscount - discountAmount;
-    } else if (user.appliedDiscount) {
-      // Remove expired discount
-      await User.findByIdAndUpdate(userId, {
-        $unset: { appliedDiscount: "" },
+    // Get applied coupon details if exists
+    let appliedCouponDetails = null;
+    if (user.appliedDiscount) {
+      const discountCode = await DiscountCode.findOne({
+        discount_code: user.appliedDiscount,
+        isActive: true,
+        expiresAt: { $gt: new Date() },
       });
+
+      if (discountCode) {
+        discountPercentage = discountCode.percentage;
+        const discountAmount = (totalBeforeDiscount * discountPercentage) / 100;
+        finalTotal = totalBeforeDiscount - discountAmount;
+        appliedCouponDetails = {
+          code: discountCode.discount_code,
+          percentage: discountCode.percentage,
+        };
+      } else {
+        // Remove invalid/expired discount code
+        await User.findByIdAndUpdate(userId, {
+          $unset: { appliedDiscount: "" },
+        });
+      }
     }
 
     let discountAmount =
@@ -102,6 +113,7 @@ module.exports.viewCart = async (req, res) => {
       totalPrice: finalTotal,
       originalTotal: originalTotal,
       discount: discountAmount,
+      appliedCoupon: appliedCouponDetails, // Add this to response
     });
   } catch (error) {
     res.status(500).json({ message: "Error fetching cart", error });
@@ -200,11 +212,7 @@ module.exports.verifyCoupon = async (req, res) => {
     }
 
     await User.findByIdAndUpdate(userId, {
-      appliedDiscount: {
-        percentage: discountCode.percentage,
-        couponCode: discountCode.discount_code,
-        expiryDate: discountCode.expiresAt,
-      },
+      appliedDiscount: couponCode,
     });
 
     res.status(200).json({

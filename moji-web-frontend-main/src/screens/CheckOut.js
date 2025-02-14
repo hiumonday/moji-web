@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import "../index.css";
-import { redirect, useLocation } from "react-router-dom";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 import { Spinner } from "../components/spinner";
 
 const CheckOut = () => {
@@ -14,7 +14,12 @@ const CheckOut = () => {
   const [error, setError] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
   const [discountedPrice, setDiscountedPrice] = useState(0);
+  const [showPriceChangeModal, setShowPriceChangeModal] = useState(false);
+  const [priceChangeDetails, setPriceChangeDetails] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const userState = useSelector((state) => state.user);
   const user = userState?.user || null;
@@ -23,31 +28,159 @@ const CheckOut = () => {
   const transactionData = location.state?.transactionData;
 
   useEffect(() => {
-    fetchCart();
+    if (!location.state?.totalPrice) {
+      navigate("/cart");
+      return;
+    }
+    verifyPriceAndLoadCart();
   }, []);
 
-  const fetchCart = async () => {
+  const verifyPriceAndLoadCart = async () => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/v1/view-cart", {
         credentials: "include",
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart);
-        setTotalPrice(data.totalPrice);
-        setError(null);
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart");
+      }
+
+      const data = await response.json();
+      const previousTotal = location.state?.totalPrice;
+
+      if (data.cart.length === 0) {
+        navigate("/cart");
+        return;
+      }
+
+      setCart(data.cart);
+      setTotalPrice(data.totalPrice);
+
+      if (previousTotal && data.totalPrice !== previousTotal) {
+        setPriceChangeDetails({
+          oldPrice: previousTotal,
+          newPrice: data.totalPrice,
+          difference: data.totalPrice - previousTotal,
+          reason:
+            i18n.language === "en"
+              ? data.totalPrice > previousTotal
+                ? "Some discounts may have expired or are no longer available."
+                : "You may have received additional discounts."
+              : data.totalPrice > previousTotal
+                ? "Một số khuyến mãi có thể đã hết hạn hoặc không còn khả dụng."
+                : "Bạn đã nhận được thêm khuyến mãi.",
+        });
+        setShowPriceChangeModal(true);
       } else {
-        setError("Failed to fetch cart.");
+        setIsVerified(true);
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError("Error fetching cart.");
+      setError("Error verifying cart. Please try again.");
+      setTimeout(() => navigate("/cart"), 2000);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handlePriceChangeResponse = (accepted) => {
+    if (accepted) {
+      setShowPriceChangeModal(false);
+      setIsVerified(true);
+    } else {
+      navigate("/cart");
+    }
+  };
+
+  const handlePayment = async () => {
+    if (!isVerified) {
+      await verifyPriceAndLoadCart();
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const response = await fetch("/api/v1/create-embedded-payment-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate payment link");
+      }
+
+      const result = await response.json();
+      window.location.href = result.checkoutUrl;
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Failed to create payment link. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const PriceChangeModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <h3 className="text-xl font-bold mb-4">
+          {i18n.language === "en"
+            ? "Price Change Notice"
+            : "Thông báo thay đổi giá"}
+        </h3>
+        <p className="mb-4">{priceChangeDetails.reason}</p>
+        <div className="mb-4">
+          <div className="flex justify-between mb-2">
+            <span className="text-gray-600">
+              {i18n.language === "en" ? "Previous Price:" : "Giá cũ:"}
+            </span>
+            <span>đ{priceChangeDetails.oldPrice.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between mb-2">
+            <span className="text-gray-600">
+              {i18n.language === "en" ? "New Price:" : "Giá mới:"}
+            </span>
+            <span>đ{priceChangeDetails.newPrice.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between font-semibold">
+            <span>
+              {i18n.language === "en" ? "Difference:" : "Chênh lệch:"}
+            </span>
+            <span
+              className={
+                priceChangeDetails.difference > 0
+                  ? "text-red-600"
+                  : "text-green-600"
+              }
+            >
+              {priceChangeDetails.difference > 0 ? "+" : "-"}đ
+              {Math.abs(priceChangeDetails.difference).toLocaleString()}
+            </span>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={() => handlePriceChangeResponse(false)}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-100"
+          >
+            {i18n.language === "en" ? "Return to Cart" : "Quay lại giỏ hàng"}
+          </button>
+          <button
+            onClick={() => handlePriceChangeResponse(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            {i18n.language === "en"
+              ? "Continue with New Price"
+              : "Tiếp tục với giá mới"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const paymentData = {
     amount: totalPrice,
@@ -65,10 +198,30 @@ const CheckOut = () => {
     },
   };
 
+  const PaymentButton = () => (
+    <button
+      onClick={handlePayment}
+      disabled={!isVerified || isLoading || isProcessing}
+      className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {isLoading || isProcessing ? (
+        <span className="flex items-center justify-center">
+          <Spinner className="mr-2" />
+          {i18n.language === "en" ? "Processing..." : "Đang xử lý..."}
+        </span>
+      ) : i18n.language === "en" ? (
+        "Complete Payment"
+      ) : (
+        "Hoàn tất thanh toán"
+      )}
+    </button>
+  );
+
   return message ? (
     <Message message={message} />
   ) : (
     <div className="container mx-auto p-4">
+      {showPriceChangeModal && <PriceChangeModal />}
       {isLoading ? (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
           <div className="text-center">
@@ -147,15 +300,23 @@ const CheckOut = () => {
           {/* Right Column */}
           <div className="lg:w-1/3 mt-8 lg:mt-0">
             <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                {i18n.language === "en"
+                  ? "Order Information"
+                  : "Thông tin đơn hàng"}
+              </h2>
 
               {/* Customer Information */}
               <div className="mb-6">
-                <h3 className="font-semibold mb-2">Người mua hàng</h3>
+                <h3 className="font-semibold mb-2">
+                  {i18n.language === "en" ? "Customer" : "Người mua hàng"}
+                </h3>
                 {user ? (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Tài khoản</p>
+                      <p className="text-sm text-gray-600">
+                        {i18n.language === "en" ? "Account" : "Tài khoản"}
+                      </p>
                       <p>{user.name}</p>
                     </div>
                     <div>
@@ -163,12 +324,18 @@ const CheckOut = () => {
                       <p>{user.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Số điện thoại</p>
+                      <p className="text-sm text-gray-600">
+                        {i18n.language === "en" ? "Phone" : "Số điện thoại"}
+                      </p>
                       <p>{user.phone || "Chưa cập nhật"}</p>
                     </div>
                   </div>
                 ) : (
-                  <p>Vui lòng đăng nhập để tiếp tục</p>
+                  <p>
+                    {i18n.language === "en"
+                      ? "Please login to continue"
+                      : "Vui lòng đăng nhập để tiếp tục"}
+                  </p>
                 )}
               </div>
 
@@ -176,11 +343,20 @@ const CheckOut = () => {
 
               {/* Order Details */}
               <div className="mb-6">
-                <h3 className="font-semibold mb-2">Đơn hàng</h3>
+                <h3 className="font-semibold mb-2">
+                  {i18n.language === "en" ? "Order" : "Đơn hàng"}
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span>Khóa học đã chọn</span>
-                    <span>{cart.length} khóa học</span>
+                    <span>
+                      {i18n.language === "en"
+                        ? "Selected Courses"
+                        : "Khóa học đã chọn"}
+                    </span>
+                    <span>
+                      {cart.length}{" "}
+                      {i18n.language === "en" ? "courses" : "khóa học"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -190,46 +366,14 @@ const CheckOut = () => {
               {/* Price Summary */}
               <div className="mb-6">
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Tổng</span>
+                  <span>{i18n.language === "en" ? "Total" : "Tổng"}</span>
                   <span>đ{totalPrice.toLocaleString()}</span>
                 </div>
               </div>
 
-              {/* Invoice and Payment */}
+              {/* Payment Button */}
               <div>
-                <button
-                  onClick={async () => {
-                    try {
-                      const response = await fetch(
-                        "/api/v1/create-embedded-payment-link",
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify(paymentData),
-                          credentials: "include",
-                        }
-                      );
-
-                      if (!response.ok) {
-                        throw new Error("Failed to generate payment link");
-                      }
-
-                      const result = await response.json();
-                      console.log("Payment URL:", result.checkoutUrl);
-
-                      // Chuyển hướng tới URL thanh toán
-                      window.location.href = result.checkoutUrl;
-                    } catch (error) {
-                      console.error("Error:", error.message);
-                      alert("Đã xảy ra lỗi khi tạo link thanh toán!");
-                    }
-                  }}
-                  className="w-full bg-blue-700 text-white py-2 rounded font-semibold hover:bg-blue-900 transition-colors"
-                >
-                  Hoàn tất thanh toán
-                </button>
+                <PaymentButton />
               </div>
             </div>
           </div>
