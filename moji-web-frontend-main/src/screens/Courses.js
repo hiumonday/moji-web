@@ -38,6 +38,11 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
+  // Add function to filter courses by type
+  const filterCoursesByType = (type) => {
+    return courses.filter((course) => course.type === type);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -61,6 +66,9 @@ const Courses = () => {
     );
   }
 
+  const nonContactCourses = filterCoursesByType("non_contact_based");
+  const contactCourses = filterCoursesByType("contact_based");
+
   return (
     <>
       <Helmet>
@@ -70,14 +78,30 @@ const Courses = () => {
         <meta name="keywords" content={t("coursesPageKeywords")} />
       </Helmet>
 
+      {/* First Section - Non-contact Based Courses */}
       <section className="bg-gray-50">
         <Container>
           <SectionTitle
-            pretitle={t("debateProgramsPretitle")}
-            title={t("debateProgramsTitle")}
+            pretitle={t("coursesPagePretitle")}
+            title="Chương trình Đào tạo"
           ></SectionTitle>
           <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3 py-12 px-10">
-            {courses.map((course) => (
+            {nonContactCourses.map((course) => (
+              <CourseCard key={course._id} course={course} i18n={i18n} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Second Section - Contact Based Courses */}
+      <section className="bg-white">
+        <Container>
+          <SectionTitle
+            pretitle={t("coursesPagePretitle")}
+            title="Chương trình Huấn luyện"
+          ></SectionTitle>
+          <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3 py-12 px-10">
+            {contactCourses.map((course) => (
               <CourseCard key={course._id} course={course} i18n={i18n} />
             ))}
           </div>

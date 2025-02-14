@@ -73,7 +73,7 @@ const AboutUs = () => {
       </Helmet>
 
       {/* Our Story */}
-      <section className="our-story py-16">
+      <section className="our-story py-8">
         <div className="container mx-auto px-4 ">
           <div className="text-center text-md font-bold tracking-wider text-indigo-600 pb-4 uppercase mx-auto">
             {t("ourMission")}

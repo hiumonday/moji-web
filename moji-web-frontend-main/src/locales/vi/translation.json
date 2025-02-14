@@ -216,6 +216,8 @@
       "studentsTaughtDF": "Học sinh đã tham gia khoá",
       "courseDuration": "Thời lượng khoá học",
       "weeks": "Tuần",
+      "debateProgramsPretitleTrainingProgram": "Chương trình Đào tạo",
+      "debateProgramsPretitleCoachingProgram": "Chương trình Huấn luyện",
       "courseStructure": "Debating Fundamentals",
       "courseStructureTitle": "Bắt đầu với câu hỏi 'tại sao?'",
       "courseStructureImage": "Course Structure Image",
@@ -255,7 +257,6 @@
       "paymentType": "Hình thức thanh toán",
       "receipt": "Hóa đơn",
       "invoiceUnavailable": "Không có hóa đơn",
-      "courses": "Khóa học",
       "myProfile": "Hồ sơ của tôi",
       "subscriptions": "Đăng ký",
       "refunds": "Hoàn tiền",
@@ -272,5 +273,7 @@
       "code": "Mã lớp",
       "joinClass": "Vào lớp",
       "noCourses": "Bạn chưa đăng ký khóa học nào",
-      "browseCourses": "Xem khóa học"
+      "browseCourses": "Xem khóa học",
+      "trainingProgramsTitle": "Chương trình Đào tạo",
+      "coachingProgramsTitle": "Chương trình Huấn luyện"
 }
