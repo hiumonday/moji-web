@@ -61,7 +61,7 @@ const CourseDetail = (i18n) => {
 
   return (
     <>
-      <div className="min-h-screen bg-white relative z-0">
+      <div className="min-h-screen bg-white relative z-10">
         {/* Hero Section */}
         <div className="relative h-[400px] w-full">
           <img
@@ -142,7 +142,7 @@ const CourseDetail = (i18n) => {
 
             {/* Sidebar */}
             <div className="md:col-span-1">
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24 z-0">
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24 z-20">
                 <div className="flex space-x-4">{renderActionButton()}</div>
 
                 <h2 className="text-xl font-bold mb-4">Course Highlights</h2>
@@ -176,7 +176,7 @@ const CourseDetail = (i18n) => {
 
         {/* Sticky Bottom Bar (Mobile Only) */}
         <div
-          className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-md transition-all duration-300 z-[999] ${
+          className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-md transition-all duration-300 z-30 ${
             isSticky ? "translate-y-0" : "translate-y-full"
           }`}
         >

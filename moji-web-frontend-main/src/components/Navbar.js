@@ -115,7 +115,7 @@ const Navbar = ({ changeLanguage }) => {
   };
 
   return (
-    <nav className="bg-white navbar-shadow sticky top-0 z-[9999]">
+    <nav className="bg-white navbar-shadow sticky top-0 z-40">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-[72px] items-center justify-between">
           {/* Mobile menu button */}

@@ -22,13 +22,15 @@ const CourseCard = ({ course, i18n }) => {
   console.log("Course type:", course.type); // Debug log
 
   const renderViewCourseButton = () => (
-    <button
-      onClick={() => navigate(`/courses/${course._id}`)}
-      className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
-    >
-      {i18n.language === "en" ? "View Course" : "Xem Khóa Học"}
-      <ChevronRightIcon className="ml-2 h-4 w-4" />
-    </button>
+    <div className="flex-1">
+      <button
+        onClick={() => navigate(`/courses/${course._id}`)}
+        className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+      >
+        {i18n.language === "en" ? "View Course" : "Xem Khóa Học"}
+        <ChevronRightIcon className="ml-2 h-4 w-4" />
+      </button>
+    </div>
   );
 
   const renderActionButtons = () => {
@@ -40,14 +42,14 @@ const CourseCard = ({ course, i18n }) => {
 
     if (course.type === "contact_based") {
       return (
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {renderViewCourseButton()}
           <ConsultationButton course={course} i18n={i18n} />
         </div>
       );
     } else {
       return (
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {renderViewCourseButton()}
           <AddToCartButton course={course} i18n={i18n} />
         </div>
