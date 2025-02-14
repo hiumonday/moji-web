@@ -1,0 +1,43 @@
+const mongoose = require("mongoose");
+
+const discountCodeSchema = mongoose.Schema(
+  {
+    discount_type: {
+      type: String,
+      required: true,
+      enum: ["event", "alumni"],
+    },
+    discount_code: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    percentage: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 100,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    usage_count: {
+      type: Number,
+      default: 1,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
+  },
+  {
+    timestamps: {
+      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+    },
+  }
+);
+
+const DiscountCode = mongoose.model("DiscountCode", discountCodeSchema);
+
+module.exports = DiscountCode;

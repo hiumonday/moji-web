@@ -74,6 +74,7 @@ const userRoute = require("./routes/admin/userRoute");
 // API routes
 app.use("/api/v1/admin", classRoute);
 app.use("/api/v1/admin", userRoute);
+app.use("/api/v1/admin/discount", require("./routes/admin/discountRoutes"));
 
 // Error handling middleware
 app.use(errorMiddleware);
