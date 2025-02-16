@@ -21,7 +21,7 @@ module.exports.generateQR = async (req, res) => {
       orderCode,
       amount,
       description,
-      returnUrl: `http://localhost:3001/api/v1/success-transaction`,
+      returnUrl: YOUR_DOMAIN,
       cancelUrl: `http://localhost:3001/api/v1/fail-transaction`,
     };
 
@@ -49,4 +49,29 @@ module.exports.generateQR = async (req, res) => {
   }
 };
 
-module.exports.successfulTransaction = async (req, res) => {};
+module.exports.failTransaction = async (req, res) => {
+  try {
+    const { orderCode } = req.query;
+
+    if (!orderCode) {
+      throw new Error("OrderCode is required");
+    }
+
+    // Find and update the transaction status
+    const transaction = await Transaction.findOneAndUpdate(
+      { orderCode },
+      { status: "CANCELLED" },
+      { new: true }
+    );
+
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+
+    // Redirect back to frontend with status
+    res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);
+  } catch (error) {
+    console.error("Failed transaction error:", error);
+    res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);
+  }
+};

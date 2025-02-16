@@ -9,15 +9,11 @@ router.post(
   isAuthenticatedUser,
   checkOutController.generateQR
 );
+
 router.get(
-  "/success-transaction",
-  isAuthenticatedUser,
-  checkOutController.successfulTransaction
-);
-router.post(
   "/fail-transaction",
   isAuthenticatedUser,
-  checkOutController.successfulTransaction
+  checkOutController.failTransaction
 );
 
 module.exports = router;

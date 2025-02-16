@@ -1,5 +1,6 @@
 import React, { useState, forwardRef } from "react";
 import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -17,11 +18,36 @@ const CustomAlert = forwardRef((props, ref) => (
 ));
 
 const AddToCartButton = ({ course, i18n }) => {
+  const navigate = useNavigate();
+  const userState = useSelector((state) => state.user);
+  const isAuthenticated = userState?.isAuthenticated || false;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
+
+  const checkLoginAndProceed = () => {
+    if (!isAuthenticated) {
+      setError(
+        i18n.language === "en"
+          ? "Please login to continue"
+          : "Vui lòng đăng nhập để tiếp tục"
+      );
+      setIsErrorOpen(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      return false;
+    }
+    return true;
+  };
+
+  const handleButtonClick = () => {
+    if (checkLoginAndProceed()) {
+      setIsDialogOpen(true);
+    }
+  };
 
   const handleAddToCart = async (selectedClass, participants) => {
     try {
@@ -68,7 +94,7 @@ const AddToCartButton = ({ course, i18n }) => {
   return (
     <div className="flex-1">
       <button
-        onClick={() => setIsDialogOpen(true)}
+        onClick={handleButtonClick}
         className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300"
       >
         {i18n.language === "en" ? "Add to Cart" : "Thêm vào giỏ"}

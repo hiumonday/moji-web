@@ -5,7 +5,7 @@ const ParticipantSchema = new mongoose.Schema({
   class_title: { type: String, required: true },
   name: { type: String, required: true },
   tution_fee: { type: Number, required: true }, // Changed to Number for consistency
-  discount_type: { type: String, required: true },
+  discount_type: { type: String },
 });
 
 const TransactionSchema = new mongoose.Schema(
@@ -25,6 +25,10 @@ const TransactionSchema = new mongoose.Schema(
     email: { type: String, required: true }, // Email validation
     phone: { type: String, required: true }, // Phone number validation
     participants: { type: [ParticipantSchema], required: true },
+    expiryAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: {
@@ -32,5 +36,38 @@ const TransactionSchema = new mongoose.Schema(
     },
   }
 );
+
+// TTL index cho PENDING transactions (1 giờ)
+TransactionSchema.index({ expiryAt: 1 }, { expireAfterSeconds: 0 });
+
+// Middleware để tự động set expiryAt dựa trên status
+TransactionSchema.pre("save", function (next) {
+  if (this.status === "PENDING") {
+    // Set expiryAt là 1 giờ từ thời điểm hiện tại
+    this.expiryAt = new Date(Date.now() + 60 * 60 * 1000);
+  } else if (this.status === "CANCELLED") {
+    // Set expiryAt là 1 tuần từ thời điểm hiện tại
+    this.expiryAt = new Date(Date.now() + 60 * 1000);
+  } else {
+    // Các status khác không set expiryAt
+    this.expiryAt = null;
+  }
+  next();
+});
+
+// Middleware để cập nhật expiryAt khi status thay đổi
+TransactionSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update && update.status) {
+    if (update.status === "PENDING") {
+      this.set({ expiryAt: new Date(Date.now() + 60 * 60 * 1000) });
+    } else if (update.status === "CANCELLED") {
+      this.set({ expiryAt: new Date(Date.now() + 7 * 60 * 60 * 1000) });
+    } else {
+      this.set({ expiryAt: null });
+    }
+  }
+  next();
+});
 
 module.exports = mongoose.model("Transaction", TransactionSchema);
