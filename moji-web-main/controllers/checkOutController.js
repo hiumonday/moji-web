@@ -100,35 +100,3 @@ module.exports.failTransaction = async (req, res) => {
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);
   }
 };
-
-// Thêm webhook handler
-module.exports.handleWebhook = async (req, res) => {
-  try {
-    const { orderCode, status } = req.body;
-    const transaction = await Transaction.findOne({ orderCode });
-
-    if (!transaction) {
-      return res.status(404).json({ message: "Transaction not found" });
-    }
-
-    if (status === "CANCELLED" && transaction.status !== "CANCELLED") {
-      // Hoàn trả early bird slots cho mỗi lớp nếu giao dịch bị hủy
-      for (const classData of transaction.classes) {
-        if (classData.ebHold > 0) {
-          await Course.updateOne(
-            { "classes._id": classData.class_id },
-            { $inc: { "classes.$.earlyBirdSlot": classData.ebHold } }
-          );
-        }
-      }
-
-      transaction.status = "CANCELLED";
-      await transaction.save();
-    }
-
-    res.status(200).json({ message: "Webhook processed successfully" });
-  } catch (error) {
-    console.error("Webhook processing error:", error);
-    res.status(500).json({ message: "Error processing webhook" });
-  }
-};
