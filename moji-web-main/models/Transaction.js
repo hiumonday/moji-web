@@ -4,8 +4,17 @@ const ParticipantSchema = new mongoose.Schema({
   course_title: { type: String, required: true },
   class_title: { type: String, required: true },
   name: { type: String, required: true },
-  tution_fee: { type: Number, required: true }, // Changed to Number for consistency
+  tution_fee: { type: Number, required: true },
   discount_type: { type: String },
+});
+
+const ClassSchema = new mongoose.Schema({
+  class_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Class",
+    required: true,
+  },
+  ebHold: { type: Number, required: true },
 });
 
 const TransactionSchema = new mongoose.Schema(
@@ -15,16 +24,17 @@ const TransactionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    orderCode: { type: String, required: true }, // Thêm orderCode
+    orderCode: { type: String, required: true },
     status: { type: String, required: true },
-    totalAmount: { type: Number, required: true }, // Changed to Number for better calculations
+    totalAmount: { type: Number, required: true },
     checkoutUrl: { type: String },
     description: { type: String, required: true },
     date: { type: String, required: true },
     name: { type: String, required: true },
-    email: { type: String, required: true }, // Email validation
-    phone: { type: String, required: true }, // Phone number validation
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
     participants: { type: [ParticipantSchema], required: true },
+    classes: { type: [ClassSchema], required: true },
     expiryAt: {
       type: Date,
       default: null,
@@ -32,7 +42,7 @@ const TransactionSchema = new mongoose.Schema(
   },
   {
     timestamps: {
-      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+      currentTime: () => new Date(new Date().getTime()),
     },
   }
 );
@@ -47,7 +57,7 @@ TransactionSchema.pre("save", function (next) {
     this.expiryAt = new Date(Date.now() + 60 * 60 * 1000);
   } else if (this.status === "CANCELLED") {
     // Set expiryAt là 1 tuần từ thời điểm hiện tại
-    this.expiryAt = new Date(Date.now() + 60 * 1000);
+    this.expiryAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   } else {
     // Các status khác không set expiryAt
     this.expiryAt = null;
@@ -62,7 +72,7 @@ TransactionSchema.pre("findOneAndUpdate", function (next) {
     if (update.status === "PENDING") {
       this.set({ expiryAt: new Date(Date.now() + 60 * 60 * 1000) });
     } else if (update.status === "CANCELLED") {
-      this.set({ expiryAt: new Date(Date.now() + 7 * 60 * 60 * 1000) });
+      this.set({ expiryAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
     } else {
       this.set({ expiryAt: null });
     }

@@ -54,8 +54,24 @@ const CheckOut = () => {
         return;
       }
 
+      // Tạo transactionData mới từ cart vừa fetch
+      const newTransactionData = {
+        totalAmount: data.totalPrice,
+        participants: data.cart.flatMap((item) =>
+          item.participants.map((participant) => ({
+            course_title: item.title,
+            class_title: `${item.classInfo.level} - ${item.classInfo.language}`,
+            name: participant.info.name,
+            tution_fee: participant.price,
+            discount_type: participant.discount_type,
+          }))
+        ),
+      };
+
       setCart(data.cart);
       setTotalPrice(data.totalPrice);
+      transactionData.totalAmount = data.totalPrice;
+      transactionData.participants = newTransactionData.participants;
 
       if (previousTotal && data.totalPrice !== previousTotal) {
         setPriceChangeDetails({
@@ -182,19 +198,24 @@ const CheckOut = () => {
     </div>
   );
 
+  // Cập nhật paymentData để sử dụng transactionData đã được cập nhật
   const paymentData = {
     amount: totalPrice,
     description: "Thanh toan khoa hoc",
     items: cart,
     transactionData: {
       ...transactionData,
-      user_id: user?._id, // Thêm user_id vào transaction data
+      user_id: user?._id,
       status: "PENDING",
       description: "Thanh toan khoa hoc",
       date: new Date().toISOString(),
       name: user?.name,
       email: user?.email,
       phone: user?.phone || "Chưa cập nhật",
+      classes: cart.map((item) => ({
+        class_id: item.classInfo._id,
+        ebHold: item.ebHold,
+      })),
     },
   };
 

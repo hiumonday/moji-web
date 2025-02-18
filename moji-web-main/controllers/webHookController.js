@@ -33,13 +33,13 @@ module.exports.webhook = async (req, res) => {
         );
 
         // Move items from cart to purchasedCourses
-        // await User.updateOne(
-        //   { _id: user._id },
-        //   {
-        //     $push: { purchasedCourses: { $each: purchasedItems } },
-        //     $pull: { cart: { orderCode: orderCode } },
-        //   }
-        // );
+        await User.updateOne(
+          { _id: user._id },
+          {
+            $push: { purchasedCourses: { $each: purchasedItems } },
+            $pull: { cart: { orderCode: orderCode } },
+          }
+        );
 
         // Add transaction to Transaction schema
 
