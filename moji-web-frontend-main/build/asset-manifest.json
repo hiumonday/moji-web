@@ -1,7 +1,11 @@
 {
   "files": {
     "main.css": "/static/css/main.86121cfb.css",
+<<<<<<< Updated upstream
     "main.js": "/static/js/main.9452e92f.js",
+=======
+    "main.js": "/static/js/main.94eddea7.js",
+>>>>>>> Stashed changes
     "static/media/vnwqo.jpeg": "/static/media/vnwqo.c0ab74a8a81df3ab7f0e.jpeg",
     "static/media/course2.jpeg": "/static/media/course2.10437ac7a637f43c0872.jpeg",
     "static/media/vnwqo.webp": "/static/media/vnwqo.711b61c2f0312355e83a.webp",
@@ -41,10 +45,18 @@
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
     "main.86121cfb.css.map": "/static/css/main.86121cfb.css.map",
+<<<<<<< Updated upstream
     "main.9452e92f.js.map": "/static/js/main.9452e92f.js.map"
   },
   "entrypoints": [
     "static/css/main.86121cfb.css",
     "static/js/main.9452e92f.js"
+=======
+    "main.94eddea7.js.map": "/static/js/main.94eddea7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.86121cfb.css",
+    "static/js/main.94eddea7.js"
+>>>>>>> Stashed changes
   ]
 }

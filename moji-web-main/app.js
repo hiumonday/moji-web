@@ -4,7 +4,6 @@ const passportConnect = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const path = require("path");
-
 const cors = require("cors");
 
 const app = express();
@@ -81,11 +80,19 @@ app.use("/api/v1/admin/discount", require("./routes/admin/discountRoutes"));
 app.use(errorMiddleware);
 
 // Serve static files from the React frontend build folder
-app.use(express.static(path.join(__dirname, "/build")));
+// app.use(express.static(path.join(__dirname, "/build")));
 
-// Catch-all route to serve the React app for any non-API route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/build", "index.html"));
-});
+// // // Catch-all route to serve the React app for any non-API route
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
+// });
+
+// // Serve static files from the React frontend build folder
+// app.use(express.static(path.join(__dirname, "/build")));
+
+// // // Catch-all route to serve the React app for any non-API route
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "/build", "index.html"));
+// });
 
 module.exports = app;
