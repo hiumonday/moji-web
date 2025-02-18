@@ -49,9 +49,7 @@ const courseSchema = mongoose.Schema(
         earlyBirdSlot: {
           type: Number,
           default: 0,
-          required: function () {
-            return this.parent().parent().type === "non_contact_based";
-          },
+          required: true,
         },
         participants: [
           {

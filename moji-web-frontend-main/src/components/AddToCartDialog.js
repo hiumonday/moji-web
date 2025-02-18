@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { UserIcon, ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-hot-toast";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
   const [selectedClass, setSelectedClass] = useState(null);
@@ -16,6 +19,12 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
     },
   ]);
   const [adding, setAdding] = useState(false);
+  const [verifyingCoupon, setVerifyingCoupon] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const handleClassSelection = (classItem) => {
     setSelectedClass(classItem);
@@ -42,21 +51,105 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
     setParticipants(updatedParticipants);
   };
 
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const showNotification = (message, severity = "success") => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
+  };
+
   const checkAlumniCoupon = async (index) => {
+    if (verifyingCoupon !== null) return;
+
+    setVerifyingCoupon(index);
     const couponCode = participants[index].alumniCoupon;
+
+    console.log("Button clicked - Starting alumni verification");
+    console.log("Current participant data:", participants[index]);
+
+    if (!couponCode) {
+      showNotification(
+        i18n.language === "en"
+          ? "Please enter an alumni code"
+          : "Vui lòng nhập mã cựu học viên",
+        "error"
+      );
+      setVerifyingCoupon(null);
+      return;
+    }
+
     try {
-      const response = await fetch("/api/v1/check-alumni");
+      const requestUrl = "/api/v1/check-alumni";
+      const requestBody = { couponCode: couponCode.trim() };
+
+      const response = await fetch(requestUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+        credentials: "include",
+      });
+
       const result = await response.json();
 
-      if (response.ok) {
-        handleParticipantChange(index, "couponValid", true);
-      } else {
-        handleParticipantChange(index, "couponValid", false);
-        handleParticipantChange(index, "alumniCoupon", "");
+      if (response.status === 401) {
+        showNotification(
+          i18n.language === "en"
+            ? "Please login to verify alumni code"
+            : "Vui lòng đăng nhập để xác nhận mã cựu học viên",
+          "error"
+        );
+        setVerifyingCoupon(null);
+        return;
       }
+
+      const updatedParticipants = [...participants];
+      if (response.ok && result.success) {
+        updatedParticipants[index] = {
+          ...updatedParticipants[index],
+          isAlumni: true,
+          couponValid: true,
+          alumniCoupon: couponCode,
+        };
+        showNotification(
+          i18n.language === "en"
+            ? "Alumni code verified successfully!"
+            : "Mã cựu học viên đã được xác nhận!"
+        );
+      } else {
+        updatedParticipants[index] = {
+          ...updatedParticipants[index],
+          isAlumni: false,
+          couponValid: false,
+          alumniCoupon: couponCode,
+        };
+        showNotification(
+          i18n.language === "en"
+            ? result.message || "Invalid alumni code"
+            : "Mã cựu học viên không hợp lệ",
+          "error"
+        );
+      }
+      setParticipants(updatedParticipants);
     } catch (err) {
-      handleParticipantChange(index, "couponValid", false);
-      handleParticipantChange(index, "alumniCoupon", "");
+      console.error("API call error:", err);
+      showNotification(
+        i18n.language === "en"
+          ? "Error verifying alumni code. Please try again."
+          : "Lỗi khi xác nhận mã cựu học viên. Vui lòng thử lại.",
+        "error"
+      );
+    } finally {
+      setVerifyingCoupon(null);
     }
   };
 
@@ -64,7 +157,19 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
     setAdding(true);
     try {
       await onAddToCart(selectedClass, participants);
+      showNotification(
+        i18n.language === "en"
+          ? "Successfully added to cart!"
+          : "Đã thêm vào giỏ hàng thành công!"
+      );
       onClose();
+    } catch (error) {
+      showNotification(
+        i18n.language === "en"
+          ? "Error adding to cart. Please try again."
+          : "Lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.",
+        "error"
+      );
     } finally {
       setAdding(false);
     }
@@ -249,10 +354,26 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
                         }
                       />
                       <button
-                        onClick={() => checkAlumniCoupon(index)}
-                        className="ml-2 px-3 py-2 text-sm border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          checkAlumniCoupon(index);
+                        }}
+                        disabled={verifyingCoupon !== null}
+                        className={`ml-2 px-3 py-2 text-sm border border-transparent rounded-md text-white 
+                          ${
+                            verifyingCoupon === index
+                              ? "bg-blue-400 cursor-not-allowed"
+                              : "bg-blue-600 hover:bg-blue-700"
+                          } 
+                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300`}
                       >
-                        {i18n.language === "en" ? "Check" : "Kiểm tra"}
+                        {verifyingCoupon === index ? (
+                          <CircularProgress size={16} color="inherit" />
+                        ) : i18n.language === "en" ? (
+                          "Check"
+                        ) : (
+                          "Kiểm tra"
+                        )}
                       </button>
                     </div>
                     {participant.couponValid === true && (
@@ -297,6 +418,23 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
           </div>
         </div>
       </div>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

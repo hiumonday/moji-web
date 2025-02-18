@@ -132,13 +132,6 @@ const CreateCourse = () => {
     type: "non_contact_based",
   });
 
-  const [discountData, setDiscountData] = useState({
-    code: "",
-    percentage: "",
-    amount: "",
-    expiresAt: "",
-  });
-
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -185,7 +178,6 @@ const CreateCourse = () => {
 
       formData.append("is_active", shouldPublish);
       formData.append("classes", JSON.stringify(classesData));
-      formData.append("discounts", JSON.stringify(courseData.discounts));
       formData.append(
         "learning_platform",
         JSON.stringify(courseData.learning_platform)
@@ -236,24 +228,6 @@ const CreateCourse = () => {
     setCourseData({ ...courseData, classes: newClasses });
   };
 
-  const addDiscount = () => {
-    setCourseData({
-      ...courseData,
-      discounts: [...courseData.discounts, discountData],
-    });
-    setDiscountData({
-      code: "",
-      percentage: "",
-      amount: "",
-      expiresAt: "",
-    });
-  };
-
-  const removeDiscount = (index) => {
-    const newDiscounts = courseData.discounts.filter((_, i) => i !== index);
-    setCourseData({ ...courseData, discounts: newDiscounts });
-  };
-
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -296,74 +270,6 @@ const CreateCourse = () => {
               disabled={isLoading}
             />
           </Grid>
-
-          {/* Only show pricing fields for non_contact_based courses */}
-          {courseData.type === "non_contact_based" && (
-            <>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  type="number"
-                  label="Regular Price"
-                  value={courseData.price}
-                  onChange={(e) =>
-                    setCourseData({ ...courseData, price: e.target.value })
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  type="number"
-                  label="Early Bird Price"
-                  value={courseData.earlyBirdPrice}
-                  onChange={(e) =>
-                    setCourseData({
-                      ...courseData,
-                      earlyBirdPrice: e.target.value,
-                    })
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  fullWidth
-                  type="number"
-                  label="Bundle Price (2+ students)"
-                  value={courseData.bundlePrice}
-                  onChange={(e) =>
-                    setCourseData({
-                      ...courseData,
-                      bundlePrice: e.target.value,
-                    })
-                  }
-                  disabled={isLoading}
-                  helperText="Price per student when 2 or more sign up together"
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  fullWidth
-                  type="number"
-                  label="Alumni Price"
-                  value={courseData.alumniPrice}
-                  onChange={(e) =>
-                    setCourseData({
-                      ...courseData,
-                      alumniPrice: e.target.value,
-                    })
-                  }
-                  disabled={isLoading}
-                  helperText="Special price for returning students"
-                />
-              </Grid>
-            </>
-          )}
-
           <Grid item xs={12}>
             <StyledTextField
               required
@@ -378,7 +284,6 @@ const CreateCourse = () => {
               disabled={isLoading}
             />
           </Grid>
-
           <Grid item xs={12}>
             <Box sx={{ mb: 3 }}>
               <Button
@@ -412,23 +317,35 @@ const CreateCourse = () => {
         </Grid>
       </StyledPaper>
 
-      {/* Learning Platform section - only for non_contact_based courses */}
+      {/* Pricing Card - Only show for non_contact_based courses */}
       {courseData.type === "non_contact_based" && (
         <StyledPaper>
-          <SectionTitle>Learning Platform</SectionTitle>
+          <SectionTitle>Course Pricing</SectionTitle>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <StyledTextField
+                required={courseData.type === "non_contact_based"}
                 fullWidth
-                label="Access Code"
-                value={courseData.learning_platform.access_code}
+                type="number"
+                label="Regular Price"
+                value={courseData.price}
+                onChange={(e) =>
+                  setCourseData({ ...courseData, price: e.target.value })
+                }
+                disabled={isLoading}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Early Bird Price"
+                value={courseData.earlyBirdPrice}
                 onChange={(e) =>
                   setCourseData({
                     ...courseData,
-                    learning_platform: {
-                      ...courseData.learning_platform,
-                      access_code: e.target.value,
-                    },
+                    earlyBirdPrice: e.target.value,
                   })
                 }
                 disabled={isLoading}
@@ -436,19 +353,36 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <StyledTextField
+                required={courseData.type === "non_contact_based"}
                 fullWidth
-                label="Access Link"
-                value={courseData.learning_platform.access_link}
+                type="number"
+                label="Bundle Price (2+ students)"
+                value={courseData.bundlePrice}
                 onChange={(e) =>
                   setCourseData({
                     ...courseData,
-                    learning_platform: {
-                      ...courseData.learning_platform,
-                      access_link: e.target.value,
-                    },
+                    bundlePrice: e.target.value,
                   })
                 }
                 disabled={isLoading}
+                helperText="Price per student when 2 or more sign up together"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <StyledTextField
+                required={courseData.type === "non_contact_based"}
+                fullWidth
+                type="number"
+                label="Alumni Price"
+                value={courseData.alumniPrice}
+                onChange={(e) =>
+                  setCourseData({
+                    ...courseData,
+                    alumniPrice: e.target.value,
+                  })
+                }
+                disabled={isLoading}
+                helperText="Special price for returning students"
               />
             </Grid>
           </Grid>
@@ -458,100 +392,45 @@ const CreateCourse = () => {
       {courseData.type === "non_contact_based" && (
         <>
           <StyledPaper>
-            <SectionTitle>Discounts</SectionTitle>
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid item xs={12} md={3}>
+            <SectionTitle>Learning Platform</SectionTitle>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
                 <StyledTextField
+                  required={courseData.type === "non_contact_based"}
                   fullWidth
-                  label="Discount Code"
-                  value={discountData.code}
+                  label="Access Code"
+                  value={courseData.learning_platform.access_code}
                   onChange={(e) =>
-                    setDiscountData({ ...discountData, code: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <StyledTextField
-                  fullWidth
-                  type="number"
-                  label="Percentage"
-                  value={discountData.percentage}
-                  onChange={(e) =>
-                    setDiscountData({
-                      ...discountData,
-                      percentage: e.target.value,
+                    setCourseData({
+                      ...courseData,
+                      learning_platform: {
+                        ...courseData.learning_platform,
+                        access_code: e.target.value,
+                      },
                     })
                   }
+                  disabled={isLoading}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
+              <Grid item xs={12} md={6}>
                 <StyledTextField
+                  required={courseData.type === "non_contact_based"}
                   fullWidth
-                  type="number"
-                  label="Amount"
-                  value={discountData.amount}
+                  label="Access Link"
+                  value={courseData.learning_platform.access_link}
                   onChange={(e) =>
-                    setDiscountData({ ...discountData, amount: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <StyledTextField
-                  fullWidth
-                  type="datetime-local"
-                  label="Expires At"
-                  value={discountData.expiresAt}
-                  onChange={(e) =>
-                    setDiscountData({
-                      ...discountData,
-                      expiresAt: e.target.value,
+                    setCourseData({
+                      ...courseData,
+                      learning_platform: {
+                        ...courseData.learning_platform,
+                        access_link: e.target.value,
+                      },
                     })
                   }
-                  InputLabelProps={{ shrink: true }}
+                  disabled={isLoading}
                 />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <StyledButton
-                  variant="contained"
-                  onClick={addDiscount}
-                  fullWidth
-                  sx={{ height: "100%" }}
-                >
-                  Add Discount
-                </StyledButton>
               </Grid>
             </Grid>
-
-            {courseData.discounts.length > 0 && (
-              <Box sx={{ mt: 3 }}>
-                <SubTitle>Added Discounts:</SubTitle>
-                <Grid container spacing={2}>
-                  {courseData.discounts.map((discount, index) => (
-                    <Grid item xs={12} key={index}>
-                      <Paper
-                        sx={{ p: 2, display: "flex", alignItems: "center" }}
-                      >
-                        <Typography sx={{ flex: 1 }}>
-                          Code: {discount.code} |
-                          {discount.percentage
-                            ? ` ${discount.percentage}% `
-                            : ""}
-                          {discount.amount ? ` $${discount.amount} ` : ""}|
-                          Expires:{" "}
-                          {new Date(discount.expiresAt).toLocaleDateString()}
-                        </Typography>
-                        <IconButton
-                          color="error"
-                          onClick={() => removeDiscount(index)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Paper>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
           </StyledPaper>
         </>
       )}
@@ -576,7 +455,7 @@ const CreateCourse = () => {
 
         {courseData.classes.map((classItem, index) => (
           <Paper key={index} sx={{ p: 2, mb: 2 }}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton
                 color="error"
                 onClick={() => removeClass(index)}
@@ -584,7 +463,7 @@ const CreateCourse = () => {
               >
                 <DeleteIcon />
               </IconButton>
-            </Box>
+            </Box> */}
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <StyledTextField
@@ -673,22 +552,20 @@ const CreateCourse = () => {
                   disabled={isLoading}
                 />
               </Grid>
-              {courseData.type === "non_contact_based" && (
-                <Grid item xs={12} md={4}>
-                  <StyledTextField
-                    required
-                    fullWidth
-                    type="number"
-                    label="Early Bird Slots"
-                    value={classItem.earlyBirdSlot || "0"}
-                    onChange={(e) =>
-                      handleClassChange(index, "earlyBirdSlot", e.target.value)
-                    }
-                    disabled={isLoading}
-                    helperText="Number of early bird slots for this class"
-                  />
-                </Grid>
-              )}
+              <Grid item xs={12} md={4}>
+                <StyledTextField
+                  required={courseData.type === "non_contact_based"}
+                  fullWidth
+                  type="number"
+                  label="Early Bird Slots"
+                  value={classItem.earlyBirdSlot}
+                  onChange={(e) =>
+                    handleClassChange(index, "earlyBirdSlot", e.target.value)
+                  }
+                  disabled={isLoading}
+                  helperText="Number of early bird slots for this class"
+                />
+              </Grid>
             </Grid>
           </Paper>
         ))}

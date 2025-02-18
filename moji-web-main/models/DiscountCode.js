@@ -14,9 +14,12 @@ const discountCodeSchema = mongoose.Schema(
     },
     percentage: {
       type: Number,
-      required: true,
+      required: function () {
+        return this.discount_type === "event";
+      },
       min: 0,
       max: 100,
+      default: 0,
     },
     isActive: {
       type: Boolean,

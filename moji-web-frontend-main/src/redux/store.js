@@ -5,6 +5,7 @@ import appReducer from "./slices/appSlice";
 import courseReducer from "./slices/courseSlice";
 import classReducer from "./slices/classSlice";
 import myCourseReducer from "./slices/myCourseSlice";
+import { discountReducer } from "./reducers/discountReducer";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     course: courseReducer,
     class: classReducer,
     myCourse: myCourseReducer,
+    discount: discountReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

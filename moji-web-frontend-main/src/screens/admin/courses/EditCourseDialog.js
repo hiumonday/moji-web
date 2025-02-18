@@ -50,8 +50,7 @@ const EditCourseDialog = ({ open, onClose, course }) => {
     description: "",
     price: "",
     earlyBirdPrice: "",
-    bundlePrice: "",
-    alumniPrice: "",
+    earlyBirdSlot: "",
     classes: [],
     learning_platform: {
       access_code: "",
@@ -71,15 +70,13 @@ const EditCourseDialog = ({ open, onClose, course }) => {
         ...currentCourse,
         price: currentCourse.price?.toString() || "0",
         earlyBirdPrice: currentCourse.earlyBirdPrice?.toString() || "0",
-        bundlePrice: currentCourse.bundlePrice?.toString() || "0",
-        alumniPrice: currentCourse.alumniPrice?.toString() || "0",
+        earlyBirdSlot: currentCourse.earlyBirdSlot?.toString() || "0",
         is_active: currentCourse.is_active || false,
         learning_platform: currentCourse.learning_platform || {
           access_code: "",
           access_link: "",
         },
         classes: currentCourse.classes || [],
-        discounts: currentCourse.discounts || [],
       });
 
       if (currentCourse.image?.data) {
@@ -99,13 +96,11 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       formData.append("description", courseData.description);
       formData.append("price", courseData.price);
       formData.append("earlyBirdPrice", courseData.earlyBirdPrice);
-      formData.append("bundlePrice", courseData.bundlePrice);
-      formData.append("alumniPrice", courseData.alumniPrice);
+      formData.append("earlyBirdSlot", courseData.earlyBirdSlot);
       formData.append("is_active", courseData.is_active);
       formData.append("type", courseData.type);
 
       formData.append("classes", JSON.stringify(courseData.classes));
-      formData.append("discounts", JSON.stringify(courseData.discounts));
       formData.append(
         "learning_platform",
         JSON.stringify(courseData.learning_platform)
@@ -135,7 +130,6 @@ const EditCourseDialog = ({ open, onClose, course }) => {
           startTime: "",
           endTime: "",
           location: "",
-          earlyBirdSlot: "0",
         },
       ],
     });
@@ -175,8 +169,7 @@ const EditCourseDialog = ({ open, onClose, course }) => {
           ...updatedCourse,
           price: updatedCourse.price.toString(),
           earlyBirdPrice: updatedCourse.earlyBirdPrice.toString(),
-          bundlePrice: updatedCourse.bundlePrice.toString(),
-          alumniPrice: updatedCourse.alumniPrice.toString(),
+          earlyBirdSlot: updatedCourse.earlyBirdSlot.toString(),
         }));
       }
     } catch (error) {
@@ -275,6 +268,21 @@ const EditCourseDialog = ({ open, onClose, course }) => {
                       setCourseData({
                         ...courseData,
                         earlyBirdPrice: e.target.value,
+                      })
+                    }
+                    disabled={isLoading}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Early Bird Slots"
+                    value={courseData.earlyBirdSlot}
+                    onChange={(e) =>
+                      setCourseData({
+                        ...courseData,
+                        earlyBirdSlot: e.target.value,
                       })
                     }
                     disabled={isLoading}
@@ -462,26 +470,6 @@ const EditCourseDialog = ({ open, onClose, course }) => {
                         disabled={isLoading}
                       />
                     </Grid>
-                    {courseData.type === "non_contact_based" && (
-                      <Grid item xs={12} md={4}>
-                        <TextField
-                          required
-                          fullWidth
-                          type="number"
-                          label="Early Bird Slots"
-                          value={classItem.earlyBirdSlot || "0"}
-                          onChange={(e) =>
-                            handleClassChange(
-                              index,
-                              "earlyBirdSlot",
-                              e.target.value
-                            )
-                          }
-                          disabled={isLoading}
-                          helperText="Number of early bird slots for this class"
-                        />
-                      </Grid>
-                    )}
                   </Grid>
                 </Paper>
               ))}

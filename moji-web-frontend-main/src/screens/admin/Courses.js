@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import MyCourses from "./courses/MyCourses";
 import CreateCourse from "./courses/CreateCourse";
+import ManageDiscount from "./courses/ManageDiscount";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -107,6 +108,23 @@ const Courses = () => {
             label="Create Course"
             {...a11yProps(1)}
           />
+          <Tab
+            icon={
+              <Box
+                component="span"
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  bgcolor: tabValue === 2 ? "#1976d2" : "grey.400",
+                  mr: 1,
+                }}
+              />
+            }
+            iconPosition="start"
+            label="Manage Discounts"
+            {...a11yProps(2)}
+          />
         </Tabs>
       </Box>
 
@@ -116,6 +134,9 @@ const Courses = () => {
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
           <CreateCourse />
+        </TabPanel>
+        <TabPanel value={tabValue} index={2}>
+          <ManageDiscount />
         </TabPanel>
       </Box>
     </Box>
