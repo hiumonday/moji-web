@@ -36,7 +36,7 @@ const discountCodeSchema = mongoose.Schema(
   },
   {
     timestamps: {
-      currentTime: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // GMT+7
+      currentTime: () => new Date(new Date().getTime()),
     },
   }
 );

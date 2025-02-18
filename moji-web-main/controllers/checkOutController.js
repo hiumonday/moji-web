@@ -1,5 +1,6 @@
 const PayOS = require("@payos/node");
 const User = require("../models/User");
+const Course = require("../models/Course");
 const Transaction = require("../models/Transaction");
 const dotenv = require("dotenv");
 
@@ -16,6 +17,16 @@ module.exports.generateQR = async (req, res) => {
   const orderCode = Number(String(Date.now()).slice(-8));
 
   try {
+    // Giảm số lượng early bird slot cho mỗi lớp
+    for (const classData of transactionData.classes) {
+      if (classData.ebHold > 0) {
+        await Course.updateOne(
+          { "classes._id": classData.class_id },
+          { $inc: { "classes.$.earlyBirdSlot": -classData.ebHold } }
+        );
+      }
+    }
+
     // Tạo payment link
     const body = {
       orderCode,
@@ -33,6 +44,7 @@ module.exports.generateQR = async (req, res) => {
       ...transactionData,
       orderCode,
       checkoutUrl,
+      status: "PENDING",
     });
     await newTransaction.save();
 
@@ -57,16 +69,29 @@ module.exports.failTransaction = async (req, res) => {
       throw new Error("OrderCode is required");
     }
 
-    // Find and update the transaction status
-    const transaction = await Transaction.findOneAndUpdate(
-      { orderCode },
-      { status: "CANCELLED" },
-      { new: true }
-    );
+    // Find the transaction
+    const transaction = await Transaction.findOne({ orderCode });
 
     if (!transaction) {
       throw new Error("Transaction not found");
     }
+
+    // Hoàn trả early bird slots cho mỗi lớp
+    for (const classData of transaction.classes) {
+      if (classData.ebHold > 0) {
+        await Course.updateOne(
+          { "classes._id": classData.class_id },
+          { $inc: { "classes.$.earlyBirdSlot": classData.ebHold } }
+        );
+      }
+    }
+
+    // Update transaction status
+    await Transaction.findOneAndUpdate(
+      { orderCode },
+      { status: "CANCELLED" },
+      { new: true }
+    );
 
     // Redirect back to frontend with status
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);

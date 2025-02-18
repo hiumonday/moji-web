@@ -17,6 +17,7 @@ module.exports.viewCart = async (req, res) => {
       const classInfo = item.courseId.classes.id(item.classId);
       let discount_type = "";
       let earlyBirdSlot = classInfo.earlyBirdSlot;
+      let ebHold = 0;
 
       const participantsWithPrice = item.participants.map((participant) => {
         let price = item.courseId.price;
@@ -27,6 +28,7 @@ module.exports.viewCart = async (req, res) => {
           price = item.courseId.earlyBirdPrice;
           discount_type = "Early Bird";
           earlyBirdSlot--;
+          ebHold++;
         } else if (item.participants.length > 1) {
           price = item.courseId.bundlePrice;
           discount_type = "Bundle";
@@ -44,6 +46,7 @@ module.exports.viewCart = async (req, res) => {
         description: item.courseId.description,
         price: item.courseId.price,
         classInfo: {
+          _id: item.classId,
           level: classInfo.level,
           language: classInfo.language,
           teacherName: classInfo.teacherName,
@@ -55,6 +58,7 @@ module.exports.viewCart = async (req, res) => {
         },
         image: imageBase64,
         participants: participantsWithPrice,
+        ebHold: ebHold,
       };
     });
 
