@@ -87,6 +87,11 @@ exports.createCourse = catchAsyncErrors(async (req, res, next) => {
             )
           );
         }
+
+        // Ensure earlyBirdSlot is a number for non-contact based courses
+        if (courseData.type === "non_contact_based") {
+          classItem.earlyBirdSlot = parseInt(classItem.earlyBirdSlot) || 0;
+        }
       }
     }
 
@@ -132,6 +137,14 @@ exports.updateCourse = catchAsyncErrors(async (req, res, next) => {
     // Parse JSON strings back to objects
     if (typeof updateData.classes === "string") {
       updateData.classes = JSON.parse(updateData.classes);
+
+      // Ensure earlyBirdSlot is a number for each class
+      if (updateData.type === "non_contact_based") {
+        updateData.classes = updateData.classes.map((classItem) => ({
+          ...classItem,
+          earlyBirdSlot: parseInt(classItem.earlyBirdSlot) || 0,
+        }));
+      }
     }
     if (typeof updateData.discounts === "string") {
       updateData.discounts = JSON.parse(updateData.discounts);

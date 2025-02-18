@@ -147,7 +147,7 @@ const App = () => {
             <Route
               path="/admin/*"
               element={
-                <Box sx={{ height: "100vh", overflow: "hidden" }}>
+                <Box sx={{ minHeight: "100vh", overflow: "auto" }}>
                   <AdminLayout>
                     <Routes>
                       <Route

@@ -1,10 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.a8547cdc.css",
-    "main.js": "/static/js/main.b6d99427.js",
+    "main.css": "/static/css/main.86121cfb.css",
+<<<<<<< Updated upstream
+    "main.js": "/static/js/main.9452e92f.js",
+=======
+    "main.js": "/static/js/main.94eddea7.js",
+>>>>>>> Stashed changes
     "static/media/vnwqo.jpeg": "/static/media/vnwqo.c0ab74a8a81df3ab7f0e.jpeg",
     "static/media/course2.jpeg": "/static/media/course2.10437ac7a637f43c0872.jpeg",
-    "static/media/sat2.webp": "/static/media/sat2.a4a1bc35e60d51a1da7c.webp",
     "static/media/vnwqo.webp": "/static/media/vnwqo.711b61c2f0312355e83a.webp",
     "static/media/course3.jpeg": "/static/media/course3.f260bffc52dcdc3570a8.jpeg",
     "static/media/mentor.jpeg": "/static/media/mentor.f260bffc52dcdc3570a8.jpeg",
@@ -24,10 +27,7 @@
     "static/media/user2.jpeg": "/static/media/user2.66a3f292e8476da49801.jpeg",
     "static/media/logo.png": "/static/media/logo.bfc3168bab9c8496124c.png",
     "static/media/comm.webp": "/static/media/comm.d21a379db65eb95fe7f1.webp",
-    "static/media/DF.webp": "/static/media/DF.a203082731ec59c4f918.webp",
-    "static/media/DD.webp": "/static/media/DD.31bc9dc3e57dab84f605.webp",
     "static/media/banmai.webp": "/static/media/banmai.76d2008422e2e05f3cbd.webp",
-    "static/media/private.webp": "/static/media/private.f94e342a94c1f7f7e614.webp",
     "static/media/suv.webp": "/static/media/suv.7fa8efda44d5e78d3170.webp",
     "static/media/google.png": "/static/media/google.e12914ad8afda3f6f2e8.png",
     "static/media/vtv7.webp": "/static/media/vtv7.66a4bcb86049731e43e9.webp",
@@ -44,11 +44,19 @@
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
-    "main.a8547cdc.css.map": "/static/css/main.a8547cdc.css.map",
-    "main.b6d99427.js.map": "/static/js/main.b6d99427.js.map"
+    "main.86121cfb.css.map": "/static/css/main.86121cfb.css.map",
+<<<<<<< Updated upstream
+    "main.9452e92f.js.map": "/static/js/main.9452e92f.js.map"
   },
   "entrypoints": [
-    "static/css/main.a8547cdc.css",
-    "static/js/main.b6d99427.js"
+    "static/css/main.86121cfb.css",
+    "static/js/main.9452e92f.js"
+=======
+    "main.94eddea7.js.map": "/static/js/main.94eddea7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.86121cfb.css",
+    "static/js/main.94eddea7.js"
+>>>>>>> Stashed changes
   ]
 }
