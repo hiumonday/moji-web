@@ -137,8 +137,8 @@ dist
 config.env
 node_modules
 *.env
-*.env.prod
-*.env.dev
+*.env.production
+*.env.development
 build/
 
 
