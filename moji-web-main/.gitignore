@@ -137,6 +137,9 @@ dist
 config.env
 node_modules
 *.env
+*.env.prod
+*.env.dev
+build/
 
 
 package-lock.json
