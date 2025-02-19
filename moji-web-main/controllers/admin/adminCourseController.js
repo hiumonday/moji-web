@@ -69,6 +69,9 @@ exports.createCourse = catchAsyncErrors(async (req, res, next) => {
       const requiredClassFields = [
         "level",
         "language",
+        "class_session",
+        "target_audience",
+        "goals",
         "teacherName",
         "day",
         "startTime",
@@ -77,7 +80,7 @@ exports.createCourse = catchAsyncErrors(async (req, res, next) => {
 
       for (const classItem of courseData.classes) {
         const missingFields = requiredClassFields.filter(
-          (field) => !classItem[field]
+          (field) => !classItem[field] && classItem[field] !== 0
         );
         if (missingFields.length > 0) {
           return next(
@@ -88,7 +91,44 @@ exports.createCourse = catchAsyncErrors(async (req, res, next) => {
           );
         }
 
-        // Ensure earlyBirdSlot is a number for non-contact based courses
+        // Validate class_session is a positive number
+        const classSession = parseInt(classItem.class_session);
+        if (isNaN(classSession) || classSession < 1) {
+          return next(
+            new ErrorHandler(
+              "Number of sessions must be a positive number",
+              400
+            )
+          );
+        }
+
+        // Validate syllabus items
+        if (
+          !classItem.syllabus ||
+          !Array.isArray(classItem.syllabus) ||
+          classItem.syllabus.length === 0
+        ) {
+          return next(
+            new ErrorHandler(
+              "Each class must have at least one syllabus item",
+              400
+            )
+          );
+        }
+
+        for (const syllabusItem of classItem.syllabus) {
+          if (!syllabusItem.title || !syllabusItem.content) {
+            return next(
+              new ErrorHandler(
+                "Syllabus items must have title and content",
+                400
+              )
+            );
+          }
+        }
+
+        // Ensure numeric fields are properly parsed
+        classItem.class_session = parseInt(classItem.class_session);
         if (courseData.type === "non_contact_based") {
           classItem.earlyBirdSlot = parseInt(classItem.earlyBirdSlot) || 0;
         }
@@ -138,13 +178,22 @@ exports.updateCourse = catchAsyncErrors(async (req, res, next) => {
     if (typeof updateData.classes === "string") {
       updateData.classes = JSON.parse(updateData.classes);
 
-      // Ensure earlyBirdSlot is a number for each class
-      if (updateData.type === "non_contact_based") {
-        updateData.classes = updateData.classes.map((classItem) => ({
-          ...classItem,
-          earlyBirdSlot: parseInt(classItem.earlyBirdSlot) || 0,
-        }));
-      }
+      // Validate and parse numeric fields for each class
+      updateData.classes = updateData.classes.map((classItem) => {
+        const parsedClass = { ...classItem };
+        parsedClass.class_session = parseInt(classItem.class_session);
+
+        if (updateData.type === "non_contact_based") {
+          parsedClass.earlyBirdSlot = parseInt(classItem.earlyBirdSlot) || 0;
+        }
+
+        // Validate class_session
+        if (isNaN(parsedClass.class_session) || parsedClass.class_session < 1) {
+          throw new Error("Number of sessions must be a positive number");
+        }
+
+        return parsedClass;
+      });
     }
     if (typeof updateData.discounts === "string") {
       updateData.discounts = JSON.parse(updateData.discounts);

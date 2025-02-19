@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   Box,
   TextField,
@@ -21,6 +21,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { createCourse } from "../../../redux/actions/courseActions";
 import { styled } from "@mui/material/styles";
+import { debounce } from "lodash";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -101,6 +102,252 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+// Create a memoized class item component
+const ClassItem = React.memo(
+  ({
+    classItem,
+    index,
+    isLoading,
+    onClassChange,
+    onSyllabusChange,
+    onAddSyllabus,
+    onRemoveSyllabus,
+    courseType,
+  }) => {
+    const handleClassChange = useCallback(
+      debounce((field, value) => {
+        onClassChange(index, field, value);
+      }, 300),
+      [index, onClassChange]
+    );
+
+    const handleSyllabusChange = useCallback(
+      debounce((syllabusIndex, field, value) => {
+        onSyllabusChange(index, syllabusIndex, field, value);
+      }, 300),
+      [index, onSyllabusChange]
+    );
+
+    return (
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              label="Level"
+              defaultValue={classItem.level}
+              onChange={(e) => handleClassChange("level", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              label="Language"
+              defaultValue={classItem.language}
+              onChange={(e) => handleClassChange("language", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              type="number"
+              label="Number of Sessions"
+              defaultValue={classItem.class_session}
+              onChange={(e) =>
+                handleClassChange("class_session", e.target.value)
+              }
+              disabled={isLoading}
+              helperText="Total number of sessions for this class"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <StyledTextField
+              required
+              fullWidth
+              multiline
+              rows={3}
+              label="Target Audience"
+              defaultValue={classItem.target_audience}
+              onChange={(e) =>
+                handleClassChange("target_audience", e.target.value)
+              }
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <StyledTextField
+              required
+              fullWidth
+              multiline
+              rows={3}
+              label="Goals"
+              defaultValue={classItem.goals}
+              onChange={(e) => handleClassChange("goals", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+
+          {/* Syllabus Section */}
+          <Grid item xs={12}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Syllabus
+              </Typography>
+              {classItem.syllabus.map((syllabusItem, syllabusIndex) => (
+                <Box
+                  key={syllabusIndex}
+                  sx={{ mb: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}
+                >
+                  <Grid container spacing={2}>
+                    <Grid item xs={11}>
+                      <StyledTextField
+                        required
+                        fullWidth
+                        label="Title"
+                        defaultValue={syllabusItem.title}
+                        onChange={(e) =>
+                          handleSyllabusChange(
+                            syllabusIndex,
+                            "title",
+                            e.target.value
+                          )
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <IconButton
+                        onClick={() => onRemoveSyllabus(index, syllabusIndex)}
+                        disabled={classItem.syllabus.length === 1}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StyledTextField
+                        required
+                        fullWidth
+                        multiline
+                        rows={2}
+                        label="Content"
+                        defaultValue={syllabusItem.content}
+                        onChange={(e) =>
+                          handleSyllabusChange(
+                            syllabusIndex,
+                            "content",
+                            e.target.value
+                          )
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StyledTextField
+                        fullWidth
+                        label="Duration"
+                        defaultValue={syllabusItem.duration}
+                        onChange={(e) =>
+                          handleSyllabusChange(
+                            syllabusIndex,
+                            "duration",
+                            e.target.value
+                          )
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              ))}
+              <Button
+                startIcon={<AddIcon />}
+                onClick={() => onAddSyllabus(index)}
+                disabled={isLoading}
+              >
+                Add Syllabus Item
+              </Button>
+            </Box>
+          </Grid>
+
+          {/* Rest of the fields */}
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              label="Teacher Name"
+              defaultValue={classItem.teacherName}
+              onChange={(e) => handleClassChange("teacherName", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              required
+              fullWidth
+              label="Day"
+              defaultValue={classItem.day}
+              onChange={(e) => handleClassChange("day", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              required
+              fullWidth
+              type="time"
+              label="Start Time"
+              defaultValue={classItem.startTime}
+              onChange={(e) => handleClassChange("startTime", e.target.value)}
+              disabled={isLoading}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              required
+              fullWidth
+              type="time"
+              label="End Time"
+              defaultValue={classItem.endTime}
+              onChange={(e) => handleClassChange("endTime", e.target.value)}
+              disabled={isLoading}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              fullWidth
+              label="Location"
+              defaultValue={classItem.location}
+              onChange={(e) => handleClassChange("location", e.target.value)}
+              disabled={isLoading}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              required={courseType === "non_contact_based"}
+              fullWidth
+              type="number"
+              label="Early Bird Slots"
+              defaultValue={classItem.earlyBirdSlot}
+              onChange={(e) =>
+                handleClassChange("earlyBirdSlot", e.target.value)
+              }
+              disabled={isLoading}
+              helperText="Number of early bird slots for this class"
+            />
+          </Grid>
+        </Grid>
+      </Paper>
+    );
+  }
+);
+
 const CreateCourse = () => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.course);
@@ -117,6 +364,16 @@ const CreateCourse = () => {
       {
         level: "",
         language: "",
+        class_session: 0,
+        target_audience: "",
+        goals: "",
+        syllabus: [
+          {
+            title: "",
+            content: "",
+            duration: "",
+          },
+        ],
         teacherName: "",
         day: "",
         startTime: "",
@@ -202,6 +459,16 @@ const CreateCourse = () => {
         {
           level: "",
           language: "",
+          class_session: 0,
+          target_audience: "",
+          goals: "",
+          syllabus: [
+            {
+              title: "",
+              content: "",
+              duration: "",
+            },
+          ],
           teacherName: "",
           day: "",
           startTime: "",
@@ -218,15 +485,19 @@ const CreateCourse = () => {
     setCourseData({ ...courseData, classes: newClasses });
   };
 
-  const handleClassChange = (index, field, value) => {
-    const newClasses = courseData.classes.map((classItem, i) => {
-      if (i === index) {
-        return { ...classItem, [field]: value };
-      }
-      return classItem;
+  const handleClassChange = useCallback((index, field, value) => {
+    setCourseData((prevData) => {
+      const newClasses = [...prevData.classes];
+      newClasses[index] = {
+        ...newClasses[index],
+        [field]: value,
+      };
+      return {
+        ...prevData,
+        classes: newClasses,
+      };
     });
-    setCourseData({ ...courseData, classes: newClasses });
-  };
+  }, []);
 
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
@@ -235,6 +506,75 @@ const CreateCourse = () => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
+
+  // Add new function to handle syllabus changes
+  const handleSyllabusChange = useCallback(
+    (classIndex, syllabusIndex, field, value) => {
+      setCourseData((prevData) => {
+        const newClasses = [...prevData.classes];
+        newClasses[classIndex].syllabus[syllabusIndex] = {
+          ...newClasses[classIndex].syllabus[syllabusIndex],
+          [field]: value,
+        };
+        return {
+          ...prevData,
+          classes: newClasses,
+        };
+      });
+    },
+    []
+  );
+
+  const addSyllabusItem = useCallback((classIndex) => {
+    setCourseData((prevData) => {
+      const newClasses = [...prevData.classes];
+      newClasses[classIndex].syllabus.push({
+        title: "",
+        content: "",
+        duration: "",
+      });
+      return {
+        ...prevData,
+        classes: newClasses,
+      };
+    });
+  }, []);
+
+  const removeSyllabusItem = useCallback((classIndex, syllabusIndex) => {
+    setCourseData((prevData) => {
+      const newClasses = [...prevData.classes];
+      newClasses[classIndex].syllabus.splice(syllabusIndex, 1);
+      return {
+        ...prevData,
+        classes: newClasses,
+      };
+    });
+  }, []);
+
+  // Memoize the class items
+  const classItems = useMemo(() => {
+    return courseData.classes.map((classItem, index) => (
+      <ClassItem
+        key={index}
+        classItem={classItem}
+        index={index}
+        isLoading={isLoading}
+        onClassChange={handleClassChange}
+        onSyllabusChange={handleSyllabusChange}
+        onAddSyllabus={addSyllabusItem}
+        onRemoveSyllabus={removeSyllabusItem}
+        courseType={courseData.type}
+      />
+    ));
+  }, [
+    courseData.classes,
+    courseData.type,
+    isLoading,
+    handleClassChange,
+    handleSyllabusChange,
+    addSyllabusItem,
+    removeSyllabusItem,
+  ]);
 
   return (
     <Box component="form" sx={{ fontFamily: "'Inter', sans-serif" }}>
@@ -452,123 +792,7 @@ const CreateCourse = () => {
             <AddIcon />
           </IconButton>
         </Box>
-
-        {courseData.classes.map((classItem, index) => (
-          <Paper key={index} sx={{ p: 2, mb: 2 }}>
-            {/* <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <IconButton
-                color="error"
-                onClick={() => removeClass(index)}
-                disabled={courseData.classes.length === 1}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box> */}
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  label="Level"
-                  value={classItem.level}
-                  onChange={(e) =>
-                    handleClassChange(index, "level", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  label="Language"
-                  value={classItem.language}
-                  onChange={(e) =>
-                    handleClassChange(index, "language", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  label="Teacher Name"
-                  value={classItem.teacherName}
-                  onChange={(e) =>
-                    handleClassChange(index, "teacherName", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  label="Day"
-                  value={classItem.day}
-                  onChange={(e) =>
-                    handleClassChange(index, "day", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  type="time"
-                  label="Start Time"
-                  value={classItem.startTime}
-                  onChange={(e) =>
-                    handleClassChange(index, "startTime", e.target.value)
-                  }
-                  disabled={isLoading}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <StyledTextField
-                  required
-                  fullWidth
-                  type="time"
-                  label="End Time"
-                  value={classItem.endTime}
-                  onChange={(e) =>
-                    handleClassChange(index, "endTime", e.target.value)
-                  }
-                  disabled={isLoading}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <StyledTextField
-                  fullWidth
-                  label="Location"
-                  value={classItem.location}
-                  onChange={(e) =>
-                    handleClassChange(index, "location", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <StyledTextField
-                  required={courseData.type === "non_contact_based"}
-                  fullWidth
-                  type="number"
-                  label="Early Bird Slots"
-                  value={classItem.earlyBirdSlot}
-                  onChange={(e) =>
-                    handleClassChange(index, "earlyBirdSlot", e.target.value)
-                  }
-                  disabled={isLoading}
-                  helperText="Number of early bird slots for this class"
-                />
-              </Grid>
-            </Grid>
-          </Paper>
-        ))}
+        {classItems}
       </StyledPaper>
 
       <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>

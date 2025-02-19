@@ -51,7 +51,28 @@ const EditCourseDialog = ({ open, onClose, course }) => {
     price: "",
     earlyBirdPrice: "",
     earlyBirdSlot: "",
-    classes: [],
+    classes: [
+      {
+        level: "",
+        language: "",
+        class_session: 0,
+        target_audience: "",
+        goals: "",
+        syllabus: [
+          {
+            title: "",
+            content: "",
+            duration: "",
+          },
+        ],
+        teacherName: "",
+        day: "",
+        startTime: "",
+        endTime: "",
+        location: "",
+        earlyBirdSlot: "0",
+      },
+    ],
     learning_platform: {
       access_code: "",
       access_link: "",
@@ -125,11 +146,22 @@ const EditCourseDialog = ({ open, onClose, course }) => {
         {
           level: "",
           language: "",
+          class_session: 0,
+          target_audience: "",
+          goals: "",
+          syllabus: [
+            {
+              title: "",
+              content: "",
+              duration: "",
+            },
+          ],
           teacherName: "",
           day: "",
           startTime: "",
           endTime: "",
           location: "",
+          earlyBirdSlot: "0",
         },
       ],
     });
@@ -191,6 +223,28 @@ const EditCourseDialog = ({ open, onClose, course }) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleSyllabusChange = (classIndex, syllabusIndex, field, value) => {
+    const newClasses = [...courseData.classes];
+    newClasses[classIndex].syllabus[syllabusIndex][field] = value;
+    setCourseData({ ...courseData, classes: newClasses });
+  };
+
+  const addSyllabusItem = (classIndex) => {
+    const newClasses = [...courseData.classes];
+    newClasses[classIndex].syllabus.push({
+      title: "",
+      content: "",
+      duration: "",
+    });
+    setCourseData({ ...courseData, classes: newClasses });
+  };
+
+  const removeSyllabusItem = (classIndex, syllabusIndex) => {
+    const newClasses = [...courseData.classes];
+    newClasses[classIndex].syllabus.splice(syllabusIndex, 1);
+    setCourseData({ ...courseData, classes: newClasses });
   };
 
   return (
@@ -402,6 +456,148 @@ const EditCourseDialog = ({ open, onClose, course }) => {
                         }
                         disabled={isLoading}
                       />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        required
+                        fullWidth
+                        type="number"
+                        label="Number of Sessions"
+                        value={classItem.class_session}
+                        onChange={(e) =>
+                          handleClassChange(
+                            index,
+                            "class_session",
+                            e.target.value
+                          )
+                        }
+                        disabled={isLoading}
+                        helperText="Total number of sessions for this class"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label="Target Audience"
+                        value={classItem.target_audience}
+                        onChange={(e) =>
+                          handleClassChange(
+                            index,
+                            "target_audience",
+                            e.target.value
+                          )
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label="Goals"
+                        value={classItem.goals}
+                        onChange={(e) =>
+                          handleClassChange(index, "goals", e.target.value)
+                        }
+                        disabled={isLoading}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                          Syllabus
+                        </Typography>
+                        {classItem.syllabus.map(
+                          (syllabusItem, syllabusIndex) => (
+                            <Box
+                              key={syllabusIndex}
+                              sx={{
+                                mb: 2,
+                                p: 2,
+                                bgcolor: "#f5f5f5",
+                                borderRadius: 1,
+                              }}
+                            >
+                              <Grid container spacing={2}>
+                                <Grid item xs={11}>
+                                  <TextField
+                                    required
+                                    fullWidth
+                                    label="Title"
+                                    value={syllabusItem.title}
+                                    onChange={(e) =>
+                                      handleSyllabusChange(
+                                        index,
+                                        syllabusIndex,
+                                        "title",
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={isLoading}
+                                  />
+                                </Grid>
+                                <Grid item xs={1}>
+                                  <IconButton
+                                    onClick={() =>
+                                      removeSyllabusItem(index, syllabusIndex)
+                                    }
+                                    disabled={classItem.syllabus.length === 1}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Grid>
+                                <Grid item xs={12}>
+                                  <TextField
+                                    required
+                                    fullWidth
+                                    multiline
+                                    rows={2}
+                                    label="Content"
+                                    value={syllabusItem.content}
+                                    onChange={(e) =>
+                                      handleSyllabusChange(
+                                        index,
+                                        syllabusIndex,
+                                        "content",
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={isLoading}
+                                  />
+                                </Grid>
+                                <Grid item xs={12}>
+                                  <TextField
+                                    fullWidth
+                                    label="Duration"
+                                    value={syllabusItem.duration}
+                                    onChange={(e) =>
+                                      handleSyllabusChange(
+                                        index,
+                                        syllabusIndex,
+                                        "duration",
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={isLoading}
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Box>
+                          )
+                        )}
+                        <Button
+                          startIcon={<AddIcon />}
+                          onClick={() => addSyllabusItem(index)}
+                          disabled={isLoading}
+                        >
+                          Add Syllabus Item
+                        </Button>
+                      </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <TextField
