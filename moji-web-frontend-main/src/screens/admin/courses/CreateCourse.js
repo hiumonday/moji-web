@@ -114,6 +114,7 @@ const ClassItem = React.memo(
     onRemoveSyllabus,
     courseType,
   }) => {
+    // Only debounce the text input changes, not the add/remove operations
     const handleClassChange = useCallback(
       debounce((field, value) => {
         onClassChange(index, field, value);
@@ -127,6 +128,18 @@ const ClassItem = React.memo(
       }, 300),
       [index, onSyllabusChange]
     );
+
+    // Remove debouncing for add/remove operations
+    const handleRemoveSyllabus = useCallback(
+      (syllabusIndex) => {
+        onRemoveSyllabus(index, syllabusIndex);
+      },
+      [index, onRemoveSyllabus]
+    );
+
+    const handleAddSyllabus = useCallback(() => {
+      onAddSyllabus(index);
+    }, [index, onAddSyllabus]);
 
     return (
       <Paper sx={{ p: 2, mb: 2 }}>
@@ -200,7 +213,7 @@ const ClassItem = React.memo(
               </Typography>
               {classItem.syllabus.map((syllabusItem, syllabusIndex) => (
                 <Box
-                  key={syllabusIndex}
+                  key={`${index}-${syllabusIndex}`}
                   sx={{ mb: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}
                 >
                   <Grid container spacing={2}>
@@ -222,7 +235,7 @@ const ClassItem = React.memo(
                     </Grid>
                     <Grid item xs={1}>
                       <IconButton
-                        onClick={() => onRemoveSyllabus(index, syllabusIndex)}
+                        onClick={() => handleRemoveSyllabus(syllabusIndex)}
                         disabled={classItem.syllabus.length === 1}
                       >
                         <DeleteIcon />
@@ -266,7 +279,7 @@ const ClassItem = React.memo(
               ))}
               <Button
                 startIcon={<AddIcon />}
-                onClick={() => onAddSyllabus(index)}
+                onClick={handleAddSyllabus}
                 disabled={isLoading}
               >
                 Add Syllabus Item
@@ -499,22 +512,18 @@ const CreateCourse = () => {
     });
   }, []);
 
-  const handleImageSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  // Add new function to handle syllabus changes
   const handleSyllabusChange = useCallback(
     (classIndex, syllabusIndex, field, value) => {
       setCourseData((prevData) => {
         const newClasses = [...prevData.classes];
-        newClasses[classIndex].syllabus[syllabusIndex] = {
-          ...newClasses[classIndex].syllabus[syllabusIndex],
+        const newSyllabus = [...newClasses[classIndex].syllabus];
+        newSyllabus[syllabusIndex] = {
+          ...newSyllabus[syllabusIndex],
           [field]: value,
+        };
+        newClasses[classIndex] = {
+          ...newClasses[classIndex],
+          syllabus: newSyllabus,
         };
         return {
           ...prevData,
@@ -525,14 +534,29 @@ const CreateCourse = () => {
     []
   );
 
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const addSyllabusItem = useCallback((classIndex) => {
     setCourseData((prevData) => {
       const newClasses = [...prevData.classes];
-      newClasses[classIndex].syllabus.push({
-        title: "",
-        content: "",
-        duration: "",
-      });
+      const newSyllabus = [
+        ...newClasses[classIndex].syllabus,
+        {
+          title: "",
+          content: "",
+          duration: "",
+        },
+      ];
+      newClasses[classIndex] = {
+        ...newClasses[classIndex],
+        syllabus: newSyllabus,
+      };
       return {
         ...prevData,
         classes: newClasses,
@@ -543,7 +567,13 @@ const CreateCourse = () => {
   const removeSyllabusItem = useCallback((classIndex, syllabusIndex) => {
     setCourseData((prevData) => {
       const newClasses = [...prevData.classes];
-      newClasses[classIndex].syllabus.splice(syllabusIndex, 1);
+      const newSyllabus = newClasses[classIndex].syllabus.filter(
+        (_, index) => index !== syllabusIndex
+      );
+      newClasses[classIndex] = {
+        ...newClasses[classIndex],
+        syllabus: newSyllabus,
+      };
       return {
         ...prevData,
         classes: newClasses,

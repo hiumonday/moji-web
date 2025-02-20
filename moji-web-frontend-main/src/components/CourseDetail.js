@@ -29,6 +29,7 @@ import {
   CalendarToday as CalendarIcon,
 } from "@mui/icons-material";
 import AddToCartButton from "./AddToCartButton";
+import ConsultationButton from "./ConsultationButton";
 
 const CourseDetail = ({ i18n }) => {
   const { id } = useParams();
@@ -172,18 +173,34 @@ const CourseDetail = ({ i18n }) => {
                   fontSize: "1.25rem",
                 }}
               >
-                {course.price.toLocaleString("vi-VN")} VND
-                {course.earlyBirdPrice && (
+                {course.price ? (
+                  <>
+                    {course.price.toLocaleString("vi-VN")} VND
+                    {course.earlyBirdPrice && (
+                      <Typography
+                        component="span"
+                        sx={{
+                          ml: 2,
+                          color: "success.main",
+                          fontWeight: 600,
+                        }}
+                      >
+                        Early Bird:{" "}
+                        {course.earlyBirdPrice.toLocaleString("vi-VN")} VND
+                      </Typography>
+                    )}
+                  </>
+                ) : (
                   <Typography
                     component="span"
                     sx={{
-                      ml: 2,
-                      color: "success.main",
-                      fontWeight: 600,
+                      color: "text.secondary",
+                      fontStyle: "italic",
                     }}
                   >
-                    Early Bird: {course.earlyBirdPrice.toLocaleString("vi-VN")}{" "}
-                    VND
+                    {i18n.language === "en"
+                      ? "Contact for pricing"
+                      : "Liên hệ để biết thêm chi tiết"}
                   </Typography>
                 )}
               </Typography>
@@ -468,11 +485,15 @@ const CourseDetail = ({ i18n }) => {
                 </List>
               </CardContent>
             </Card>
-            <AddToCartButton
-              course={course}
-              selectedClass={selectedClass}
-              i18n={i18n}
-            />
+            {course.type === "contact_based" ? (
+              <ConsultationButton course={course} i18n={i18n} />
+            ) : (
+              <AddToCartButton
+                course={course}
+                selectedClass={selectedClass}
+                i18n={i18n}
+              />
+            )}
           </Grid>
         </Grid>
       </Container>
