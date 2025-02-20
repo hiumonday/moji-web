@@ -109,7 +109,9 @@ module.exports.viewCart = async (req, res) => {
 
     let discountAmount =
       originalTotal > 0
-        ? ((originalTotal - finalTotal) / originalTotal) * 100
+        ? Number(
+            (((originalTotal - finalTotal) / originalTotal) * 100).toFixed(2)
+          )
         : 0;
 
     res.status(200).json({
