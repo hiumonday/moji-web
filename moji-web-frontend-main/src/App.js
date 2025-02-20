@@ -16,6 +16,7 @@ import { initReactI18next } from "react-i18next";
 import enTranslation from "./locales/en/translation.json";
 import viTranslation from "./locales/vi/translation.json";
 import AboutUs from "./screens/AboutUs";
+import Mentors from "./screens/Mentors";
 import UserCourses from "./screens/Courses";
 import DF from "./screens/DF";
 import Login from "./screens/Login";
@@ -141,6 +142,7 @@ const App = () => {
               element={<TransactionHistory />}
             />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/mentors" element={<Mentors />} />
             <Route path="/courses" element={<UserCourses />} />
             <Route path="/debating-fundamentals" element={<DF />} />
             <Route path="/admin/login" element={<AdminLogin />} />

@@ -258,5 +258,22 @@
   "noCourses": "You haven't bought any courses yet",
   "browseCourses": "Browse Courses",
   "trainingProgramsTitle": "Training Programs",
-  "coachingProgramsTitle": "Coaching Programs"
+  "coachingProgramsTitle": "Coaching Programs",
+  "introduction": "About Us",
+  "mentors": "Our Mentors",
+  "mentorsPageTitle": "Our Mentors",
+  "mentorsPageDescription": "Meet our experienced and dedicated mentors at Moji Education",
+  "mentorsPageOgTitle": "Our Mentors - Moji Education",
+  "mentorsPageKeywords": "mentors, teachers, debate coaches, SAT tutors, Moji Education",
+  "mentorsTitle": "Meet Our Expert Mentors",
+  "mentorsDescription": "Our mentors are experienced educators and accomplished debaters who are passionate about helping students succeed.",
+  "mentorTitle1": "Co-founder & Lead Debate Coach",
+  "mentorExperience1": "4 National Debate Championship titles, 3 years experience as debate coach and SAT mentor at Moji Education",
+  "mentorEducation1": "Computer Science and Education at Colby College",
+  "mentorTitle2": "Co-founder & Head of Curriculum",
+  "mentorExperience2": "Ex-Captain of Vietnam National Debate Team, 3 years experience as debate coach and SAT mentor at Moji Education",
+  "mentorEducation2": "Theater and Comparative Literature at Williams College",
+  "mentorTitle3": "Co-founder & Community Development Lead",
+  "mentorExperience3": "7 National Debate Championship titles, founder of the Vietnam Debate Network, 4 years of experience as Debate Coach",
+  "mentorEducation3": "International Relations at Diplomatic Academy of Vietnam"
 }
