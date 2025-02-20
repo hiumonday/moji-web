@@ -7,6 +7,13 @@ const learningPlatformSchema = mongoose.Schema({
   _id: false,
 });
 
+const syllabusSchema = mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  duration: { type: String },
+  _id: false,
+});
+
 const courseSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -41,6 +48,11 @@ const courseSchema = mongoose.Schema(
         },
         level: { type: String, required: true },
         language: { type: String, required: true },
+        class_session: { type: Number, required: true },
+        target_audience: { type: String, required: true },
+        goals: { type: String, required: true },
+        syllabus: [syllabusSchema],
+        location: { type: String },
         teacherName: { type: String, required: true },
         day: { type: String, required: true },
         startTime: { type: String, required: true },

@@ -62,49 +62,50 @@ module.exports.viewCart = async (req, res) => {
       };
     });
 
-    const originalTotal = cartItems.reduce((sum, item) => {
+    const originalTotal = validCartItems.reduce((sum, item) => {
       const numParticipants = item.participants.length;
-      let price = item.price;
-
+      let price = item.price || 0;
       return sum + price * numParticipants;
     }, 0);
 
-    const totalBeforeDiscount = cartItems.reduce((sum, item) => {
+    const totalBeforeDiscount = validCartItems.reduce((sum, item) => {
       return (
         sum +
         item.participants.reduce((participantSum, participant) => {
-          return participantSum + participant.price;
+          return participantSum + (participant.price || 0);
         }, 0)
       );
     }, 0);
 
-    // Check if coupon exists and is valid
     let finalTotal = totalBeforeDiscount;
     let discountPercentage = 0;
-
-    // Get applied coupon details if exists
     let appliedCouponDetails = null;
-    if (user.appliedDiscount) {
-      const discountCode = await DiscountCode.findOne({
-        discount_code: user.appliedDiscount,
-        isActive: true,
-        expiresAt: { $gt: new Date() },
-      });
 
-      if (discountCode) {
-        discountPercentage = discountCode.percentage;
-        const discountAmount = (totalBeforeDiscount * discountPercentage) / 100;
-        finalTotal = totalBeforeDiscount - discountAmount;
-        appliedCouponDetails = {
-          code: discountCode.discount_code,
-          percentage: discountCode.percentage,
-        };
-      } else {
-        // Remove invalid/expired discount code
-        await User.findByIdAndUpdate(userId, {
-          $unset: { appliedDiscount: "" },
+    try {
+      if (user.appliedDiscount) {
+        const discountCode = await DiscountCode.findOne({
+          discount_code: user.appliedDiscount,
+          isActive: true,
+          expiresAt: { $gt: new Date() },
         });
+
+        if (discountCode) {
+          discountPercentage = discountCode.percentage || 0;
+          const discountAmount =
+            (totalBeforeDiscount * discountPercentage) / 100;
+          finalTotal = totalBeforeDiscount - discountAmount;
+          appliedCouponDetails = {
+            code: discountCode.discount_code,
+            percentage: discountCode.percentage,
+          };
+        } else {
+          await User.findByIdAndUpdate(userId, {
+            $unset: { appliedDiscount: "" },
+          });
+        }
       }
+    } catch (error) {
+      console.error("Error processing discount:", error);
     }
 
     let discountAmount =
@@ -113,14 +114,18 @@ module.exports.viewCart = async (req, res) => {
         : 0;
 
     res.status(200).json({
-      cart: cartItems,
+      cart: validCartItems,
       totalPrice: finalTotal,
       originalTotal: originalTotal,
       discount: discountAmount,
-      appliedCoupon: appliedCouponDetails, // Add this to response
+      appliedCoupon: appliedCouponDetails,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching cart", error });
+    console.error("Error in viewCart:", error);
+    res.status(500).json({
+      message: "Error fetching cart",
+      error: error.message,
+    });
   }
 };
 

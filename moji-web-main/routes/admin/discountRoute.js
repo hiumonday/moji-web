@@ -12,7 +12,12 @@ const {
 const router = express.Router();
 
 // Get all discounts
-router.get("/", isAuthenticatedUser, authorizedRole("admin"), getAllDiscounts);
+router.get(
+  "/discount",
+  isAuthenticatedUser,
+  authorizedRole("admin"),
+  getAllDiscounts
+);
 
 // Create event discount
 router.post(

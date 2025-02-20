@@ -85,7 +85,19 @@ const Courses = () => {
             pretitle={t("coursesPagePretitle")}
             title="Chương trình Đào tạo"
           ></SectionTitle>
-          <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3 py-12 px-10">
+          <div
+            className={`
+            grid gap-10 
+            ${
+              nonContactCourses.length === 1
+                ? "grid-cols-1 max-w-md"
+                : nonContactCourses.length === 2
+                  ? "grid-cols-2 max-w-4xl"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl"
+            } 
+            mx-auto py-12 px-10
+          `}
+          >
             {nonContactCourses.map((course) => (
               <CourseCard key={course._id} course={course} i18n={i18n} />
             ))}
@@ -100,7 +112,19 @@ const Courses = () => {
             pretitle={t("coursesPagePretitle")}
             title="Chương trình Huấn luyện"
           ></SectionTitle>
-          <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3 py-12 px-10">
+          <div
+            className={`
+            grid gap-10 
+            ${
+              contactCourses.length === 1
+                ? "grid-cols-1 max-w-md"
+                : contactCourses.length === 2
+                  ? "grid-cols-2 max-w-4xl"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl"
+            } 
+            mx-auto py-12 px-10
+          `}
+          >
             {contactCourses.map((course) => (
               <CourseCard key={course._id} course={course} i18n={i18n} />
             ))}

@@ -2,17 +2,17 @@ const PayOS = require("@payos/node");
 const User = require("../models/User");
 const Course = require("../models/Course");
 const Transaction = require("../models/Transaction");
-const dotenv = require("dotenv");
 
-dotenv.config();
 const payOS = new PayOS(
   process.env.PAYOS_CLIENT_ID,
   process.env.PAYOS_API_KEY,
   process.env.PAYOS_CHECKSUM_KEY
 );
 
+const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
+const CANCEL_URL = process.env.CANCEL_URL;
+
 module.exports.generateQR = async (req, res) => {
-  const YOUR_DOMAIN = `http://localhost:3000`;
   const { amount, description, transactionData } = req.body;
   const orderCode = Number(String(Date.now()).slice(-8));
 
@@ -33,7 +33,7 @@ module.exports.generateQR = async (req, res) => {
       amount,
       description,
       returnUrl: YOUR_DOMAIN,
-      cancelUrl: `http://localhost:3001/api/v1/fail-transaction`,
+      cancelUrl: CANCEL_URL,
     };
 
     const paymentLinkResponse = await payOS.createPaymentLink(body);
@@ -95,6 +95,8 @@ module.exports.failTransaction = async (req, res) => {
 
     // Redirect back to frontend with status
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);
+
+    // res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);
   } catch (error) {
     console.error("Failed transaction error:", error);
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}`);

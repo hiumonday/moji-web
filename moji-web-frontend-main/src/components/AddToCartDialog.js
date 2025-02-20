@@ -359,7 +359,7 @@ const AddToCartDialog = ({ isOpen, onClose, course, i18n, onAddToCart }) => {
                           checkAlumniCoupon(index);
                         }}
                         disabled={verifyingCoupon !== null}
-                        className={`ml-2 px-3 py-2 text-sm border border-transparent rounded-md text-white 
+                        className={`ml-2 px-3 py-2 text-sm border border-transparent rounded-md text-white min-w-[80px]
                           ${
                             verifyingCoupon === index
                               ? "bg-blue-400 cursor-not-allowed"

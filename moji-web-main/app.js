@@ -8,7 +8,11 @@ const cors = require("cors");
 
 const app = express();
 
-require("dotenv").config({ path: "./.env" });
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? "./.env.production"
+    : "./.env.development";
+require("dotenv").config({ path: envFile });
 
 const allowedOrigins = ["http://localhost:3000", "https://moji.education/"];
 
@@ -42,6 +46,7 @@ app.use(
     origin: [
       "https://14d6-2a09-bac5-d45b-16c8-00-245-7.ngrok-free.app/", // Remote frontend URL
       "http://localhost:3000", // Local frontend URL
+      "https://moji.education/",
     ], // Allow frontend access
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -68,13 +73,6 @@ const route = require("./routes/siteRoute");
 route(app);
 
 // Add this with your other route imports
-const classRoute = require("./routes/admin/classRoute");
-const userRoute = require("./routes/admin/userRoute");
-
-// API routes
-app.use("/api/v1/admin", classRoute);
-app.use("/api/v1/admin", userRoute);
-app.use("/api/v1/admin/discount", require("./routes/admin/discountRoute"));
 
 // Error handling middleware
 app.use(errorMiddleware);
@@ -82,15 +80,7 @@ app.use(errorMiddleware);
 // Serve static files from the React frontend build folder
 // app.use(express.static(path.join(__dirname, "/build")));
 
-// // // Catch-all route to serve the React app for any non-API route
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, "../moji-web-frontend-main/build", "index.html"));
-// });
-
-// // Serve static files from the React frontend build folder
-// app.use(express.static(path.join(__dirname, "/build")));
-
-// // // Catch-all route to serve the React app for any non-API route
+// // Catch-all route to serve the React app for any non-API route
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "/build", "index.html"));
 // });

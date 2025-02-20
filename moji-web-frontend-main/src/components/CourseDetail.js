@@ -1,222 +1,503 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCourseDetail } from "../redux/actions/courseActions";
+import {
+  Box,
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  Tabs,
+  Tab,
+  Paper,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
+import {
+  Person as PersonIcon,
+  Schedule as ScheduleIcon,
+  School as SchoolIcon,
+  Computer as ComputerIcon,
+  CalendarToday as CalendarIcon,
+} from "@mui/icons-material";
 import AddToCartButton from "./AddToCartButton";
-import Footer from "./footer";
-import { Spinner } from "./spinner"; // Import Spinner component
+import ConsultationButton from "./ConsultationButton";
 
-const CourseDetail = (i18n) => {
+const CourseDetail = ({ i18n }) => {
   const { id } = useParams();
-  const [course, setCourse] = useState(null);
-  const [isSticky, setIsSticky] = useState(true);
+  const dispatch = useDispatch();
+  const { currentCourse: course, loading } = useSelector(
+    (state) => state.course
+  );
+  const [selectedClass, setSelectedClass] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/v1/courses/${id}`)
-      .then((response) => response.json())
-      .then((data) => setCourse(data.course))
-      .catch((error) => console.error("Error fetching course:", error));
-  }, [id]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      setIsSticky(true);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  if (!course)
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center">
-          <Spinner className="mb-4" />
-          <p className="text-gray-600">
-            {i18n.language === "en" ? "Loading..." : "Đang tải..."}{" "}
-          </p>
-        </div>
-      </div>
-    );
-
-  const hasEarlyBirdSlots = course.earlyBirdSlot > 0;
-
-  const renderActionButton = () => {
-    if (course.type === "contact_based") {
-      return (
-        <button
-          onClick={() => (window.location.href = "tel:+84123456789")} // Replace with actual contact number
-          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
-        >
-          {i18n.language === "en"
-            ? "Contact for consultation"
-            : "Liên hệ tư vấn"}
-        </button>
-      );
+    console.log("CourseDetail mounted with courseId:", id);
+    if (id) {
+      dispatch(fetchCourseDetail(id));
     }
+  }, [id, dispatch]);
 
-    return <AddToCartButton course={course} i18n={i18n} />;
+  useEffect(() => {
+    console.log("Course data updated:", course);
+    if (
+      course &&
+      course.classes &&
+      course.classes.length > 0 &&
+      !selectedClass
+    ) {
+      console.log("Setting initial selected class");
+      setSelectedClass(course.classes[0]);
+    }
+  }, [course, selectedClass]);
+
+  const handleClassChange = (classItem) => {
+    setSelectedClass(classItem);
   };
 
+  // Return loading state if course is loading or not yet loaded
+  if (loading || !course) {
+    console.log("Loading state - loading:", loading, "course:", course);
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  // Return error state if course has no classes
+  if (!course.classes || course.classes.length === 0) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <Typography color="error">
+          {i18n.language === "en"
+            ? "No classes available for this course"
+            : "Không có lớp học nào cho khóa học này"}
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Don't render the main content until selectedClass is set
+  if (!selectedClass) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <>
-      <div className="min-h-screen bg-white">
-        {/* Hero Section */}
-        <div className="relative h-[400px] w-full">
-          <img
-            src={course.image || "/default-image.jpg"}
-            alt={course.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <div className="max-w-6xl mx-auto">
-              <h1 className="text-5xl font-bold text-white mb-4">
-                {course.title}
-              </h1>
-              {course.type === "contact_based" ? (
-                <p className="text-3xl font-bold text-white">
-                  {i18n.language === "en"
-                    ? "Contact for pricing"
-                    : "Liên hệ để biết giá"}
-                </p>
-              ) : hasEarlyBirdSlots ? (
-                <div className="space-y-1">
-                  <p className="text-3xl font-bold text-green-400">
-                    {course.earlyBirdPrice.toLocaleString()} VNĐ
-                  </p>
-                  <p className="text-2xl line-through text-gray-300">
-                    {course.price.toLocaleString()} VNĐ
-                  </p>
-                </div>
-              ) : (
-                <p className="text-3xl font-bold text-white">
-                  {course.price.toLocaleString()} VNĐ
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Content Section */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="md:col-span-2 space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">
-                  {i18n.language === "en"
-                    ? "Course Description "
-                    : "Thông tin khóa học"}
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  {course.description}
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Class Schedule</h2>
-                <div className="space-y-4">
-                  {course.classes.map((classInfo, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 p-4 rounded-lg border border-gray-200"
-                    >
-                      <h3 className="font-semibold text-lg mb-2">
-                        {classInfo.level} - {classInfo.language}
-                      </h3>
-                      <p className="text-gray-600">
-                        {i18n.language === "en" ? "Teacher: " : "Giáo viên: "}
-                        {classInfo.teacherName}
-                      </p>
-                      <p className="text-gray-600">
-                        {classInfo.day}, {classInfo.startTime} -{" "}
-                        {classInfo.endTime}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="md:col-span-1">
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24 z-10">
-                <div className="flex space-x-4">{renderActionButton()}</div>
-
-                <h2 className="text-xl font-bold mb-4">Course Highlights</h2>
-                <ul className="space-y-3">
-                  <li className="flex items-center text-gray-700">
-                    <span className="mr-2 text-green-500">✓</span> Professional
-                    instructors
-                  </li>
-                  <li className="flex items-center text-gray-700">
-                    <span className="mr-2 text-green-500">✓</span> Flexible
-                    class schedules
-                  </li>
-                  <li className="flex items-center text-gray-700">
-                    <span className="mr-2 text-green-500">✓</span> Hands-on
-                    projects
-                  </li>
-                  <li className="flex items-center text-gray-700">
-                    <span className="mr-2 text-green-500">✓</span> Certificate
-                    upon completion
-                  </li>
-                </ul>
-                {hasEarlyBirdSlots && (
-                  <p className="mt-4 text-center text-sm text-red-600 font-semibold">
-                    Only {course.earlyBirdSlot} early bird slots left!
-                  </p>
+    <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      {/* Banner Section */}
+      <Box sx={{ bgcolor: "#f5f5f5", py: 6 }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={8}>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: "1.75rem", md: "2.5rem" },
+                }}
+              >
+                {`${course.title} - ${selectedClass.level} - ${selectedClass.language}`}
+              </Typography>
+              <Typography
+                variant="body1"
+                paragraph
+                sx={{
+                  fontSize: "1.1rem",
+                  color: "text.secondary",
+                  mb: 3,
+                }}
+              >
+                {course.description}
+              </Typography>
+              <Box sx={{ mb: 3 }}>
+                {course.classes.map((classItem) => (
+                  <Chip
+                    key={classItem._id}
+                    label={`${classItem.level} - ${classItem.language}`}
+                    onClick={() => handleClassChange(classItem)}
+                    sx={{
+                      mr: 1,
+                      mb: 1,
+                      fontSize: "0.9rem",
+                      height: "32px",
+                    }}
+                    color={
+                      selectedClass._id === classItem._id
+                        ? "primary"
+                        : "default"
+                    }
+                  />
+                ))}
+              </Box>
+              <Typography
+                variant="h6"
+                color="primary"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: "1.25rem",
+                }}
+              >
+                {course.price ? (
+                  <>
+                    {course.price.toLocaleString("vi-VN")} VND
+                    {course.earlyBirdPrice && (
+                      <Typography
+                        component="span"
+                        sx={{
+                          ml: 2,
+                          color: "success.main",
+                          fontWeight: 600,
+                        }}
+                      >
+                        Early Bird:{" "}
+                        {course.earlyBirdPrice.toLocaleString("vi-VN")} VND
+                      </Typography>
+                    )}
+                  </>
+                ) : (
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: "text.secondary",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {i18n.language === "en"
+                      ? "Contact for pricing"
+                      : "Liên hệ để biết thêm chi tiết"}
+                  </Typography>
                 )}
-              </div>
-            </div>
-          </div>
-        </div>
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card
+                sx={{
+                  width: "100%",
+                  height: "240px",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="240"
+                  image={course.image}
+                  alt={course.title}
+                  sx={{
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
 
-        {/* Sticky Bottom Bar (Mobile Only) */}
-        <div
-          className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-md transition-all duration-300 z-20 ${
-            isSticky ? "translate-y-0" : "translate-y-full"
-          }`}
-        >
-          <div className="px-4 py-3 flex justify-between items-center">
-            <div>
-              {course.type === "contact_based" ? (
-                <p className="text-lg font-bold">
+      {/* Content Section */}
+      <Container maxWidth="lg" sx={{ mt: 6 }}>
+        <Grid container spacing={4}>
+          {/* Left Section */}
+          <Grid item xs={12} md={8}>
+            <Paper sx={{ p: 3, mb: 3 }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  fontWeight: 600,
+                  mb: 2,
+                }}
+              >
+                {i18n.language === "en"
+                  ? "Target Audience"
+                  : "Đối tượng học viên"}
+              </Typography>
+              <Typography paragraph>{selectedClass.target_audience}</Typography>
+            </Paper>
+
+            <Paper sx={{ p: 3, mb: 3 }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  fontWeight: 600,
+                  mb: 2,
+                }}
+              >
+                {i18n.language === "en" ? "Goals" : "Mục tiêu"}
+              </Typography>
+              <Typography paragraph>{selectedClass.goals}</Typography>
+            </Paper>
+
+            <Paper sx={{ p: 3 }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  fontWeight: 600,
+                  mb: 2,
+                }}
+              >
+                {i18n.language === "en" ? "Syllabus" : "Nội dung chương trình"}
+              </Typography>
+              <List>
+                {selectedClass.syllabus.map((item, index) => (
+                  <ListItem key={index}>
+                    <ListItemText
+                      primary={
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {item.title}
+                        </Typography>
+                      }
+                      secondary={
+                        <>
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {item.content}
+                          </Typography>
+                          {item.duration && (
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ ml: 1 }}
+                            >
+                              {` - ${item.duration}`}
+                            </Typography>
+                          )}
+                        </>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
+
+          {/* Right Section */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                mb: 2,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <CardContent>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 600,
+                    mb: 2,
+                  }}
+                >
                   {i18n.language === "en"
-                    ? "Contact for pricing"
-                    : "Liên hệ tư vấn"}
-                </p>
-              ) : hasEarlyBirdSlots ? (
-                <div className="flex items-center">
-                  <p className="text-sm line-through text-gray-400 mr-2">
-                    {course.price.toLocaleString()} VNĐ
-                  </p>
-                  <p className="text-lg font-bold text-green-600">
-                    {course.earlyBirdPrice.toLocaleString()} VNĐ
-                  </p>
-                </div>
-              ) : (
-                <p className="text-lg font-bold">
-                  {course.price.toLocaleString()} VNĐ
-                </p>
-              )}
-            </div>
-            <button className="bg-blue-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300">
-              {course.type === "contact_based"
-                ? i18n.language === "en"
-                  ? "Contact Us"
-                  : "Liên Hệ"
-                : i18n.language === "en"
-                  ? "Enroll Now"
-                  : "Đăng Ký"}
-            </button>
-          </div>
-        </div>
-      </div>
-      <Footer />
-    </>
+                    ? "Class Information"
+                    : "Thông tin lớp học"}
+                </Typography>
+                <List>
+                  <ListItem sx={{ py: 1 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <PersonIcon sx={{ fontSize: "1.25rem" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Box
+                          component="span"
+                          sx={{ display: "flex", alignItems: "center" }}
+                        >
+                          <Typography
+                            component="span"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            {i18n.language === "en"
+                              ? "Teacher: "
+                              : "Giảng viên: "}
+                          </Typography>
+                          <Typography
+                            component="span"
+                            sx={{ fontWeight: 600, ml: 1 }}
+                          >
+                            {selectedClass.teacherName}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 1 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <CalendarIcon sx={{ fontSize: "1.25rem" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Box
+                          component="span"
+                          sx={{ display: "flex", alignItems: "center" }}
+                        >
+                          <Typography
+                            component="span"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            {i18n.language === "en" ? "Day: " : "Ngày học: "}
+                          </Typography>
+                          <Typography
+                            component="span"
+                            sx={{ fontWeight: 600, ml: 1 }}
+                          >
+                            {selectedClass.day}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 1 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <ScheduleIcon sx={{ fontSize: "1.25rem" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Box
+                          component="span"
+                          sx={{ display: "flex", alignItems: "center" }}
+                        >
+                          <Typography
+                            component="span"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            {i18n.language === "en" ? "Time: " : "Thời gian: "}
+                          </Typography>
+                          <Typography
+                            component="span"
+                            sx={{ fontWeight: 600, ml: 1 }}
+                          >
+                            {`${selectedClass.startTime} - ${selectedClass.endTime}`}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                  {selectedClass.learning_platform && (
+                    <ListItem sx={{ py: 1 }}>
+                      <ListItemIcon sx={{ minWidth: 40 }}>
+                        <ComputerIcon sx={{ fontSize: "1.25rem" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Box
+                            component="span"
+                            sx={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Typography
+                              component="span"
+                              sx={{ color: "text.secondary" }}
+                            >
+                              {i18n.language === "en"
+                                ? "Platform: "
+                                : "Nền tảng: "}
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{ fontWeight: 600, ml: 1 }}
+                            >
+                              {selectedClass.learning_platform.platform}
+                            </Typography>
+                          </Box>
+                        }
+                      />
+                    </ListItem>
+                  )}
+                  {selectedClass.location && (
+                    <ListItem sx={{ py: 1 }}>
+                      <ListItemIcon sx={{ minWidth: 40 }}>
+                        <SchoolIcon sx={{ fontSize: "1.25rem" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Box
+                            component="span"
+                            sx={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Typography
+                              component="span"
+                              sx={{ color: "text.secondary" }}
+                            >
+                              {i18n.language === "en"
+                                ? "Location: "
+                                : "Địa điểm: "}
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{ fontWeight: 600, ml: 1 }}
+                            >
+                              {selectedClass.location}
+                            </Typography>
+                          </Box>
+                        }
+                      />
+                    </ListItem>
+                  )}
+                </List>
+              </CardContent>
+            </Card>
+            {course.type === "contact_based" ? (
+              <ConsultationButton course={course} i18n={i18n} />
+            ) : (
+              <AddToCartButton
+                course={course}
+                selectedClass={selectedClass}
+                i18n={i18n}
+              />
+            )}
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

@@ -6,6 +6,7 @@ import {
   updateCourse,
   deleteCourseFromState,
   setToggleLoading,
+  setCurrentCourse,
 } from "../slices/courseSlice";
 
 // Fetch all courses
@@ -127,6 +128,34 @@ export const createConsultation = (consultationData) => async (dispatch) => {
     dispatch(
       setError(
         error.response?.data?.message || "Failed to send consultation request"
+      )
+    );
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+// Fetch single course detail
+export const fetchCourseDetail = (courseId) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const { data } = await axiosInstance.get(`/api/v1/courses/${courseId}`);
+    console.log("Course detail response:", data); // Debug log
+
+    if (
+      data &&
+      data.message === "Successfully found course for viewing" &&
+      data.course
+    ) {
+      dispatch(setCurrentCourse(data.course));
+    } else {
+      dispatch(setError("Course not found or invalid response format"));
+    }
+  } catch (error) {
+    console.error("Error fetching course detail:", error); // Debug log
+    dispatch(
+      setError(
+        error.response?.data?.message || "Failed to fetch course details"
       )
     );
   } finally {
