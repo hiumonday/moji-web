@@ -95,8 +95,19 @@ const Navbar = ({ changeLanguage }) => {
     { name: t("home"), href: "/", current: currentPath === "/" },
     {
       name: t("aboutMoji"),
-      href: "/about-us",
-      current: currentPath === "/about-us",
+      items: [
+        {
+          name: t("introduction"),
+          href: "/about-us",
+          current: currentPath === "/about-us",
+        },
+        {
+          name: t("mentors"),
+          href: "/mentors",
+          current: currentPath === "/mentors",
+        },
+      ],
+      current: currentPath === "/about-us" || currentPath === "/mentors",
     },
     {
       name: t("courses"),
@@ -145,20 +156,51 @@ const Navbar = ({ changeLanguage }) => {
             {/* Desktop Navigation */}
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-blue-500 text-white"
-                        : "text-blue-600 hover:bg-blue-50 hover:text-blue-700",
-                      "rounded-md px-4 py-2.5 text-base font-medium"
-                    )}
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
+                {navigation.map((item) =>
+                  item.items ? (
+                    <div className="relative group" key={item.name}>
+                      <button
+                        className={classNames(
+                          item.current
+                            ? "bg-blue-500 text-white"
+                            : "text-blue-600 hover:bg-blue-50 hover:text-blue-700",
+                          "rounded-md px-4 py-2.5 text-base font-medium inline-flex items-center"
+                        )}
+                      >
+                        {item.name}
+                      </button>
+                      <div className="absolute left-0 z-10 mt-1 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                        {item.items.map((subItem) => (
+                          <NavLink
+                            key={subItem.name}
+                            to={subItem.href}
+                            className={({ isActive }) =>
+                              classNames(
+                                isActive ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                              )
+                            }
+                          >
+                            {subItem.name}
+                          </NavLink>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-blue-500 text-white"
+                          : "text-blue-600 hover:bg-blue-50 hover:text-blue-700",
+                        "rounded-md px-4 py-2.5 text-base font-medium"
+                      )}
+                    >
+                      {item.name}
+                    </NavLink>
+                  )
+                )}
               </div>
             </div>
           </div>
