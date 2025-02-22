@@ -20,7 +20,6 @@ module.exports.webhook = async (req, res) => {
       try {
         // Find user by checking if any item in the cart has a matching orderCode
         const user = await User.findOne({ "cart.orderCode": orderCode });
-        console.log(user._id);
 
         if (!user) {
           console.error(`User with order code ${orderCode} not found`);
@@ -31,6 +30,7 @@ module.exports.webhook = async (req, res) => {
         const purchasedItems = user.cart.filter(
           (item) => item.orderCode === orderCode
         );
+        console.log(purchasedItems);
 
         // Move items from cart to purchasedCourses
         await User.updateOne(
