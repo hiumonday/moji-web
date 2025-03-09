@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-
-// Giả lập i18n nếu bạn không dùng react-i18next
-const useTranslation = () => {
-  return {
-    i18n: {
-      language: "vi", // hoặc 'en'
-    },
-  };
-};
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const timeSlots = Array.from(
   { length: 12 },
@@ -42,6 +35,7 @@ const formatDate = (date, language) => {
 };
 
 export default function MyCourses() {
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -515,9 +509,29 @@ export default function MyCourses() {
           {/* Course List / Calendar View */}
           <div className="lg:col-span-7">
             {view === "list" ? (
-              <div className="grid gap-6">
-                {filteredCourses.map((course) => renderCourseCard(course))}
-              </div>
+              courses.length === 0 ? (
+                <>
+                  <div className="text-center text-gray-500">
+                    {i18n.language === "en"
+                      ? "No courses found"
+                      : "Bạn chưa đăng ký khóa học nào"}
+                  </div>
+                  <div className="mt-6 content-center text-center">
+                    <button
+                      onClick={() => navigate("/courses")}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      {i18n.language === "en"
+                        ? "Go to Courses"
+                        : "Đi đến trang Khóa học"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="grid gap-6">
+                  {filteredCourses.map((course) => renderCourseCard(course))}
+                </div>
+              )
             ) : (
               <div className="rounded-lg bg-white p-4 shadow">
                 {/* Simple Calendar View - You can enhance this with a proper calendar library */}

@@ -10,7 +10,7 @@ module.exports.webhook = async (req, res) => {
   console.log("transaction:");
   let transaction = req.body;
 
-  if (!isValidData(transaction.data, transaction.signature, checksumKey)) {
+  if (isValidData(transaction.data, transaction.signature, checksumKey)) {
     console.log(transaction);
 
     if (transaction.success && transaction.code === "00") {
@@ -49,14 +49,26 @@ module.exports.webhook = async (req, res) => {
         return res.status(500).end("Error processing transaction");
       }
     } else {
-      console.error("Transaction failed or invalid code");
-      return res.status(400).end("Transaction failed or invalid code");
+      console.error(
+        "Transaction failed or invalid code. Order code: ",
+        transaction.data.orderCode
+      );
+      return res
+        .status(400)
+        .end(
+          `Transaction failed or invalid code. Order code: ${transaction.data.orderCode}`
+        );
     }
 
     res.status(200).json({ success: true });
   } else {
-    console.error("Invalid data signature");
-    return res.status(400).end("Invalid data signature");
+    console.error(
+      "Invalid data signature. Order code: ",
+      transaction.data.orderCode
+    );
+    return res
+      .status(400)
+      .end(`Invalid data signature. Order code: ${transaction.data.orderCode}`);
   }
 };
 

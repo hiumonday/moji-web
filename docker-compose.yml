@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./moji-web-main
+      dockerfile: Dockerfile
+    container_name: moji-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./moji-web-main:/be_moji
+      - /be_moji/node_modules
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./moji-web-frontend-main
+      dockerfile: Dockerfile
+    container_name: moji-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

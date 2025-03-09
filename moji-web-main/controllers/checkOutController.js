@@ -30,7 +30,7 @@ module.exports.generateQR = async (req, res) => {
     // Tạo payment link
     const body = {
       orderCode,
-      amount,
+      amount: 5000,
       description,
       returnUrl: YOUR_DOMAIN,
       cancelUrl: `http://localhost:3001/api/v1/fail-transaction`,
