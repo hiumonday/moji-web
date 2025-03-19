@@ -5,9 +5,10 @@ services:
     build:
       context: ./moji-web-main
       dockerfile: Dockerfile
+    image: hiumonday/moji-backend:latest
     container_name: moji-backend
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NODE_ENV=development
     volumes:
@@ -16,12 +17,14 @@ services:
     restart: unless-stopped
 
   frontend:
+    platform: linux/amd64
     build:
       context: ./moji-web-frontend-main
       dockerfile: Dockerfile
+    image: hiumonday/moji-frontend:latest
     container_name: moji-frontend
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
     restart: unless-stopped

@@ -1,5 +1,5 @@
 # Use Node.js as base image
-FROM node:18-alpine as build
+FROM --platform=linux/amd64 node:18-alpine as build
 
 # Set working directory
 WORKDIR /fe_moji
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM --platform=linux/amd64 nginx:alpine
 
 # Copy built assets from the build stage
 COPY --from=build /fe_moji/build /usr/share/nginx/html
