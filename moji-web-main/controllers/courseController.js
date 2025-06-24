@@ -1,44 +1,56 @@
 const User = require("../models/User");
 const Course = require("../models/Course");
 const moment = require("moment");
+const fs = require("fs");
+const path = require("path");
 
-module.exports.getCourse = (req, res) => {
+module.exports.getCourse = async (req, res) => {
   try {
-    Course.find({})
-      .lean()
-      .then((courses) => {
-        const updatedCourses = courses.map((course) => {
-          if (
-            course.flash_sale &&
-            course.flash_sale.is_active &&
-            moment().isBefore(course.flash_sale.end_date)
-          ) {
-            return {
-              ...course,
-              price: course.price - course.flash_sale.discount_amount,
-            };
-          }
+    // Fetch only active courses
+    const courses = await Course.find({ is_active: true }).lean();
 
-          console.log(course);
-          return course;
-        });
+    // Format response to include specific information and image as base64
+    const formattedCourses = courses.map((course) => {
+      let imageBase64 = null;
+      if (course.image && course.image.data) {
+        imageBase64 = `data:${
+          course.image.contentType
+        };base64,${course.image.data.toString("base64")}`;
+      }
 
-        res
-          .status(200)
-          .json({ message: "Found all the courses", course: updatedCourses });
-      })
-      .catch((error) => {
-        console.error("Error fetching courses: ", error.message);
-        res.status(400).json({
-          message: "Failed to retrieve courses",
-          error:
-            "Unable to fetch courses at this time. Please try again later.",
-        });
-      });
-  } catch (error) {}
+      return {
+        _id: course._id,
+        title: course.title,
+        description: course.description,
+        type: course.type,
+        price: course.price,
+        earlyBirdPrice: course.earlyBirdPrice,
+        bundlePrice: course.bundlePrice,
+        alumniPrice: course.alumniPrice,
+        classes: course.classes.map((classItem) => ({
+          ...classItem,
+          earlyBirdSlot: classItem.earlyBirdSlot || 0,
+        })),
+        image: imageBase64,
+        is_active: course.is_active,
+      };
+    });
+
+    // Return formatted courses
+    res.status(200).json({
+      message: "Courses fetched successfully",
+      data: formattedCourses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error.message);
+    res.status(500).json({
+      message: "Error fetching courses",
+      error: error.message,
+    });
+  }
 };
 
-module.exports.viewCourse = (req, res) => {
+module.exports.viewCourseDetail = (req, res) => {
   const { courseId } = req.params;
 
   Course.findById(courseId)
@@ -50,47 +62,116 @@ module.exports.viewCourse = (req, res) => {
         });
       }
 
-      if (
-        course.flash_sale &&
-        course.flash_sale.is_active &&
-        moment().isBefore(course.flash_sale.end_date)
-      ) {
-        course.price = course.price - course.flash_sale.discount_amount; // Apply flash sale discount
+      let imageBase64 = null;
+      if (course.image && course.image.data) {
+        imageBase64 = `data:${
+          course.image.contentType
+        };base64,${course.image.data.toString("base64")}`;
       }
 
+      const courseWithImage = {
+        _id: course._id,
+        title: course.title,
+        type: course.type,
+        description: course.description,
+        price: course.price,
+        earlyBirdPrice: course.earlyBirdPrice,
+        bundlePrice: course.bundlePrice,
+        alumniPrice: course.alumniPrice,
+        is_active: course.is_active,
+        classes: course.classes.map((classItem) => ({
+          _id: classItem._id,
+          level: classItem.level,
+          language: classItem.language,
+          class_session: classItem.class_session,
+          class_title: classItem.class_title,
+          target_audience: classItem.target_audience,
+          goals: classItem.goals,
+          syllabus: classItem.syllabus,
+          location: classItem.location,
+          teacherName: classItem.teacherName,
+          day: classItem.day,
+          startTime: classItem.startTime,
+          endTime: classItem.endTime,
+          learning_platform: classItem.learning_platform,
+          earlyBirdSlot: classItem.earlyBirdSlot || 0,
+          participants: classItem.participants,
+        })),
+        image: imageBase64,
+      };
+
+      // Send the response
       res.status(200).json({
         message: "Successfully found course for viewing",
-        course,
+        course: courseWithImage,
       });
     })
     .catch((error) => {
       console.error("Error fetching course:", error.message);
-      res.status(400).json({
+      res.status(500).json({
         message: "Failed to retrieve course for viewing",
         error: "Unable to fetch the course. Please try again later.",
       });
     });
 };
 
-module.exports.createCourse = (req, res) => {
-  const coursesData = req.body;
+module.exports.createCourse = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      price,
+      earlyBirdPrice,
+      earlyBirdSlot,
+      discounts,
+      classes,
+      learning_platform,
+    } = req.body;
 
-  Course.insertMany(coursesData)
-    .then((newCourses) => {
-      console.log("Courses created:", newCourses);
+    // Validate required fields
+    if (!title || !price || !earlyBirdPrice) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
 
-      res.status(201).json({
-        message: "Courses created successfully",
-        courses: newCourses,
-      });
-    })
-    .catch((error) => {
-      console.error("Error creating courses:", error.message);
-      res.status(400).json({
-        message: "Failed to create courses",
-        error: "Invalid input or server error",
-      });
+    // Parse classes and discounts if they are sent as JSON strings
+    const parsedClasses = classes ? JSON.parse(classes) : [];
+    const parsedDiscounts = discounts ? JSON.parse(discounts) : [];
+
+    // Handle image (if uploaded)
+    let imageData = null;
+    if (req.file) {
+      imageData = {
+        data: req.file.buffer, // Store image data as a Buffer
+        contentType: req.file.mimetype, // Store MIME type (e.g., "image/jpeg")
+      };
+    }
+
+    // Create new course object
+    const newCourse = new Course({
+      title,
+      description,
+      price,
+      earlyBirdPrice,
+      earlyBirdSlot: earlyBirdSlot || 5,
+      discounts: parsedDiscounts,
+      classes: parsedClasses,
+      learning_platform: learning_platform || null,
+      image: imageData,
     });
+
+    // Save course to the database
+    await newCourse.save();
+
+    // Send success response
+    res
+      .status(201)
+      .json({ message: "Course created successfully!", course: newCourse });
+  } catch (error) {
+    console.error("Error creating course:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error.", error: error.message });
+  }
 };
 
 module.exports.editCourse = (req, res) => {

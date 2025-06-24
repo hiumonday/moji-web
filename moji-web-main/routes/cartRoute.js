@@ -6,14 +6,27 @@ const router = express.Router();
 // View cart
 router.get("/view-cart", isAuthenticatedUser, cartController.viewCart);
 // Add course to cart
-router.post("/add", isAuthenticatedUser, cartController.addCourseToCart);
+router.post(
+  "/add-to-cart",
+  isAuthenticatedUser,
+  cartController.addCourseToCart
+);
 
 // Remove course from cart
-router.post(
-  "/remove",
+router.delete(
+  "/view-cart/remove/:courseId/:classId",
   isAuthenticatedUser,
   cartController.removeCourseFromCart
 );
-router.get("/demo", isAuthenticatedUser, cartController.demoApiForwarding);
+
+// Remove coupon
+router.delete(
+  "/remove-coupon",
+  isAuthenticatedUser,
+  cartController.removeCoupon
+);
+
+// Verify coupon
+router.post("/verify-coupon", isAuthenticatedUser, cartController.verifyCoupon);
 
 module.exports = router;

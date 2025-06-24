@@ -10,72 +10,29 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 
 // Auto-login route using cookie
-router.get("/login-success", isAuthenticatedUser, userController.loginSuccess);
+router.get("/login/success", isAuthenticatedUser, userController.loginSuccess);
 
 // Logout route
-router.post("/logout", isAuthenticatedUser, userController.logout);
+router.get("/logout", isAuthenticatedUser, userController.logout);
 
 // Fake login for testing (optional)
 router.post("/fake-login", userController.fakeLogin);
 
-// router.get("/auth/google", passport.authenticate("google"));
-// router.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", {
-//     failureRedirect: process.env.FRONTEND_URL ? process.env.FRONTEND_URL : "/",
-//   }),
-//   (req, res) => {
-//     const options = {
-//       expires: new Date(
-//         Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-//       ),
-//       httpOnly: true,
-//     };
-//     res.cookie("token", req.user, options);
-//     res.redirect(process.env.FRONTEND_URL ? process.env.FRONTEND_URL : "/");
-//   }
-// );
+router.get("/viewCourse", userController.viewCourse);
 
-// router.get(
-//   "/auth/facebook",
-//   passport.authenticate("facebook", {
-//     scope: ["email"],
-//   })
-// );
-// router.get(
-//   "/auth/facebook/callback",
-//   passport.authenticate("facebook", {
-//     failureRedirect: process.env.FRONTEND_URL ? process.env.FRONTEND_URL : "/",
-//   }),
-//   (req, res) => {
-//     const options = {
-//       expires: new Date(
-//         Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-//       ),
-//       httpOnly: true,
-//     };
-//     res.cookie("token", req.user, options);
-//     res.redirect(process.env.FRONTEND_URL ? process.env.FRONTEND_URL : "/");
-//   }
-// );
+router.get(
+  "/transaction-history",
+  isAuthenticatedUser,
+  userController.getTransactionHistory
+);
 
-// router.get("/login/fake", fakeLogin);
-// router.get("/login/success", isAuthenticatedUser, loginSuccess);
-// router.get("/logout", logout);
-// router
-//   .route("/admin/user/:id")
-//   .get(isAuthenticatedUser, authorizedRole("admin"), getUserDetails)
-//   .put(isAuthenticatedUser, authorizedRole("admin"), chageUserRole);
-// router
-//   .route("/admin/users")
-//   .get(isAuthenticatedUser, authorizedRole("admin"), getAllUsers);
-
-// router.route("/update/:id").put(isAuthenticatedUser, updateUser1);
-
-// router.put(
-//   "/referral/:referrerId/:referredId",
-//   isAuthenticatedUser,
-//   updateReferralStatus
-// );
+// Add these new routes
+router.post("/password/forgot", userController.forgotPassword);
+router.put("/password/reset/:token", userController.resetPassword);
+router.put(
+  "/password/update",
+  isAuthenticatedUser,
+  userController.updatePassword
+);
 
 module.exports = router;

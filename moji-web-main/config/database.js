@@ -5,7 +5,7 @@ const databaseConnect = async () => {
 		mongoose.set("bufferTimeoutMS", 100000);
 		mongoose.set("strictQuery", false);
 		await mongoose
-			.connect(process.env.DB_URI, {
+			.connect(process.env.DB_URI_CLUSTER, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 				autoIndex: true,

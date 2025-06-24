@@ -138,5 +138,7 @@ config.env
 node_modules
 *.env
 
-package.json
 package-lock.json
+
+*.env.production
+*.env.development

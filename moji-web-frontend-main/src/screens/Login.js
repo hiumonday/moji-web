@@ -1,14 +1,37 @@
 import { useNavigate } from "react-router-dom";
-import { Fragment } from "react";
-import Meta from "../utils/Meta";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginAction, loginGoogleAction } from "../redux/actions/userAction";
+import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(
+      loginAction(formData, () => {
+        navigate("/"); // Redirect on successful login
+      })
+    );
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  };
 
   return (
     <div>
@@ -24,20 +47,20 @@ const Login = () => {
               {t("login")}
             </h2>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
-            <input type="hidden" name="remember" value="true" />
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
-                <label htmlFor="email-address" className="sr-only">
+                <label htmlFor="email" className="sr-only">
                   Email
                 </label>
                 <input
-                  id="email-address"
+                  id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Email"
                 />
               </div>
@@ -49,36 +72,35 @@ const Login = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder={t("passWord")}
                 />
               </div>
             </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center"></div>
-
-              <div className="text-sm">
-                <a
-                  href="/register"
-                  className="font-medium text-blue-900 hover:text-blue-800"
-                >
-                  {t("forgotPassWord")}?
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            <div className="text-right">
+              <NavLink
+                to="/password/forgot"
+                className="text-sm text-blue-500 hover:text-blue-600"
               >
-                {t("login")}
-              </button>
+                {t("forgotPassword")}
+              </NavLink>
             </div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {t("login")}
+            </button>
           </form>
+          <button
+            onClick={handleGoogleLogin}
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
+          >
+            Sign in with Google
+          </button>
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               {t("accountExist")}?{" "}

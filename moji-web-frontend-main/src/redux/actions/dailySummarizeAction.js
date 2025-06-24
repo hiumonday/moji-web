@@ -13,7 +13,7 @@ export const getSummaryData = () => async (dispatch) => {
         dispatch(setLoader(true));
 
         const { data } = await axios.get(
-            process.env.REACT_APP_API_URL + `/api/v1/daily`, {
+            `/api/v1/daily`, {
             withCredentials: true,
         }
 
@@ -32,7 +32,7 @@ export const isDoneDaily = () => async (dispatch) => {
         dispatch(setLoader(true));
 
         const { data } = await axios.get(
-            process.env.REACT_APP_API_URL + `/api/v1/done-daily`, {
+            `/api/v1/done-daily`, {
             withCredentials: true,
         }
         );
@@ -63,7 +63,7 @@ export const submitSummary = (userId, data) => {
 
              score = score + calculateBonus(data.time);
              
-            const response2 = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/daily/${userId}`, {
+            const response2 = await axios.post(`${REACT_APP_API_URL}/api/v1/daily/${userId}`, {
                 comments: response.data.sentence_scores_explained,
                 user: userId,
                 score: score,
@@ -90,7 +90,7 @@ export const getSummaryResult = (resultsId) => async (dispatch) => {
         dispatch(setLoader(true));
 
         const { data } = await axios.get(
-            process.env.REACT_APP_API_URL + `/api/v1/daily_results/${resultsId}`, {
+            `/api/v1/daily_results/${resultsId}`, {
             withCredentials: true,
         }
         );
@@ -107,7 +107,7 @@ export const getLeaderboard = (dayNumber) => async (dispatch) => {
         dispatch(setLoader(true));
 
         const { data } = await axios.get(
-            process.env.REACT_APP_API_URL + `/api/v1/daily-leaderboard/${dayNumber}`, {
+            `/api/v1/daily-leaderboard/${dayNumber}`, {
             withCredentials: true,
         }
         );
@@ -128,7 +128,7 @@ export const getOwnSummary = (userId) => async (dispatch) => {
     try {
 
         dispatch(setLoader(true));
-        const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/me/own-daily/${userId}`, {
+        const { data } = await axios.get(`/api/v1/me/own-daily/${userId}`, {
             withCredentials: true,
         });
         // console.log(data)
@@ -145,7 +145,7 @@ export const getPercentile = (dayNumber) => async (dispatch) => {
     try {
 
         dispatch(setLoader(true));
-        const { data } = await axios.get(process.env.REACT_APP_API_URL + `/api/v1/me/daily-percentile/${dayNumber}`, {
+        const { data } = await axios.get(`/api/v1/me/daily-percentile/${dayNumber}`, {
             withCredentials: true,
         });
         dispatch(setDaillyPercentile(data.data));
