@@ -15,6 +15,7 @@ const adminConsultationRoute = require("./admin/consultationRoute");
 const adminTransactionRoute = require("./admin/transactionRoute");
 const adminClassRoute = require("./admin/classRoute");
 const adminUserRoute = require("./admin/userRoute");
+const tournamentRoute = require("./admin/tournamentRoute");
 const app = express();
 
 function route(app) {
@@ -26,6 +27,7 @@ function route(app) {
   app.use("/api/v1/admin", adminDiscountRoute);
   app.use("/api/v1/admin", adminClassRoute);
   app.use("/api/v1/admin", adminUserRoute);
+  app.use("/api/v1/admin", tournamentRoute);
 
   app.use("/api/v1", userRoute);
   app.use("/api/v1", discountRoute);

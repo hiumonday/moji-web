@@ -13,16 +13,26 @@ import {
   Box,
 } from "@mui/material";
 import {
-  School as CourseIcon,
-  People as UsersIcon,
-  Receipt as TransactionsIcon,
-  Dashboard as DashboardIcon,
-  Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Class as ClassIcon,
-  Chat as ConsultationIcon,
-} from "@mui/icons-material";
+  FaTachometerAlt,
+  FaUsers,
+  FaBook,
+  FaMoneyBill,
+  FaTrophy,
+  FaSignOutAlt,
+  FaChalkboardTeacher,
+} from "react-icons/fa";
+import {
+    Dashboard as DashboardIcon,
+    Book as CourseIcon,
+    People as UsersIcon,
+    Receipt as TransactionsIcon,
+    Class as ClassIcon,
+    QuestionAnswer as ConsultationIcon,
+    Menu as MenuIcon,
+    ChevronLeft as ChevronLeftIcon,
+  } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
+
 
 const drawerWidth = 240;
 
@@ -51,6 +61,11 @@ const AdminSidebar = () => {
       text: "Transactions",
       path: "/admin/transactions",
       icon: <TransactionsIcon />,
+    },
+    {
+      text: "Tournaments",
+      path: "/admin/tournaments",
+      icon: <FaTrophy />,
     },
   ];
 

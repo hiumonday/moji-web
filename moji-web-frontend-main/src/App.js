@@ -36,6 +36,8 @@ import MyCourses from "./screens/MyCourses";
 import ConsultationManagement from "./screens/admin/Consultation";
 import ForgotPassword from "./screens/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword";
+import TournamentList from "./screens/admin/tournaments/TournamentList";
+import CreateTournament from "./screens/admin/tournaments/CreateTournament";
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -166,6 +168,9 @@ const App = () => {
                         path="transactions"
                         element={<TransactionLogs />}
                       />
+                      <Route path="tournaments" element={<TournamentList />} />
+                      <Route path="tournaments/new" element={<CreateTournament />} />
+                      <Route path="tournaments/edit/:id" element={<CreateTournament />} />
                     </Routes>
                   </AdminLayout>
                 </Box>
