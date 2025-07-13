@@ -72,6 +72,58 @@ const TransactionLogTable = ({ isAdmin = false }) => {
     setOpenRowId(openRowId === id ? null : id);
   };
 
+  const renderParticipants = (transaction) => {
+    const isCoursePurchase = transaction.transactionType === "COURSE_PURCHASE";
+    const participants = isCoursePurchase
+      ? transaction.details?.participants
+      : transaction.details?.tournament_participants;
+
+    if (!participants || participants.length === 0) {
+      return (
+        <div className="p-4 text-center text-gray-500">No participant data</div>
+      );
+    }
+
+    return (
+      <div className="grid gap-4">
+        {participants.map((participant, index) => (
+          <div
+            key={index}
+            className="flex justify-between items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+          >
+            {isCoursePurchase ? (
+              <>
+                <div>
+                  <p className="font-medium text-gray-900">{participant.name}</p>
+                  <p className="text-sm text-gray-500">{participant.course_title}</p>
+                  <p className="text-sm text-gray-500">{participant.class_title}</p>
+                  <p className="text-sm text-gray-500">
+                    Discount: {participant.discount_type || "N/A"}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-gray-900">
+                    {formatCurrency(participant.tuition_fee)}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <p className="font-medium text-gray-900">{participant.fullName}</p>
+                  <p className="text-sm text-gray-500">School: {participant.school}</p>
+                  <p className="text-sm text-gray-500">Email: {participant.email}</p>
+                  <p className="text-sm text-gray-500">Phone: {participant.phone}</p>
+                </div>
+                {/* For tournaments, you might not have a per-participant fee to show */}
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const getStatusColor = (status) => {
     const statusText = {
       PENDING: i18n.language === "en" ? "PENDING" : "CHỜ THANH TOÁN",
@@ -202,10 +254,23 @@ const TransactionLogTable = ({ isAdmin = false }) => {
                     {formatDate(transaction.date, i18n)}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <div>
-                      <div className="font-medium">{transaction.name}</div>
-                      <div className="text-gray-500">{transaction.email}</div>
-                    </div>
+                    {isAdmin && transaction.user_id ? (
+                      <div>
+                        <div className="font-medium">{transaction.user_id.name}</div>
+                        <div className="text-gray-500">
+                          {transaction.user_id.email}
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="font-medium">
+                          {transaction.name || transaction.user_id?.name}
+                        </div>
+                        <div className="text-gray-500">
+                          {transaction.email || transaction.user_id?.email}
+                        </div>
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <span
@@ -224,8 +289,9 @@ const TransactionLogTable = ({ isAdmin = false }) => {
                       onClick={() => toggleDropdown(transaction._id)}
                       className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
                     >
-                      {transaction.participants.length}{" "}
-                      {i18n.language === "en" ? "Students" : "Học viên"}
+                      {(transaction.details?.participants?.length || 0) +
+                        (transaction.details?.tournament_participants?.length || 0)}{" "}
+                      {i18n.language === "en" ? "Participants" : "Tham dự"}
                       {openRowId === transaction._id ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
@@ -251,39 +317,7 @@ const TransactionLogTable = ({ isAdmin = false }) => {
                   <td colSpan="7" className="p-0">
                     <StyledCollapse in={openRowId === transaction._id}>
                       <div className="px-4 py-4 bg-gray-50">
-                        <div className="grid gap-4">
-                          {transaction.participants.map(
-                            (participant, index) => (
-                              <div
-                                key={index}
-                                className="flex justify-between items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                              >
-                                <div>
-                                  <p className="font-medium text-gray-900">
-                                    {participant.name}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    {participant.course_title}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    {participant.class_title}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    {i18n.language === "en"
-                                      ? "Discount"
-                                      : "Giảm giá"}
-                                    : {participant.discount_type}
-                                  </p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="font-medium text-gray-900">
-                                    {formatCurrency(participant.tution_fee)}
-                                  </p>
-                                </div>
-                              </div>
-                            )
-                          )}
-                        </div>
+                        {renderParticipants(transaction)}
                       </div>
                     </StyledCollapse>
                   </td>
