@@ -8,14 +8,48 @@ import {
 } from "../../../redux/slices/tournamentSlice";
 import BackButton from "../../../components/backButton";
 import ImageUpload from "../../../components/ImageUpload";
-import RoleManager from "../../../components/admin/RoleManager";
+import {
+  Box,
+  Paper,
+  Grid,
+  TextField,
+  MenuItem,
+  Button,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { Spinner } from "../../../components/spinner";
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+    backgroundColor: "#FFFFFF",
+    "& fieldset": {
+      borderColor: "#D1D5DB",
+    },
+    "&:hover fieldset": {
+      borderColor: "#D1D5DB",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#2A5FFF",
+      borderWidth: "2px",
+      boxShadow: "0 0 5px rgba(42, 95, 255, 0.3)",
+    },
+  },
+  "& .MuiInputLabel-root": {
+    color: "#6B7280",
+  },
+}));
 
 const CreateTournament = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { tournament: currentTournament, loading, error } = useSelector((state) => state.tournament);
+  const { tournament: currentTournament, loading, error } = useSelector(
+    (state) => state.tournament
+  );
 
   const [tournament, setTournament] = useState({
     name: "",
@@ -25,7 +59,8 @@ const CreateTournament = () => {
     status: "upcoming",
     registrationStartDate: "",
     registrationEndDate: "",
-    postPaymentRedirectUrl: "",
+    discordLink: "",
+    fanpageLink: "",
     roles: [],
   });
   const [banner, setBanner] = useState(null);
@@ -46,12 +81,17 @@ const CreateTournament = () => {
         type: currentTournament.type || "BP",
         platform: currentTournament.platform || "online",
         status: currentTournament.status || "upcoming",
-        registrationStartDate: currentTournament.registrationStartDate?.split("T")[0] || "",
-        registrationEndDate: currentTournament.registrationEndDate?.split("T")[0] || "",
-        postPaymentRedirectUrl: currentTournament.postPaymentRedirectUrl || "",
+        registrationStartDate:
+          currentTournament.registrationStartDate?.split("T")[0] || "",
+        registrationEndDate:
+          currentTournament.registrationEndDate?.split("T")[0] || "",
+        discordLink: currentTournament.discordLink || "",
+        fanpageLink: currentTournament.fanpageLink || "",
         roles: currentTournament.roles || [],
       });
-      setBanner(currentTournament.banner?.url);
+      if(currentTournament.bannerUrl) {
+        setBanner(currentTournament.bannerUrl);
+      }
     }
   }, [isEditMode, currentTournament]);
 
@@ -60,24 +100,45 @@ const CreateTournament = () => {
     setTournament({ ...tournament, [name]: value });
   };
 
-  const handleRolesChange = (newRoles) => {
+  const handleBannerChange = (file) => {
+    setBanner(file);
+  };
+  
+  const addRole = () => {
+    setTournament({
+      ...tournament,
+      roles: [
+        ...tournament.roles,
+        { roleName: "Debater", slots: 0, price: 0 },
+      ],
+    });
+  };
+
+  const removeRole = (index) => {
+    const newRoles = tournament.roles.filter((_, i) => i !== index);
     setTournament({ ...tournament, roles: newRoles });
   };
 
-  const handleBannerChange = (file) => {
-    setBanner(file);
+  const handleRoleChange = (index, field, value) => {
+    const newRoles = tournament.roles.map((role, i) => {
+      if (i === index) {
+        return { ...role, [field]: value };
+      }
+      return role;
+    });
+    setTournament({ ...tournament, roles: newRoles });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    Object.keys(tournament).forEach(key => {
-        if (key === 'roles') {
-            formData.append(key, JSON.stringify(tournament[key]));
-        } else {
-            formData.append(key, tournament[key]);
-        }
+    Object.keys(tournament).forEach((key) => {
+      if (key === "roles") {
+        formData.append(key, JSON.stringify(tournament[key]));
+      } else {
+        formData.append(key, tournament[key]);
+      }
     });
 
     if (banner && banner instanceof File) {
@@ -115,35 +176,29 @@ const CreateTournament = () => {
         {/* Basic Information Section */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Tournament Name
-              </label>
-              <input
-                type="text"
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <StyledTextField
+                fullWidth
+                required
+                label="Tournament Name"
                 name="name"
-                id="name"
                 value={tournament.name}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
               />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <textarea
+            </Grid>
+            <Grid item xs={12}>
+              <StyledTextField
+                fullWidth
+                multiline
+                rows={3}
+                label="Description"
                 name="description"
-                id="description"
-                rows="3"
                 value={tournament.description}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              ></textarea>
-            </div>
-          </div>
+              />
+            </Grid>
+          </Grid>
         </div>
 
         {/* Tournament Banner Section */}
@@ -155,66 +210,190 @@ const CreateTournament = () => {
         {/* Configuration Section */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-lg font-semibold mb-4">Configuration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type</label>
-              <select name="type" id="type" value={tournament.type} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="BP">BP</option>
-                <option value="WSDC">WSDC</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="platform" className="block text-sm font-medium text-gray-700">Platform</label>
-              <select name="platform" id="platform" value={tournament.platform} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-              <select name="status" id="status" value={tournament.status} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="upcoming">Upcoming</option>
-                <option value="registration_open">Registration Open</option>
-                <option value="registration_closed">Registration Closed</option>
-                <option value="ongoing">Ongoing</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
-          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <StyledTextField
+                select
+                fullWidth
+                label="Type"
+                name="type"
+                value={tournament.type}
+                onChange={handleChange}
+              >
+                <MenuItem value="BP">BP</MenuItem>
+                <MenuItem value="WSDC">WSDC</MenuItem>
+              </StyledTextField>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <StyledTextField
+                select
+                fullWidth
+                label="Platform"
+                name="platform"
+                value={tournament.platform}
+                onChange={handleChange}
+              >
+                <MenuItem value="online">Online</MenuItem>
+                <MenuItem value="offline">Offline</MenuItem>
+              </StyledTextField>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <StyledTextField
+                select
+                fullWidth
+                label="Status"
+                name="status"
+                value={tournament.status}
+                onChange={handleChange}
+              >
+                <MenuItem value="upcoming">Upcoming</MenuItem>
+                <MenuItem value="registration_open">Registration Open</MenuItem>
+                <MenuItem value="registration_closed">
+                  Registration Closed
+                </MenuItem>
+                <MenuItem value="ongoing">Ongoing</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+              </StyledTextField>
+            </Grid>
+          </Grid>
         </div>
-        
+
         {/* Registration Period & URL Section */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Registration Period & URL</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label htmlFor="registrationStartDate" className="block text-sm font-medium text-gray-700">Registration Start Date</label>
-                    <input type="date" name="registrationStartDate" id="registrationStartDate" value={tournament.registrationStartDate} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required />
-                </div>
-                <div>
-                    <label htmlFor="registrationEndDate" className="block text-sm font-medium text-gray-700">Registration End Date</label>
-                    <input type="date" name="registrationEndDate" id="registrationEndDate" value={tournament.registrationEndDate} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required />
-                </div>
-                <div className="md:col-span-2">
-                    <label htmlFor="postPaymentRedirectUrl" className="block text-sm font-medium text-gray-700">Post-Payment Redirect URL</label>
-                    <input type="url" name="postPaymentRedirectUrl" id="postPaymentRedirectUrl" value={tournament.postPaymentRedirectUrl} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-            </div>
+          <h2 className="text-lg font-semibold mb-4">
+            Registration Period & URL
+          </h2>
+          <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <StyledTextField
+                  label="Registration Start Date"
+                  type="date"
+                  name="registrationStartDate"
+                  value={tournament.registrationStartDate}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StyledTextField
+                  label="Registration End Date"
+                  type="date"
+                  name="registrationEndDate"
+                  value={tournament.registrationEndDate}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+            <Grid item xs={12}>
+              <StyledTextField
+                fullWidth
+                type="url"
+                label="Discord Link"
+                name="discordLink"
+                value={tournament.discordLink}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <StyledTextField
+                fullWidth
+                type="url"
+                label="Fanpage Link"
+                name="fanpageLink"
+                value={tournament.fanpageLink}
+                onChange={handleChange}
+              />
+            </Grid>
+          </Grid>
         </div>
 
         {/* Roles & Pricing Section */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Roles & Pricing</h2>
-            <RoleManager roles={tournament.roles} onRolesChange={handleRolesChange} />
+          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+            <Typography variant="h6">Roles & Pricing</Typography>
+            <IconButton color="primary" onClick={addRole} disabled={loading}>
+              <AddIcon />
+            </IconButton>
+          </Box>
+          {tournament.roles.map((role, index) => (
+            <Paper key={index} sx={{ p: 2, mb: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <IconButton color="error" onClick={() => removeRole(index)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    select
+                    required
+                    fullWidth
+                    label="Role Name"
+                    value={role.roleName}
+                    onChange={(e) =>
+                      handleRoleChange(index, "roleName", e.target.value)
+                    }
+                    disabled={loading}
+                  >
+                    <MenuItem value="Debater">Debater</MenuItem>
+                    <MenuItem value="Adjudicator">Adjudicator</MenuItem>
+                    <MenuItem value="Observer">Observer</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    required
+                    fullWidth
+                    type="number"
+                    label="Slots"
+                    value={role.slots}
+                    onChange={(e) =>
+                      handleRoleChange(index, "slots", e.target.value)
+                    }
+                    disabled={loading}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    required
+                    fullWidth
+                    type="number"
+                    label="Price"
+                    value={role.price}
+                    onChange={(e) =>
+                      handleRoleChange(index, "price", e.target.value)
+                    }
+                    disabled={loading}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
+          ))}
         </div>
 
         {/* Footer */}
         <div className="flex justify-end space-x-2">
-          <button type="button" onClick={() => navigate("/admin/tournaments")} className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/tournaments")}
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+          >
             Cancel
           </button>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" disabled={loading}>
-            {loading ? "Saving..." : (isEditMode ? "Save Changes" : "Create Tournament")}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading
+              ? "Saving..."
+              : isEditMode
+              ? "Save Changes"
+              : "Create Tournament"}
           </button>
         </div>
       </form>

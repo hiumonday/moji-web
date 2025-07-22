@@ -19,6 +19,7 @@ const TournamentParticipantSchema = new mongoose.Schema(
     school: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
+    facebookLink: { type: String, required: true },
   },
   { _id: false }
 );
@@ -36,7 +37,7 @@ const TransactionSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true },
     checkoutUrl: { type: String },
     description: { type: String },
-
+    
     // --- Discriminator ---
     transactionType: {
       type: String,

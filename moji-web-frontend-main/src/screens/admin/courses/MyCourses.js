@@ -37,11 +37,7 @@ const CourseCard = React.memo(({ course, onEdit, onDelete }) => {
   };
 
   const getImageUrl = () => {
-    if (course.image?.data) {
-      // The data should already be in base64 format from the backend
-      return `data:${course.image.contentType};base64,${course.image.data}`;
-    }
-    return "https://via.placeholder.com/300x140"; // Fallback image
+    return course.imageUrl || "https://via.placeholder.com/300x140"; // Fallback image
   };
 
   return (

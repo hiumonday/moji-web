@@ -6,6 +6,7 @@ const initialState = {
   tournament: null,
   loading: false,
   error: null,
+  toggleLoading: {},
 };
 
 export const fetchTournaments = createAsyncThunk(
@@ -64,6 +65,18 @@ export const deleteTournament = createAsyncThunk(
     try {
       await axios.delete(`/api/v1/admin/tournaments/${id}`);
       return id;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const toggleTournamentPublish = createAsyncThunk(
+  "tournaments/toggleTournamentPublish",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/v1/admin/tournaments/${id}/toggle-publish`);
+      return response.data.tournament;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -143,6 +156,24 @@ const tournamentSlice = createSlice({
       })
       .addCase(deleteTournament.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      // Toggle Publish Status
+      .addCase(toggleTournamentPublish.pending, (state, action) => {
+        state.toggleLoading[action.meta.arg] = true;
+      })
+      .addCase(toggleTournamentPublish.fulfilled, (state, action) => {
+        state.toggleLoading[action.payload._id] = false;
+        const index = state.tournaments.findIndex((t) => t._id === action.payload._id);
+        if (index !== -1) {
+          state.tournaments[index] = action.payload;
+        }
+        if (state.tournament && state.tournament._id === action.payload._id) {
+            state.tournament = action.payload;
+        }
+      })
+      .addCase(toggleTournamentPublish.rejected, (state, action) => {
+        state.toggleLoading[action.meta.arg] = false;
         state.error = action.payload;
       });
   },

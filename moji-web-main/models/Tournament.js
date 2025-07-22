@@ -14,6 +14,7 @@ const participantSchema = new mongoose.Schema({
     school: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
+    facebookLink: { type: String },
 });
 
 const roleSchema = new mongoose.Schema({
@@ -47,9 +48,20 @@ const tournamentSchema = new mongoose.Schema(
         description: { type: String },
         registrationStartDate: { type: Date, required: true },
         registrationEndDate: { type: Date, required: true },
-        postPaymentRedirectUrl: { type: String },
+        discordLink: { type: String },
+        fanpageLink: { type: String },
         type: { type: String, enum: ["BP", "WSDC"] },
         platform: { type: String, enum: ["online", "offline"] },
+        bannerUrl: {
+            type: String,
+        },
+        bannerPublicId: {
+            type: String,
+        },
+        is_active: {
+            type: Boolean,
+            default: false,
+        },
         roles: [roleSchema],
         status: {
             type: String,

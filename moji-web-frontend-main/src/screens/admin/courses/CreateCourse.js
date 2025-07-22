@@ -426,6 +426,7 @@ const CreateCourse = () => {
 
       const classesData = courseData.classes.map((classItem) => ({
         ...classItem,
+        day: classItem.day || "Monday",
         startTime: classItem.startTime || "00:00",
         endTime: classItem.endTime || "00:00",
         earlyBirdSlot:
@@ -483,7 +484,7 @@ const CreateCourse = () => {
             },
           ],
           teacherName: "",
-          day: "",
+          day: "Monday",
           startTime: "",
           endTime: "",
           location: "",

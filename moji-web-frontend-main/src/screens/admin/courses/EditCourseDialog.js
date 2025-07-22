@@ -100,10 +100,8 @@ const EditCourseDialog = ({ open, onClose, course }) => {
         classes: currentCourse.classes || [],
       });
 
-      if (currentCourse.image?.data) {
-        setImagePreview(
-          `data:${currentCourse.image.contentType};base64,${currentCourse.image.data}`
-        );
+      if (currentCourse.imageUrl) {
+        setImagePreview(currentCourse.imageUrl);
       }
     }
   }, [course, courses]);
